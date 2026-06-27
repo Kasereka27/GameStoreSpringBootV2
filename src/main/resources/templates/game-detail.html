@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Elden Ring — Clé numérique PC, PS5 ou Xbox. Livraison instantanée sur GameStore Platform.">
+  <title>Elden Ring — GameStore Platform</title><!-- th:text="${game.title} + ' — GameStore Platform'" -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-gaming-bg: #0f0f13;
+      --color-gaming-surface: #1a1a24;
+      --color-gaming-surface-hover: #252532;
+      --color-gaming-border: #2e2e3a;
+      --color-gaming-purple: #8b5cf6;
+      --color-gaming-purple-light: #a855f7;
+      --color-gaming-cyan: #06b6d4;
+      --color-gaming-cyan-light: #22d3ee;
+      --color-gaming-text: #e4e4e7;
+      --color-gaming-muted: #71717a;
+      --color-brand-purple: #7c3aed;
+      --color-brand-cyan: #06b6d4;
+      --color-border: #2e2e3a;
+      --color-muted: #71717a;
+      --color-success: #22c55e;
+      --color-error: #ef4444;
+      --color-info: #3b82f6;
+    }
+  </style>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/theme.css">
+</head>
+<body class="bg-gaming-bg text-gaming-text antialiased min-h-screen flex flex-col">
+
+  <!-- th:replace="~{fragments/layout :: navbar}" -->
+  <header class="sticky top-0 z-50 border-b border-gaming-border bg-gaming-bg/90 backdrop-blur-md">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8" aria-label="Navigation principale">
+      <a href="index.html" class="flex items-center gap-2 shrink-0" aria-label="GameStore Platform — Accueil"><!-- th:href="@{/}" -->
+        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-gaming-purple to-gaming-cyan font-bold text-white text-sm">GS</span>
+        <span class="hidden font-bold text-white sm:inline">Game<span class="gradient-text">Store</span></span>
+      </a>
+      <ul class="hidden items-center gap-6 md:flex">
+        <li><a href="index.html" class="text-sm font-medium text-gaming-muted transition hover:text-white">Accueil</a></li>
+        <li><a href="catalogue.html" class="text-sm font-medium text-gaming-cyan-light" aria-current="page">Catalogue</a></li><!-- th:href="@{/catalogue}" -->
+        <li><a href="catalogue.html?promo=true" class="text-sm font-medium text-gaming-muted transition hover:text-white">Promotions</a></li>
+        <li><a href="#" class="text-sm font-medium text-gaming-muted transition hover:text-white">Support</a></li>
+      </ul>
+      <form class="hidden flex-1 max-w-md lg:block" role="search" action="catalogue.html" method="get"><!-- th:action="@{/catalogue}" -->
+        <label for="search-desktop" class="sr-only">Rechercher un jeu</label>
+        <div class="relative">
+          <input type="search" id="search-desktop" name="q"
+                 class="w-full rounded-lg border border-gaming-border bg-gaming-surface py-2 pl-10 pr-4 text-sm text-white placeholder-gaming-muted focus:border-gaming-purple focus:outline-none focus:ring-1 focus:ring-gaming-purple"
+                 placeholder="Rechercher un jeu…"><!-- th:value="${searchQuery}" -->
+          <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gaming-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+      </form>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button type="button" data-search-toggle class="rounded-lg p-2 text-gaming-muted transition hover:bg-gaming-surface hover:text-white lg:hidden" aria-label="Ouvrir la recherche">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </button>
+        <a href="cart.html" class="relative rounded-lg p-2 text-gaming-muted transition hover:bg-gaming-surface hover:text-white" aria-label="Panier"><!-- th:href="@{/panier}" -->
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span class="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-gaming-purple text-[10px] font-bold text-white">3</span><!-- th:text="${cartItemCount}" -->
+        </a>
+        <a href="login.html" class="hidden rounded-lg p-2 text-gaming-muted transition hover:bg-gaming-surface hover:text-white sm:block" aria-label="Mon compte"><!-- th:href="@{/compte}" -->
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        </a>
+        <button type="button" data-menu-toggle class="rounded-lg p-2 text-gaming-muted transition hover:bg-gaming-surface hover:text-white md:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menu">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </nav>
+    <div data-search-panel class="hidden border-t border-gaming-border px-4 py-3 lg:hidden">
+      <form role="search" action="catalogue.html" method="get">
+        <input type="search" name="q" class="w-full rounded-lg border border-gaming-border bg-gaming-surface py-2 px-4 text-sm text-white placeholder-gaming-muted focus:border-gaming-purple focus:outline-none" placeholder="Rechercher un jeu…">
+      </form>
+    </div>
+    <div id="mobile-menu" data-mobile-menu aria-hidden="true" class="border-t border-gaming-border bg-gaming-surface md:hidden">
+      <ul class="flex flex-col px-4 py-4 gap-1">
+        <li><a href="index.html" class="block rounded-lg px-3 py-2 text-sm text-gaming-muted hover:bg-gaming-surface-hover hover:text-white">Accueil</a></li>
+        <li><a href="catalogue.html" class="block rounded-lg px-3 py-2 text-sm text-gaming-cyan-light bg-gaming-surface-hover">Catalogue</a></li>
+        <li><a href="catalogue.html?promo=true" class="block rounded-lg px-3 py-2 text-sm text-gaming-muted hover:bg-gaming-surface-hover hover:text-white">Promotions</a></li>
+        <li><a href="login.html" class="block rounded-lg px-3 py-2 text-sm text-gaming-muted hover:bg-gaming-surface-hover hover:text-white">Mon compte</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="flex-1">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+
+      <nav aria-label="Fil d'Ariane" class="mb-6">
+        <ol class="flex flex-wrap items-center gap-2 text-sm text-gaming-muted">
+          <li><a href="index.html" class="hover:text-gaming-cyan-light">Accueil</a></li><!-- th:href="@{/}" -->
+          <li aria-hidden="true">/</li>
+          <li><a href="catalogue.html" class="hover:text-gaming-cyan-light">Catalogue</a></li><!-- th:href="@{/catalogue}" -->
+          <li aria-hidden="true">/</li>
+          <li><span class="text-white" aria-current="page">Elden Ring</span><!-- th:text="${game.title}" --></li>
+        </ol>
+      </nav>
+
+      <article class="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
+        <!-- Colonne gauche : galerie -->
+        <div>
+          <figure class="gradient-border overflow-hidden rounded-2xl bg-gaming-surface image-zoom-container">
+            <img data-gallery-main
+                 src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&h=500&fit=crop"
+                 alt="Elden Ring — capture principale"
+                 class="w-full aspect-[16/10] object-cover"><!-- th:src="${game.coverUrl}" th:alt="${game.title}" -->
+          </figure>
+
+          <ul class="mt-4 grid grid-cols-4 gap-3" aria-label="Captures d'écran"><!-- th:each="screenshot, stat : ${game.screenshots}" -->
+            <li>
+              <button type="button" data-gallery-thumb data-full="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&h=500&fit=crop"
+                      class="overflow-hidden rounded-lg ring-2 ring-brand-purple opacity-100 transition hover:opacity-100"><!-- th:attr="data-full=${screenshot.fullUrl}" -->
+                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=150&h=100&fit=crop" alt="Capture 1" class="aspect-video w-full object-cover"><!-- th:src="${screenshot.thumbUrl}" th:alt="${screenshot.alt}" -->
+              </button>
+            </li>
+            <li>
+              <button type="button" data-gallery-thumb data-full="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&h=500&fit=crop"
+                      class="overflow-hidden rounded-lg opacity-60 transition hover:opacity-100">
+                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=150&h=100&fit=crop" alt="Capture 2" class="aspect-video w-full object-cover">
+              </button>
+            </li>
+            <li>
+              <button type="button" data-gallery-thumb data-full="https://images.unsplash.com/photo-1493710667105-003dca9897c9?w=800&h=500&fit=crop"
+                      class="overflow-hidden rounded-lg opacity-60 transition hover:opacity-100">
+                <img src="https://images.unsplash.com/photo-1493710667105-003dca9897c9?w=150&h=100&fit=crop" alt="Capture 3" class="aspect-video w-full object-cover">
+              </button>
+            </li>
+            <li>
+              <button type="button" data-gallery-thumb data-full="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&h=500&fit=crop"
+                      class="overflow-hidden rounded-lg opacity-60 transition hover:opacity-100">
+                <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=150&h=100&fit=crop" alt="Capture 4" class="aspect-video w-full object-cover">
+              </button>
+            </li>
+          </ul>
+
+          <div class="mt-6 overflow-hidden rounded-xl border border-gaming-border bg-gaming-surface">
+            <div class="aspect-video w-full">
+              <iframe class="h-full w-full"
+                      src="https://www.youtube.com/embed/E3Huy2KrzHQ"
+                      title="Bande-annonce Elden Ring"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowfullscreen
+                      loading="lazy"><!-- th:src="${game.trailerUrl}" th:title="'Bande-annonce ' + ${game.title}" --></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Colonne droite : infos produit -->
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="rounded bg-gaming-purple/20 px-2 py-0.5 text-xs font-medium text-gaming-purple-light">RPG</span><!-- th:each="genre : ${game.genres}" th:text="${genre}" -->
+            <span class="rounded bg-gaming-purple/20 px-2 py-0.5 text-xs font-medium text-gaming-purple-light">Action</span>
+            <span class="rounded bg-gaming-surface px-2 py-0.5 text-xs font-bold text-white border border-gaming-border">PEGI 16</span><!-- th:text="'PEGI ' + ${game.pegiRating}" -->
+            <span class="rounded bg-gaming-surface px-2 py-0.5 text-xs text-gaming-cyan">PC · Steam</span><!-- th:text="${game.platformLabel}" -->
+            <span class="rounded bg-gaming-purple px-2 py-0.5 text-xs font-bold text-white">-50%</span><!-- th:if="${game.discountPercent > 0}" th:text="'-' + ${game.discountPercent} + '%'" -->
+          </div>
+
+          <h1 class="mt-4 text-3xl font-bold text-white sm:text-4xl">Elden Ring</h1><!-- th:text="${game.title}" -->
+
+          <dl class="mt-3 space-y-1 text-sm text-gaming-muted">
+            <div class="flex flex-wrap gap-x-4">
+              <dt class="sr-only">Éditeur</dt>
+              <dd>Éditeur : <span class="text-gaming-text">Bandai Namco Entertainment</span></dd><!-- th:text="'Éditeur : ' + ${game.publisher}" -->
+            </div>
+            <div class="flex flex-wrap gap-x-4">
+              <dt class="sr-only">Développeur</dt>
+              <dd>Développeur : <span class="text-gaming-text">FromSoftware</span></dd><!-- th:text="'Développeur : ' + ${game.developer}" -->
+            </div>
+            <div class="flex flex-wrap gap-x-4">
+              <dt class="sr-only">Date de sortie</dt>
+              <dd>Sortie : <span class="text-gaming-text">25 février 2022</span></dd><!-- th:text="'Sortie : ' + ${#temporals.format(game.releaseDate, 'dd MMMM yyyy')}" -->
+            </div>
+          </dl>
+
+          <div class="mt-4 flex items-center gap-3">
+            <div class="flex items-center gap-1 text-gaming-cyan-light" aria-label="Note 4,8 sur 5">
+              <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20" aria-hidden="true"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <span class="text-sm font-medium text-white">4,8</span><!-- th:text="${game.rating}" -->
+              <span class="text-sm text-gaming-muted">(1 247 avis)</span><!-- th:text="'(' + ${game.reviewCount} + ' avis)'" -->
+            </div>
+          </div>
+
+          <div class="mt-6 flex items-baseline gap-3">
+            <span class="text-4xl font-bold text-white">29,99 €</span><!-- th:text="${#numbers.formatDecimal(game.price, 1, 2)} + ' €'" -->
+            <span class="text-xl text-gaming-muted line-through">59,99 €</span><!-- th:text="${#numbers.formatDecimal(game.originalPrice, 1, 2)} + ' €'" -->
+          </div>
+
+          <p class="mt-2 flex items-center gap-2 text-sm text-gaming-cyan-light">
+            <span class="inline-flex h-2 w-2 rounded-full bg-green-500" aria-hidden="true"></span>
+            <span>47 clés en stock</span><!-- th:text="${game.stockCount} + ' clés en stock'" -->
+          </p>
+
+          <fieldset class="mt-6">
+            <legend class="text-sm font-semibold text-white">Plateforme d'activation</legend>
+            <div class="mt-3 flex flex-wrap gap-2"><!-- th:each="platform : ${game.platforms}" -->
+              <label class="cursor-pointer">
+                <input type="radio" name="platform" value="pc" checked class="peer sr-only"><!-- th:value="${platform.code}" th:checked="${platform.selected}" -->
+                <span class="inline-flex rounded-lg border border-gaming-border bg-gaming-surface px-4 py-2 text-sm text-gaming-muted peer-checked:border-gaming-purple peer-checked:bg-gaming-purple/10 peer-checked:text-white">PC</span><!-- th:text="${platform.label}" -->
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="platform" value="ps5" class="peer sr-only">
+                <span class="inline-flex rounded-lg border border-gaming-border bg-gaming-surface px-4 py-2 text-sm text-gaming-muted peer-checked:border-gaming-purple peer-checked:bg-gaming-purple/10 peer-checked:text-white">PS5</span>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="platform" value="xbox" class="peer sr-only">
+                <span class="inline-flex rounded-lg border border-gaming-border bg-gaming-surface px-4 py-2 text-sm text-gaming-muted peer-checked:border-gaming-purple peer-checked:bg-gaming-purple/10 peer-checked:text-white">Xbox</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <button type="button" data-add-to-cart data-game-id="2"
+                    class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-gaming-purple to-gaming-purple-light px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-gaming-purple/25 transition hover:opacity-90"><!-- th:attr="data-game-id=${game.id}" -->
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+              Ajouter au panier
+            </button>
+            <a href="checkout.html" class="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-gaming-cyan bg-gaming-cyan/10 px-6 py-3.5 text-sm font-semibold text-gaming-cyan-light transition hover:bg-gaming-cyan/20"><!-- th:href="@{/checkout(gameId=${game.id})}" -->
+              Acheter maintenant
+            </a>
+          </div>
+
+          <ul class="mt-6 space-y-2 text-sm text-gaming-muted"><!-- th:each="guarantee : ${game.guarantees}" -->
+            <li class="flex items-center gap-2">
+              <svg class="h-4 w-4 shrink-0 text-gaming-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Livraison instantanée par e-mail
+            </li><!-- th:text="${guarantee}" -->
+            <li class="flex items-center gap-2">
+              <svg class="h-4 w-4 shrink-0 text-gaming-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Clé 100 % officielle et garantie
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="h-4 w-4 shrink-0 text-gaming-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Remboursement sous 14 jours si non activée
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="h-4 w-4 shrink-0 text-gaming-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Support client 24/7
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Onglets : Description | Config | Langues | Tags -->
+      <section class="mt-16 border-t border-gaming-border pt-12" aria-label="Détails du jeu">
+        <div class="border-b border-gaming-border" data-tab-list role="tablist" aria-label="Informations du jeu">
+          <div class="flex gap-1 overflow-x-auto">
+            <button role="tab" id="tab-desc" aria-selected="true" aria-controls="panel-desc"
+                    class="shrink-0 border-b-2 border-brand-purple px-4 py-3 text-sm font-medium text-white">
+              Description
+            </button>
+            <button role="tab" id="tab-config" aria-selected="false" aria-controls="panel-config"
+                    class="shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-medium text-muted hover:text-white">
+              Config
+            </button>
+            <button role="tab" id="tab-langues" aria-selected="false" aria-controls="panel-langues"
+                    class="shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-medium text-muted hover:text-white">
+              Langues
+            </button>
+            <button role="tab" id="tab-tags" aria-selected="false" aria-controls="panel-tags"
+                    class="shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-medium text-muted hover:text-white">
+              Tags
+            </button>
+          </div>
+        </div>
+
+        <div id="panel-desc" data-tab-panel role="tabpanel" aria-labelledby="tab-desc" class="mt-6">
+          <div class="prose prose-invert max-w-none text-gaming-muted leading-relaxed">
+            <p>Elden Ring est un RPG d'action-aventure en monde ouvert développé par FromSoftware. Explorez les Terres Intermédiaires, un vaste royaume façonné par la volonté des demi-dieux et les fragments de l'Anneau d'Elden.</p><!-- th:utext="${game.description}" -->
+            <p class="mt-4">Incarnez un Tarnished, exilé des Terres Intermédiaires, et forgez votre propre chemin à travers des champs ouverts, des châteaux imposants et des donjons sombres. Combattez des créatures légendaires, maîtrisez des armes et des arts mystiques, et découvrez les secrets d'un monde en ruine.</p>
+          </div>
+        </div>
+
+        <div id="panel-config" data-tab-panel role="tabpanel" aria-labelledby="tab-config" class="mt-6 hidden">
+          <h3 class="text-lg font-semibold text-white">Configuration requise (PC)</h3>
+          <dl class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div class="rounded-xl border border-gaming-border bg-gaming-surface p-5">
+              <dt class="text-sm font-semibold text-gaming-cyan-light">Minimum</dt>
+              <dd class="mt-3 space-y-1 text-sm text-gaming-muted"><!-- th:each="req : ${game.minRequirements}" -->
+                <p>OS : Windows 10 64-bit</p>
+                <p>Processeur : Intel Core i5-8400</p>
+                <p>Mémoire : 12 Go RAM</p>
+                <p>Graphiques : NVIDIA GTX 1060 3 Go</p>
+                <p>Stockage : 60 Go</p><!-- th:text="${req}" -->
+              </dd>
+            </div>
+            <div class="rounded-xl border border-gaming-border bg-gaming-surface p-5">
+              <dt class="text-sm font-semibold text-gaming-purple-light">Recommandé</dt>
+              <dd class="mt-3 space-y-1 text-sm text-gaming-muted"><!-- th:each="req : ${game.recommendedRequirements}" -->
+                <p>OS : Windows 11 64-bit</p>
+                <p>Processeur : Intel Core i7-8700K</p>
+                <p>Mémoire : 16 Go RAM</p>
+                <p>Graphiques : NVIDIA GTX 1070 8 Go</p>
+                <p>Stockage : 60 Go SSD</p>
+              </dd>
+            </div>
+          </dl>
+        </div>
+
+        <div id="panel-langues" data-tab-panel role="tabpanel" aria-labelledby="tab-langues" class="mt-6 hidden">
+          <h3 class="text-lg font-semibold text-white">Langues disponibles</h3>
+          <table class="mt-4 w-full text-sm">
+            <thead>
+              <tr class="border-b border-gaming-border text-left text-gaming-muted">
+                <th class="pb-3 pr-4">Langue</th>
+                <th class="pb-3 pr-4">Interface</th>
+                <th class="pb-3 pr-4">Audio</th>
+                <th class="pb-3">Sous-titres</th>
+              </tr>
+            </thead>
+            <tbody class="text-gaming-text"><!-- th:each="lang : ${game.languages}" -->
+              <tr class="border-b border-gaming-border/50">
+                <td class="py-3 pr-4">Français</td><!-- th:text="${lang.name}" -->
+                <td class="py-3 pr-4 text-gaming-cyan">✓</td><!-- th:text="${lang.interface ? '✓' : '—'}" -->
+                <td class="py-3 pr-4 text-gaming-muted">—</td>
+                <td class="py-3 text-gaming-cyan">✓</td>
+              </tr>
+              <tr class="border-b border-gaming-border/50">
+                <td class="py-3 pr-4">Anglais</td>
+                <td class="py-3 pr-4 text-gaming-cyan">✓</td>
+                <td class="py-3 pr-4 text-gaming-cyan">✓</td>
+                <td class="py-3 text-gaming-cyan">✓</td>
+              </tr>
+              <tr class="border-b border-gaming-border/50">
+                <td class="py-3 pr-4">Allemand</td>
+                <td class="py-3 pr-4 text-gaming-cyan">✓</td>
+                <td class="py-3 pr-4 text-gaming-muted">—</td>
+                <td class="py-3 text-gaming-cyan">✓</td>
+              </tr>
+              <tr>
+                <td class="py-3 pr-4">Espagnol</td>
+                <td class="py-3 pr-4 text-gaming-cyan">✓</td>
+                <td class="py-3 pr-4 text-gaming-muted">—</td>
+                <td class="py-3 text-gaming-cyan">✓</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="panel-tags" data-tab-panel role="tabpanel" aria-labelledby="tab-tags" class="mt-6 hidden">
+          <h3 class="text-lg font-semibold text-white">Tags</h3>
+          <ul class="mt-4 flex flex-wrap gap-2"><!-- th:each="tag : ${game.tags}" -->
+            <li><a href="catalogue.html?tag=souls-like" class="rounded-full border border-gaming-border bg-gaming-surface px-3 py-1 text-sm text-gaming-muted transition hover:border-gaming-purple hover:text-white">Souls-like</a></li><!-- th:href="@{/catalogue(tag=${tag.slug})}" th:text="${tag.name}" -->
+            <li><a href="catalogue.html?tag=open-world" class="rounded-full border border-gaming-border bg-gaming-surface px-3 py-1 text-sm text-gaming-muted transition hover:border-gaming-purple hover:text-white">Monde ouvert</a></li>
+            <li><a href="catalogue.html?tag=coop" class="rounded-full border border-gaming-border bg-gaming-surface px-3 py-1 text-sm text-gaming-muted transition hover:border-gaming-purple hover:text-white">Coopération</a></li>
+            <li><a href="catalogue.html?tag=dark-fantasy" class="rounded-full border border-gaming-border bg-gaming-surface px-3 py-1 text-sm text-gaming-muted transition hover:border-gaming-purple hover:text-white">Dark fantasy</a></li>
+            <li><a href="catalogue.html?tag=difficult" class="rounded-full border border-gaming-border bg-gaming-surface px-3 py-1 text-sm text-gaming-muted transition hover:border-gaming-purple hover:text-white">Difficile</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Avis clients -->
+      <section class="mt-16 border-t border-gaming-border pt-12" aria-labelledby="reviews-title">
+        <h2 id="reviews-title" class="text-2xl font-bold text-white">Avis des joueurs</h2>
+
+        <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div class="rounded-xl border border-gaming-border bg-gaming-surface p-6 lg:col-span-1">
+            <p class="text-5xl font-bold text-white">4,8</p><!-- th:text="${game.rating}" -->
+            <div class="mt-1 flex items-center gap-1 text-gaming-cyan-light" aria-hidden="true">
+              <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <p class="mt-2 text-sm text-gaming-muted">Basé sur 1 247 avis</p><!-- th:text="'Basé sur ' + ${game.reviewCount} + ' avis'" -->
+            <ul class="mt-6 space-y-2"><!-- th:each="dist : ${game.ratingDistribution}" -->
+              <li class="flex items-center gap-3 text-sm">
+                <span class="w-8 text-gaming-muted">5 ★</span><!-- th:text="${dist.stars} + ' ★'" -->
+                <div class="h-2 flex-1 overflow-hidden rounded-full bg-gaming-bg">
+                  <div class="h-full rounded-full bg-gaming-purple bar-chart-bar" style="width: 72%"></div><!-- th:style="'width:' + ${dist.percentage} + '%'" -->
+                </div>
+                <span class="w-10 text-right text-gaming-muted">72%</span><!-- th:text="${dist.percentage} + '%'" -->
+              </li>
+              <li class="flex items-center gap-3 text-sm">
+                <span class="w-8 text-gaming-muted">4 ★</span>
+                <div class="h-2 flex-1 overflow-hidden rounded-full bg-gaming-bg">
+                  <div class="h-full rounded-full bg-gaming-purple bar-chart-bar" style="width: 18%"></div>
+                </div>
+                <span class="w-10 text-right text-gaming-muted">18%</span>
+              </li>
+              <li class="flex items-center gap-3 text-sm">
+                <span class="w-8 text-gaming-muted">3 ★</span>
+                <div class="h-2 flex-1 overflow-hidden rounded-full bg-gaming-bg">
+                  <div class="h-full rounded-full bg-gaming-purple bar-chart-bar" style="width: 6%"></div>
+                </div>
+                <span class="w-10 text-right text-gaming-muted">6%</span>
+              </li>
+              <li class="flex items-center gap-3 text-sm">
+                <span class="w-8 text-gaming-muted">2 ★</span>
+                <div class="h-2 flex-1 overflow-hidden rounded-full bg-gaming-bg">
+                  <div class="h-full rounded-full bg-gaming-purple bar-chart-bar" style="width: 2%"></div>
+                </div>
+                <span class="w-10 text-right text-gaming-muted">2%</span>
+              </li>
+              <li class="flex items-center gap-3 text-sm">
+                <span class="w-8 text-gaming-muted">1 ★</span>
+                <div class="h-2 flex-1 overflow-hidden rounded-full bg-gaming-bg">
+                  <div class="h-full rounded-full bg-gaming-purple bar-chart-bar" style="width: 2%"></div>
+                </div>
+                <span class="w-10 text-right text-gaming-muted">2%</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="lg:col-span-2 space-y-4">
+            <ul class="space-y-4"><!-- th:each="review : ${reviews}" -->
+              <li class="rounded-xl border border-gaming-border bg-gaming-surface p-5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div class="flex items-center gap-3">
+                    <span class="font-medium text-white">J***n</span><!-- th:text="${review.maskedAuthorName}" -->
+                    <span class="rounded bg-gaming-cyan/20 px-2 py-0.5 text-xs font-medium text-gaming-cyan-light">Achat vérifié</span><!-- th:if="${review.verified}" -->
+                  </div>
+                  <time class="text-xs text-gaming-muted" datetime="2026-05-12">12 mai 2026</time><!-- th:datetime="${review.createdAt}" th:text="${#temporals.format(review.createdAt, 'dd MMMM yyyy')}" -->
+                </div>
+                <div class="mt-2 flex items-center gap-0.5 text-yellow-400" aria-label="5 sur 5"><!-- th:aria-label="${review.rating} + ' sur 5'" -->
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                </div>
+                <p class="mt-3 text-sm text-gaming-muted leading-relaxed">Chef-d'œuvre absolu. L'exploration est addictive et chaque zone réserve des surprises. Le combat est exigeant mais gratifiant. Un must pour tous les fans de souls-like.</p><!-- th:text="${review.content}" -->
+                <button type="button" class="mt-4 flex items-center gap-2 text-xs text-gaming-muted transition hover:text-gaming-cyan-light">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/></svg>
+                  Utile (42)</button><!-- th:text="'Utile (' + ${review.helpfulCount} + ')'" -->
+              </li>
+              <li class="rounded-xl border border-gaming-border bg-gaming-surface p-5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div class="flex items-center gap-3">
+                    <span class="font-medium text-white">M***e</span>
+                    <span class="rounded bg-gaming-cyan/20 px-2 py-0.5 text-xs font-medium text-gaming-cyan-light">Achat vérifié</span>
+                  </div>
+                  <time class="text-xs text-gaming-muted" datetime="2026-04-28">28 avril 2026</time>
+                </div>
+                <div class="mt-2 flex items-center gap-0.5 text-yellow-400" aria-label="5 sur 5">
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                </div>
+                <p class="mt-3 text-sm text-gaming-muted leading-relaxed">Clé reçue en quelques secondes, activation Steam sans problème. Le jeu est immense — plus de 100 heures de contenu. La coop en ligne fonctionne parfaitement.</p>
+                <button type="button" class="mt-4 flex items-center gap-2 text-xs text-gaming-muted transition hover:text-gaming-cyan-light">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/></svg>
+                  Utile (28)</button>
+              </li>
+              <li class="rounded-xl border border-gaming-border bg-gaming-surface p-5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div class="flex items-center gap-3">
+                    <span class="font-medium text-white">A***x</span>
+                    <span class="rounded bg-gaming-cyan/20 px-2 py-0.5 text-xs font-medium text-gaming-cyan-light">Achat vérifié</span>
+                  </div>
+                  <time class="text-xs text-gaming-muted" datetime="2026-03-15">15 mars 2026</time>
+                </div>
+                <div class="mt-2 flex items-center gap-0.5 text-yellow-400" aria-label="4 sur 5">
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="h-4 w-4 text-border fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                </div>
+                <p class="mt-3 text-sm text-gaming-muted leading-relaxed">Excellent jeu mais très exigeant. La courbe de difficulté peut décourager les nouveaux. Graphismes magnifiques et bande-son épique. Prix promo imbattable ici.</p>
+                <button type="button" class="mt-4 flex items-center gap-2 text-xs text-gaming-muted transition hover:text-gaming-cyan-light">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/></svg>
+                  Utile (15)</button>
+              </li>
+            </ul>
+
+            <!-- Formulaire d'avis -->
+            <form class="mt-8 rounded-xl border border-gaming-border bg-gaming-surface p-6" action="#" method="post" aria-labelledby="review-form-title"><!-- th:action="@{/jeux/{slug}/avis(slug=${game.slug})}" -->
+              <h3 id="review-form-title" class="text-lg font-semibold text-white">Donner votre avis</h3>
+              <div class="mt-4">
+                <label class="text-sm font-medium text-gaming-muted">Votre note</label>
+                <div data-star-rating class="mt-2 flex items-center gap-1" role="group" aria-label="Note sur 5 étoiles">
+                  <input type="hidden" name="rating" value="0"><!-- th:field="*{rating}" -->
+                  <button type="button" data-star="1" class="text-border transition hover:text-yellow-400" aria-label="1 étoile">
+                    <svg class="h-7 w-7 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  </button>
+                  <button type="button" data-star="2" class="text-border transition hover:text-yellow-400" aria-label="2 étoiles">
+                    <svg class="h-7 w-7 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  </button>
+                  <button type="button" data-star="3" class="text-border transition hover:text-yellow-400" aria-label="3 étoiles">
+                    <svg class="h-7 w-7 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  </button>
+                  <button type="button" data-star="4" class="text-border transition hover:text-yellow-400" aria-label="4 étoiles">
+                    <svg class="h-7 w-7 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  </button>
+                  <button type="button" data-star="5" class="text-border transition hover:text-yellow-400" aria-label="5 étoiles">
+                    <svg class="h-7 w-7 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="mt-4">
+                <label for="review-content" class="text-sm font-medium text-gaming-muted">Votre commentaire</label>
+                <textarea id="review-content" name="content" rows="4" required
+                          class="mt-2 w-full rounded-lg border border-gaming-border bg-gaming-bg px-4 py-3 text-sm text-white placeholder-gaming-muted focus:border-gaming-purple focus:outline-none focus:ring-1 focus:ring-gaming-purple"
+                          placeholder="Partagez votre expérience avec Elden Ring…"></textarea><!-- th:field="*{content}" -->
+              </div>
+              <button type="submit" class="mt-4 rounded-lg bg-gaming-purple px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-gaming-purple-light">
+                Publier mon avis
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Jeux similaires -->
+      <section class="mt-16 border-t border-gaming-border pt-12" aria-labelledby="similar-title">
+        <h2 id="similar-title" class="text-2xl font-bold text-white">Jeux similaires</h2>
+        <div class="mt-6 -mx-4 px-4 overflow-x-auto scrollbar-thin">
+          <ul class="flex gap-4 pb-4 sm:gap-6"><!-- th:each="similar : ${similarGames}" -->
+            <li class="w-56 shrink-0 sm:w-64">
+              <article class="group card-glow gradient-border overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html" class="block"><!-- th:href="@{/jeux/{slug}(slug=${similar.slug})}" -->
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1560419015-7c2a8ccc5dac?w=300&h=180&fit=crop" alt="Dark Souls III" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy"><!-- th:src="${similar.coverUrl}" th:alt="${similar.title}" -->
+                    <span class="absolute left-3 top-3 rounded bg-gaming-purple px-2 py-0.5 text-xs font-bold text-white">-40%</span><!-- th:if="${similar.discountPercent > 0}" -->
+                  </figure>
+                  <div class="p-4">
+                    <span class="text-xs font-medium text-gaming-cyan">PC · Steam</span><!-- th:text="${similar.platformLabel}" -->
+                    <h3 class="mt-1 font-semibold text-white line-clamp-1">Dark Souls III</h3><!-- th:text="${similar.title}" -->
+                    <div class="mt-2 flex items-center gap-2">
+                      <span class="text-lg font-bold text-white">17,99 €</span><!-- th:text="${#numbers.formatDecimal(similar.price, 1, 2)} + ' €'" -->
+                      <span class="text-sm text-gaming-muted line-through">29,99 €</span>
+                    </div>
+                  </div>
+                </a>
+              </article>
+            </li>
+            <li class="w-56 shrink-0 sm:w-64">
+              <article class="group card-glow gradient-border overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=8" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1560419015-7c2a8ccc5dac?w=300&h=180&fit=crop" alt="Baldur's Gate 3" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                  </figure>
+                  <div class="p-4">
+                    <span class="text-xs font-medium text-gaming-cyan">PC · Steam</span>
+                    <h3 class="mt-1 font-semibold text-white line-clamp-1">Baldur's Gate 3</h3>
+                    <div class="mt-2 flex items-center gap-2">
+                      <span class="text-lg font-bold text-white">24,99 €</span>
+                    </div>
+                  </div>
+                </a>
+              </article>
+            </li>
+            <li class="w-56 shrink-0 sm:w-64">
+              <article class="group card-glow gradient-border overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=5" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=300&h=180&fit=crop" alt="Sekiro: Shadows Die Twice" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                  </figure>
+                  <div class="p-4">
+                    <span class="text-xs font-medium text-gaming-cyan">PC · Steam</span>
+                    <h3 class="mt-1 font-semibold text-white line-clamp-1">Sekiro: Shadows Die Twice</h3>
+                    <div class="mt-2 flex items-center gap-2">
+                      <span class="text-lg font-bold text-white">19,99 €</span>
+                      <span class="text-sm text-gaming-muted line-through">39,99 €</span>
+                    </div>
+                  </div>
+                </a>
+              </article>
+            </li>
+            <li class="w-56 shrink-0 sm:w-64">
+              <article class="group card-glow gradient-border overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=3" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1493710667105-003dca9897c9?w=300&h=180&fit=crop" alt="God of War Ragnarök" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                  </figure>
+                  <div class="p-4">
+                    <span class="text-xs font-medium text-blue-400">PS5</span>
+                    <h3 class="mt-1 font-semibold text-white line-clamp-1">God of War Ragnarök</h3>
+                    <div class="mt-2 flex items-center gap-2">
+                      <span class="text-lg font-bold text-white">47,99 €</span>
+                      <span class="text-sm text-gaming-muted line-through">59,99 €</span>
+                    </div>
+                  </div>
+                </a>
+              </article>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- th:replace="~{fragments/layout :: footer}" -->
+  <footer class="border-t border-gaming-border bg-gaming-surface">
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <a href="index.html" class="flex items-center gap-2"><!-- th:href="@{/}" -->
+            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-gaming-purple to-gaming-cyan text-xs font-bold text-white">GS</span>
+            <span class="font-bold text-white">GameStore</span>
+          </a>
+          <p class="mt-4 text-sm text-gaming-muted leading-relaxed">Plateforme de vente de licences numériques. Jeux PC, console et mobile à prix imbattables.</p><!-- th:text="${siteDescription}" -->
+        </div>
+        <nav aria-label="Liens boutique">
+          <h3 class="text-sm font-semibold text-white">Boutique</h3>
+          <ul class="mt-4 space-y-2">
+            <li><a href="catalogue.html" class="text-sm text-gaming-muted transition hover:text-gaming-cyan-light">Catalogue</a></li><!-- th:href="@{/catalogue}" -->
+            <li><a href="catalogue.html?promo=true" class="text-sm text-gaming-muted transition hover:text-gaming-cyan-light">Promotions</a></li>
+            <li><a href="#" class="text-sm text-gaming-muted transition hover:text-gaming-cyan-light">Nouveautés</a></li>
+            <li><a href="#" class="text-sm text-gaming-muted transition hover:text-gaming-cyan-light">Meilleures ventes</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Liens compte">
+          <h3 class="text-sm font-semibold text-white">Mon compte</h3>
+          <ul class="mt-4 space-y-2">
+            <li><a href="login.html" class="text-sm text-gaming-muted transition hover:text-gaming-cyan-light">Connexion</a></li><!-- th:href="@{/login}" -->
+            <li><a href="register.html" class="text-sm text-gaming-muted transition hover:text-gaming-cyan-light">Inscription</a></li>
+            <li><a href="account.html" class="text-sm text-gaming-muted transition hover:text-gaming-cyan-light">Mes commandes</a></li>
+            <li><a href="cart.html" class="text-sm text-gaming-muted transition hover:text-gaming-cyan-light">Panier</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Liens légaux">
+          <h3 class="text-sm font-semibold text-white">Informations</h3>
+          <ul class="mt-4 space-y-2">
+            <li><a href="#" class="text-sm text-gaming-muted transition hover:text-gaming-cyan-light">CGV</a></li>
+            <li><a href="#" class="text-sm text-gaming-muted transition hover:text-gaming-cyan-light">Politique de confidentialité</a></li>
+            <li><a href="#" class="text-sm text-gaming-muted transition hover:text-gaming-cyan-light">Remboursements</a></li>
+            <li><a href="#" class="text-sm text-gaming-muted transition hover:text-gaming-cyan-light">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="mt-10 flex flex-col items-center justify-between gap-4 border-t border-gaming-border pt-8 sm:flex-row">
+        <p class="text-xs text-gaming-muted">&copy; <!-- th:text="${#dates.year(#dates.createNow())}" -->2026 GameStore Platform. Tous droits réservés.</p>
+        <div class="flex items-center gap-3" aria-label="Moyens de paiement">
+          <span class="rounded border border-gaming-border px-2 py-1 text-xs text-gaming-muted">Visa</span>
+          <span class="rounded border border-gaming-border px-2 py-1 text-xs text-gaming-muted">Mastercard</span>
+          <span class="rounded border border-gaming-border px-2 py-1 text-xs text-gaming-muted">PayPal</span>
+          <span class="rounded border border-gaming-border px-2 py-1 text-xs text-gaming-muted">Crypto</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- th:replace="~{fragments/layout :: toasts}" -->
+  <div data-toast-container class="fixed bottom-4 right-4 z-[100] flex flex-col gap-3 max-w-sm w-full pointer-events-none" aria-live="polite" aria-atomic="true">
+    <template id="toast-template">
+      <div class="pointer-events-auto flex items-start gap-3 rounded-lg border border-gaming-border bg-gaming-surface px-4 py-3 shadow-xl toast-enter" role="alert">
+        <span data-toast-icon class="shrink-0 mt-0.5"></span>
+        <p data-toast-message class="flex-1 text-sm text-white"></p>
+        <button type="button" data-toast-close class="shrink-0 text-gaming-muted hover:text-white" aria-label="Fermer">&times;</button>
+      </div>
+    </template>
+    <!-- th:if="${flashSuccess}" th:attr="data-flash-type='success',data-flash-message=${flashSuccess}" -->
+    <!-- th:if="${flashError}" th:attr="data-flash-type='error',data-flash-message=${flashError}" -->
+    <!-- th:if="${flashInfo}" th:attr="data-flash-type='info',data-flash-message=${flashInfo}" -->
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

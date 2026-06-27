@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tableau de bord administrateur GameStore — KPI, ventes et alertes.">
+  <title>Dashboard — Admin GameStore</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-brand-purple: #7c3aed;
+      --color-brand-purple-light: #8b5cf6;
+      --color-brand-cyan: #06b6d4;
+      --color-brand-cyan-light: #22d3ee;
+      --color-bg-dark: #0f0f13;
+      --color-bg-card: #1a1a24;
+      --color-bg-card-hover: #252532;
+      --color-border: #2e2e3a;
+      --color-text: #e4e4e7;
+      --color-muted: #71717a;
+      --color-success: #22c55e;
+      --color-error: #ef4444;
+      --color-info: #3b82f6;
+      --color-warning: #eab308;
+    }
+  </style>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body class="bg-bg-dark text-text antialiased min-h-screen">
+
+  <div class="flex min-h-screen">
+
+    <!-- Sidebar admin -->
+    <!-- THYMELEAF: th:replace="~{admin/_sidebar :: sidebar(activePage='dashboard')}" -->
+    <aside class="admin-sidebar fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border">
+      <div class="flex h-16 items-center gap-2.5 border-b border-border px-5">
+        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-cyan">
+          <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M6 9h4v6H6V9zm8 0h4v6h-4V9zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zM4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/>
+          </svg>
+        </span>
+        <div>
+          <p class="text-sm font-bold text-white">GameStore</p>
+          <p class="text-[10px] uppercase tracking-wider text-muted">Administration</p>
+        </div>
+      </div>
+      <nav class="flex-1 overflow-y-auto px-3 py-4" aria-label="Menu administration">
+        <ul class="space-y-1">
+          <li>
+            <a href="dashboard.html" class="flex items-center gap-3 rounded-lg bg-brand-purple/20 px-3 py-2.5 text-sm font-medium text-brand-cyan-light">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="games.html" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-bg-card-hover hover:text-white">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Jeux
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-bg-card-hover hover:text-white">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+              Licences
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-bg-card-hover hover:text-white">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+              Commandes
+              <span class="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-error px-1.5 text-[10px] font-bold text-white">12</span><!-- th:text="${pendingOrdersCount}" -->
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-bg-card-hover hover:text-white">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              Utilisateurs
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-bg-card-hover hover:text-white">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
+              Promotions
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-bg-card-hover hover:text-white">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+              Rapports
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-bg-card-hover hover:text-white">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              Paramètres
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="border-t border-border p-4">
+        <a href="../index.html" class="flex items-center gap-2 text-xs text-muted transition hover:text-brand-cyan-light">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          Retour au site
+        </a>
+      </div>
+    </aside>
+
+    <!-- Contenu principal -->
+    <div class="admin-content ml-64 flex min-h-screen flex-1 flex-col">
+
+      <!-- Topbar -->
+      <header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-bg-dark/90 px-6 backdrop-blur-md">
+        <nav aria-label="Fil d'Ariane" class="flex items-center gap-2 text-sm">
+          <a href="dashboard.html" class="text-muted hover:text-white">Admin</a>
+          <svg class="h-4 w-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          <span class="font-medium text-white">Dashboard</span>
+        </nav>
+        <div class="flex items-center gap-4">
+          <a href="../index.html" target="_blank" rel="noopener" class="hidden items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted transition hover:border-brand-purple/50 hover:text-white sm:inline-flex">
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            Voir le site
+          </a>
+          <div class="flex items-center gap-2">
+            <span class="hidden text-right sm:block">
+              <span class="block text-sm font-medium text-white">Sophie Admin</span><!-- th:text="${admin.name}" -->
+              <span class="block text-xs text-muted">Super administrateur</span>
+            </span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-brand-purple to-brand-cyan text-xs font-bold text-white">SA</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="flex-1 p-6">
+        <div class="mb-6">
+          <h1 class="text-2xl font-bold text-white">Tableau de bord</h1>
+          <p class="mt-1 text-sm text-muted">Vue d'ensemble de l'activité — <!-- th:text="${#temporals.format(today, 'dd MMMM yyyy')}" -->27 juin 2026</p>
+        </div>
+
+        <!-- KPI Cards -->
+        <!-- th:with stats=${dashboardStats} -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <article class="rounded-xl border border-border bg-bg-card p-5">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-sm text-muted">CA du jour</p>
+                <p class="mt-2 text-2xl font-bold text-white">1 847 €</p><!-- th:text="${#numbers.formatDecimal(stats.dailyRevenue, 0, 0)} + ' €'" -->
+                <p class="mt-1 text-xs text-success">+12 % vs hier</p><!-- th:text="${stats.revenueTrend}" -->
+              </div>
+              <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-purple/20 text-brand-purple-light">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </span>
+            </div>
+          </article>
+          <article class="rounded-xl border border-border bg-bg-card p-5">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-sm text-muted">Commandes du jour</p>
+                <p class="mt-2 text-2xl font-bold text-white">34</p><!-- th:text="${stats.dailyOrders}" -->
+                <p class="mt-1 text-xs text-success">↗ Tendance haussière</p>
+              </div>
+              <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-info/20 text-info">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+              </span>
+            </div>
+          </article>
+          <article class="rounded-xl border border-border bg-bg-card p-5">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-sm text-muted">Nouveaux inscrits</p>
+                <p class="mt-2 text-2xl font-bold text-white">18</p><!-- th:text="${stats.newUsersToday}" -->
+                <p class="mt-1 text-xs text-brand-cyan-light">Aujourd'hui</p>
+              </div>
+              <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-cyan/20 text-brand-cyan-light">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </span>
+            </div>
+          </article>
+          <article class="rounded-xl border border-border bg-bg-card p-5">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-sm text-muted">Stock faible</p>
+                <p class="mt-2 text-2xl font-bold text-error">3</p><!-- th:text="${stats.lowStockGames}" -->
+                <p class="mt-1 text-xs text-error">Jeux &lt; 10 clés</p>
+              </div>
+              <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-warning/20 text-warning">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              </span>
+            </div>
+          </article>
+        </div>
+
+        <div class="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
+          <!-- Graphique barres 7 jours -->
+          <section class="xl:col-span-2 rounded-xl border border-border bg-bg-card p-6" aria-labelledby="chart-title">
+            <div class="mb-6 flex items-center justify-between">
+              <div>
+                <h2 id="chart-title" class="text-lg font-semibold text-white">Ventes — 7 derniers jours</h2>
+                <p class="text-xs text-muted mt-0.5">Chiffre d'affaires quotidien en euros</p>
+              </div>
+              <span class="text-sm font-medium text-brand-cyan-light">Revenus · Commandes</span>
+            </div>
+            <div class="mb-4 flex gap-4 text-xs text-muted">
+              <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-brand-purple"></span> Revenus (€)</span>
+              <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-brand-cyan"></span> Nb commandes</span>
+            </div>
+            <!-- th:each="day, stat : ${weeklySales}" — bar heights from data -->
+            <div class="flex items-end justify-between gap-2 sm:gap-4" style="height: 200px;">
+              <div class="flex flex-1 flex-col items-center gap-2">
+                <div class="bar-chart-bar w-full max-w-12 rounded-t-md bg-gradient-to-t from-brand-purple to-brand-cyan-light" style="height: 55%;"></div>
+                <span class="text-[10px] text-muted sm:text-xs">Lun</span>
+                <span class="text-[10px] font-medium text-white">2,1k</span>
+              </div>
+              <div class="flex flex-1 flex-col items-center gap-2">
+                <div class="bar-chart-bar w-full max-w-12 rounded-t-md bg-gradient-to-t from-brand-purple to-brand-cyan-light" style="height: 72%;"></div>
+                <span class="text-[10px] text-muted sm:text-xs">Mar</span>
+                <span class="text-[10px] font-medium text-white">2,8k</span>
+              </div>
+              <div class="flex flex-1 flex-col items-center gap-2">
+                <div class="bar-chart-bar w-full max-w-12 rounded-t-md bg-gradient-to-t from-brand-purple to-brand-cyan-light" style="height: 48%;"></div>
+                <span class="text-[10px] text-muted sm:text-xs">Mer</span>
+                <span class="text-[10px] font-medium text-white">1,9k</span>
+              </div>
+              <div class="flex flex-1 flex-col items-center gap-2">
+                <div class="bar-chart-bar w-full max-w-12 rounded-t-md bg-gradient-to-t from-brand-purple to-brand-cyan-light" style="height: 85%;"></div>
+                <span class="text-[10px] text-muted sm:text-xs">Jeu</span>
+                <span class="text-[10px] font-medium text-white">3,3k</span>
+              </div>
+              <div class="flex flex-1 flex-col items-center gap-2">
+                <div class="bar-chart-bar w-full max-w-12 rounded-t-md bg-gradient-to-t from-brand-purple to-brand-cyan-light" style="height: 65%;"></div>
+                <span class="text-[10px] text-muted sm:text-xs">Ven</span>
+                <span class="text-[10px] font-medium text-white">2,5k</span>
+              </div>
+              <div class="flex flex-1 flex-col items-center gap-2">
+                <div class="bar-chart-bar w-full max-w-12 rounded-t-md bg-gradient-to-t from-brand-purple to-brand-cyan-light" style="height: 100%;"></div>
+                <span class="text-[10px] text-muted sm:text-xs">Sam</span>
+                <span class="text-[10px] font-medium text-white">3,9k</span>
+              </div>
+              <div class="flex flex-1 flex-col items-center gap-2">
+                <div class="bar-chart-bar w-full max-w-12 rounded-t-md bg-gradient-to-t from-brand-purple to-brand-cyan-light" style="height: 78%;"></div>
+                <span class="text-[10px] text-muted sm:text-xs">Dim</span>
+                <span class="text-[10px] font-medium text-white">3,0k</span>
+              </div>
+            </div>
+            <!-- SVG overlay pour grille décorative -->
+            <svg class="pointer-events-none absolute opacity-0" aria-hidden="true" width="0" height="0">
+              <defs>
+                <linearGradient id="barGrad" x1="0" y1="1" x2="0" y2="0">
+                  <stop offset="0%" stop-color="#7c3aed"/>
+                  <stop offset="100%" stop-color="#22d3ee"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </section>
+
+          <!-- Alertes -->
+          <section class="rounded-xl border border-border bg-bg-card p-6" aria-labelledby="alerts-title">
+            <h2 id="alerts-title" class="text-lg font-semibold text-white">Alertes</h2>
+            <p class="text-xs text-muted mt-0.5">Éléments nécessitant votre attention</p>
+            <ul class="mt-4 space-y-3">
+              <li class="flex gap-3 rounded-lg border border-warning/30 bg-warning/5 p-3">
+                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-warning/20 text-warning">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                </span>
+                <div>
+                  <p class="text-sm font-medium text-white">Stock faible</p>
+                  <p class="text-xs text-muted mt-0.5">3 jeux ont moins de 10 clés disponibles</p><!-- th:text="${stats.lowStockGames} + ' jeux avec <10 clés'" -->
+                  <a href="games.html" class="mt-1 inline-block text-xs font-medium text-warning hover:underline">Gérer le stock →</a>
+                </div>
+              </li>
+              <li class="flex gap-3 rounded-lg border border-info/30 bg-info/5 p-3">
+                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-info/20 text-info">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                </span>
+                <div>
+                  <p class="text-sm font-medium text-white">Avis en attente</p>
+                  <p class="text-xs text-muted mt-0.5">7 avis clients à modérer</p>
+                  <a href="#" class="mt-1 inline-block text-xs font-medium text-info hover:underline">Modérer →</a>
+                </div>
+              </li>
+              <li class="flex gap-3 rounded-lg border border-error/30 bg-error/5 p-3">
+                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-error/20 text-error">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </span>
+                <div>
+                  <p class="text-sm font-medium text-white">Commandes en attente</p>
+                  <p class="text-xs text-muted mt-0.5">2 commandes PENDING &gt; 24 h</p>
+                  <a href="#" class="mt-1 inline-block text-xs font-medium text-error hover:underline">Traiter →</a>
+                </div>
+              </li>
+            </ul>
+          </section>
+        </div>
+
+        <!-- Dernières commandes -->
+        <section class="mt-6 rounded-xl border border-border bg-bg-card" aria-labelledby="recent-orders-title">
+          <div class="flex items-center justify-between border-b border-border px-6 py-4">
+            <div>
+              <h2 id="recent-orders-title" class="text-lg font-semibold text-white">Dernières commandes</h2>
+              <p class="text-xs text-muted">5 commandes les plus récentes</p>
+            </div>
+            <a href="#" class="text-sm font-medium text-brand-cyan-light hover:text-brand-cyan">Tout voir →</a>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[640px] text-left text-sm">
+              <thead class="border-b border-border bg-bg-dark/50">
+                <tr>
+                  <th class="px-6 py-3 font-medium text-muted">Référence</th>
+                  <th class="px-6 py-3 font-medium text-muted">Client</th>
+                  <th class="px-6 py-3 font-medium text-muted">Date</th>
+                  <th class="px-6 py-3 font-medium text-muted">Total</th>
+                  <th class="px-6 py-3 font-medium text-muted">Statut</th>
+                  <th class="px-6 py-3 font-medium text-muted">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border">
+                <!-- th:each="order : ${recentOrders}" -->
+                <tr class="hover:bg-bg-card-hover/50">
+                  <td class="px-6 py-4 font-mono text-brand-cyan-light">GS-2026-0847291</td>
+                  <td class="px-6 py-4 text-white">Alex Martin</td><!-- th:text="${order.customerName}" -->
+                  <td class="px-6 py-4 text-muted">27 juin 2026, 14:32</td>
+                  <td class="px-6 py-4 font-semibold text-white">89,97 €</td>
+                  <td class="px-6 py-4"><span class="rounded-full bg-success/20 px-2.5 py-1 text-xs font-medium text-success">COMPLETED</span></td>
+                  <td class="px-6 py-4">
+                    <div class="flex gap-2">
+                      <button type="button" class="rounded border border-border px-2 py-1 text-xs text-muted hover:text-white">Voir</button><!-- th:href="@{/admin/commandes/{id}(id=${order.id})}" -->
+                      <button type="button" class="rounded border border-brand-purple/50 px-2 py-1 text-xs text-brand-cyan-light hover:bg-brand-purple/10">Statut</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="hover:bg-bg-card-hover/50">
+                  <td class="px-6 py-4 font-mono text-brand-cyan-light">GS-2026-0847288</td>
+                  <td class="px-6 py-4 text-white">Marie Dupont</td>
+                  <td class="px-6 py-4 text-muted">27 juin 2026, 13:15</td>
+                  <td class="px-6 py-4 font-semibold text-white">48,99 €</td>
+                  <td class="px-6 py-4"><span class="rounded-full bg-info/20 px-2.5 py-1 text-xs font-medium text-info">PAID</span></td>
+                  <td class="px-6 py-4"><div class="flex gap-2"><button type="button" class="rounded border border-border px-2 py-1 text-xs text-muted hover:text-white">Voir</button><button type="button" class="rounded border border-brand-purple/50 px-2 py-1 text-xs text-brand-cyan-light">Statut</button></div></td>
+                </tr>
+                <tr class="hover:bg-bg-card-hover/50">
+                  <td class="px-6 py-4 font-mono text-brand-cyan-light">GS-2026-0847280</td>
+                  <td class="px-6 py-4 text-white">Thomas Leroy</td>
+                  <td class="px-6 py-4 text-muted">27 juin 2026, 11:42</td>
+                  <td class="px-6 py-4 font-semibold text-white">134,97 €</td>
+                  <td class="px-6 py-4"><span class="rounded-full bg-warning/20 px-2.5 py-1 text-xs font-medium text-warning">PENDING</span></td>
+                  <td class="px-6 py-4"><div class="flex gap-2"><button type="button" class="rounded border border-border px-2 py-1 text-xs text-muted hover:text-white">Voir</button><button type="button" class="rounded border border-brand-purple/50 px-2 py-1 text-xs text-brand-cyan-light">Statut</button></div></td>
+                </tr>
+                <tr class="hover:bg-bg-card-hover/50">
+                  <td class="px-6 py-4 font-mono text-brand-cyan-light">GS-2026-0847275</td>
+                  <td class="px-6 py-4 text-white">Julie Bernard</td>
+                  <td class="px-6 py-4 text-muted">27 juin 2026, 10:08</td>
+                  <td class="px-6 py-4 font-semibold text-white">41,99 €</td>
+                  <td class="px-6 py-4"><span class="rounded-full bg-success/20 px-2.5 py-1 text-xs font-medium text-success">COMPLETED</span></td>
+                  <td class="px-6 py-4"><div class="flex gap-2"><button type="button" class="rounded border border-border px-2 py-1 text-xs text-muted hover:text-white">Voir</button><button type="button" class="rounded border border-brand-purple/50 px-2 py-1 text-xs text-brand-cyan-light">Statut</button></div></td>
+                </tr>
+                <tr class="hover:bg-bg-card-hover/50">
+                  <td class="px-6 py-4 font-mono text-brand-cyan-light">GS-2026-0847260</td>
+                  <td class="px-6 py-4 text-white">Pierre Moreau</td>
+                  <td class="px-6 py-4 text-muted">27 juin 2026, 09:21</td>
+                  <td class="px-6 py-4 font-semibold text-white">19,99 €</td>
+                  <td class="px-6 py-4"><span class="rounded-full bg-muted/20 px-2.5 py-1 text-xs font-medium text-muted">REFUNDED</span></td>
+                  <td class="px-6 py-4"><div class="flex gap-2"><button type="button" class="rounded border border-border px-2 py-1 text-xs text-muted hover:text-white">Voir</button><button type="button" class="rounded border border-brand-purple/50 px-2 py-1 text-xs text-brand-cyan-light">Statut</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- THYMELEAF: th:replace="~{_layout :: toasts}" -->
+  <div data-toast-container class="fixed bottom-4 right-4 z-[100] flex flex-col gap-3 max-w-sm w-full pointer-events-none" aria-live="polite" aria-atomic="true">
+    <template id="toast-template">
+      <div class="pointer-events-auto flex items-start gap-3 rounded-lg border px-4 py-3 shadow-xl toast-enter" role="alert">
+        <span data-toast-icon class="shrink-0 mt-0.5"></span>
+        <p data-toast-message class="flex-1 text-sm text-white"></p>
+        <button type="button" data-toast-close class="shrink-0 text-muted hover:text-white" aria-label="Fermer">&times;</button>
+      </div>
+    </template>
+  </div>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

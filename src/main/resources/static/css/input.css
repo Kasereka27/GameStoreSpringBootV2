@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@source "../../templates";
+
+@theme {
+  --color-brand-purple: #7c3aed;
+  --color-brand-purple-light: #8b5cf6;
+  --color-brand-cyan: #06b6d4;
+  --color-brand-cyan-light: #22d3ee;
+  --color-bg-dark: #0f0f13;
+  --color-bg-card: #1a1a24;
+  --color-bg-card-hover: #252532;
+  --color-border: #2e2e3a;
+  --color-text: #e4e4e7;
+  --color-muted: #71717a;
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+  --color-warning: #eab308;
+  --color-gaming-bg: #0f0f13;
+  --color-gaming-surface: #1a1a24;
+  --color-gaming-surface-hover: #252532;
+  --color-gaming-border: #2e2e3a;
+  --color-gaming-purple: #8b5cf6;
+  --color-gaming-purple-light: #a855f7;
+  --color-gaming-cyan: #06b6d4;
+  --color-gaming-cyan-light: #22d3ee;
+  --color-gaming-text: #e4e4e7;
+  --color-gaming-muted: #71717a;
+}

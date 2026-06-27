@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Page introuvable — Le niveau que vous cherchez n'existe pas sur GameStore Platform.">
+  <title>Niveau introuvable — GameStore Platform</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-brand-purple: #7c3aed;
+      --color-brand-purple-light: #8b5cf6;
+      --color-brand-cyan: #06b6d4;
+      --color-brand-cyan-light: #22d3ee;
+      --color-bg-dark: #0f0f13;
+      --color-bg-card: #1a1a24;
+      --color-bg-card-hover: #252532;
+      --color-border: #2e2e3a;
+      --color-text: #e4e4e7;
+      --color-muted: #71717a;
+      --color-success: #22c55e;
+      --color-error: #ef4444;
+      --color-info: #3b82f6;
+    }
+  </style>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/theme.css">
+</head>
+<body class="bg-bg-dark text-text antialiased min-h-screen flex flex-col">
+
+  <!-- THYMELEAF: th:replace="~{_layout :: logo-header}" -->
+  <header class="border-b border-border bg-bg-dark">
+    <div class="mx-auto flex max-w-7xl items-center justify-center px-4 py-4 sm:px-6">
+      <a href="index.html" class="flex items-center gap-2.5" aria-label="GameStore — Accueil">
+        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-cyan">
+          <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M6 9h4v6H6V9zm8 0h4v6h-4V9zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zM4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/>
+          </svg>
+        </span>
+        <span class="font-bold text-white">Game<span class="gradient-text">Store</span></span>
+      </a>
+    </div>
+  </header>
+
+  <main class="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 py-16 sm:px-6">
+
+    <!-- Grille pixel décorative -->
+    <div class="pointer-events-none absolute inset-0 opacity-[0.04]" aria-hidden="true">
+      <svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+            <path d="M32 0H0V32" fill="none" stroke="#8b5cf6" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)"/>
+      </svg>
+    </div>
+
+    <!-- Lueur d'ambiance -->
+    <div class="pointer-events-none absolute left-1/2 top-1/3 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-purple/20 blur-3xl" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute right-1/4 bottom-1/4 h-48 w-48 rounded-full bg-brand-cyan/10 blur-3xl" aria-hidden="true"></div>
+
+    <div class="relative z-10 w-full max-w-xl text-center">
+
+      <!-- Personnage gaming SVG — pixel hero perdu -->
+      <div class="mx-auto mb-8" aria-hidden="true">
+        <svg class="mx-auto h-48 w-48 sm:h-56 sm:w-56" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Ombre -->
+          <ellipse cx="100" cy="178" rx="40" ry="8" fill="#7c3aed" opacity="0.25"/>
+          <!-- Corps pixel -->
+          <rect x="72" y="88" width="56" height="48" rx="4" fill="#1a1a24" stroke="#2e2e3a" stroke-width="2"/>
+          <rect x="80" y="96" width="40" height="32" rx="2" fill="#252532"/>
+          <!-- Écran corps — 404 -->
+          <text x="100" y="118" text-anchor="middle" font-family="monospace" font-size="16" font-weight="bold" fill="#22d3ee">404</text>
+          <!-- Tête -->
+          <rect x="78" y="52" width="44" height="40" rx="6" fill="#1a1a24" stroke="#2e2e3a" stroke-width="2"/>
+          <!-- Visière casque -->
+          <rect x="82" y="58" width="36" height="14" rx="3" fill="#7c3aed"/>
+          <rect x="86" y="62" width="28" height="6" rx="1" fill="#22d3ee" opacity="0.8"/>
+          <!-- Yeux confus -->
+          <rect x="88" y="78" width="6" height="6" rx="1" fill="#22d3ee"/>
+          <rect x="106" y="78" width="6" height="6" rx="1" fill="#22d3ee"/>
+          <!-- Antennes -->
+          <line x1="88" y1="52" x2="84" y2="40" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round"/>
+          <line x1="112" y1="52" x2="116" y2="40" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="84" cy="38" r="4" fill="#06b6d4"/>
+          <circle cx="116" cy="38" r="4" fill="#06b6d4"/>
+          <!-- Bras gauche — gamepad -->
+          <rect x="48" y="96" width="24" height="16" rx="3" fill="#1a1a24" stroke="#2e2e3a" stroke-width="2"/>
+          <rect x="52" y="100" width="6" height="4" rx="1" fill="#7c3aed"/>
+          <rect x="62" y="100" width="6" height="4" rx="1" fill="#7c3aed"/>
+          <circle cx="58" cy="108" r="3" fill="#06b6d4"/>
+          <!-- Bras droit — pointe -->
+          <rect x="128" y="92" width="24" height="16" rx="3" fill="#1a1a24" stroke="#2e2e3a" stroke-width="2"/>
+          <path d="M148 100 L160 92 L160 108 Z" fill="#8b5cf6"/>
+          <!-- Jambes -->
+          <rect x="80" y="136" width="16" height="24" rx="3" fill="#1a1a24" stroke="#2e2e3a" stroke-width="2"/>
+          <rect x="104" y="136" width="16" height="24" rx="3" fill="#1a1a24" stroke="#2e2e3a" stroke-width="2"/>
+          <!-- Particules -->
+          <rect x="30" y="60" width="4" height="4" fill="#8b5cf6" opacity="0.6"/>
+          <rect x="170" y="80" width="4" height="4" fill="#06b6d4" opacity="0.6"/>
+          <rect x="160" y="140" width="3" height="3" fill="#8b5cf6" opacity="0.4"/>
+          <rect x="36" y="130" width="3" height="3" fill="#06b6d4" opacity="0.4"/>
+          <!-- Point d'interrogation flottant -->
+          <text x="162" y="56" font-family="monospace" font-size="20" font-weight="bold" fill="#8b5cf6" opacity="0.7">?</text>
+        </svg>
+      </div>
+
+      <!-- Code erreur stylisé -->
+      <p class="font-mono text-7xl font-black tracking-tighter sm:text-8xl" aria-hidden="true">
+        <span class="gradient-text">4</span><span class="text-white">0</span><span class="gradient-text">4</span>
+      </p>
+
+      <h1 class="mt-4 text-2xl font-bold text-white sm:text-3xl">Niveau introuvable</h1>
+      <p class="mt-3 text-base text-muted sm:text-lg">Cette page n'existe pas — le boss que vous cherchez a peut-être été vaincu ailleurs.</p>
+
+      <!-- ASCII décoratif -->
+      <pre class="mx-auto mt-6 hidden max-w-xs overflow-hidden rounded-lg border border-border bg-bg-card px-4 py-3 text-left font-mono text-[10px] leading-tight text-brand-cyan/60 sm:block" aria-hidden="true">╔══════════════════╗
+║  GAME OVER       ║
+║  > RETRY LEVEL   ║
+║  > MAIN MENU     ║
+╚══════════════════╝</pre>
+
+      <div class="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+        <a href="index.html"
+           class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-purple px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-purple-light sm:w-auto">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          Retour à l'accueil
+        </a>
+        <a href="catalogue.html"
+           class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-bg-card px-6 py-3 text-sm font-semibold text-white transition hover:border-brand-purple hover:bg-bg-card-hover sm:w-auto">
+          <svg class="h-4 w-4 text-brand-cyan-light" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+          </svg>
+          Explorer le catalogue
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- THYMELEAF: th:replace="~{_layout :: minimal-footer}" -->
+  <footer class="border-t border-border bg-bg-dark py-6">
+    <div class="mx-auto max-w-7xl px-4 text-center sm:px-6">
+      <p class="text-xs text-muted">&copy; 2026 GameStore Platform. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

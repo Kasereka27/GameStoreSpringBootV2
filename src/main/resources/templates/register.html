@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Créez votre compte GameStore Platform et accédez à vos clés de jeux.">
+  <title>Inscription — GameStore Platform</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-brand-purple: #7c3aed;
+      --color-brand-purple-light: #8b5cf6;
+      --color-brand-cyan: #06b6d4;
+      --color-brand-cyan-light: #22d3ee;
+      --color-bg-dark: #0f0f13;
+      --color-bg-card: #1a1a24;
+      --color-bg-card-hover: #252532;
+      --color-border: #2e2e3a;
+      --color-text: #e4e4e7;
+      --color-muted: #71717a;
+      --color-success: #22c55e;
+      --color-error: #ef4444;
+      --color-info: #3b82f6;
+      --color-warning: #eab308;
+    }
+  </style>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/theme.css">
+</head>
+<body class="bg-bg-dark text-text antialiased min-h-screen flex flex-col">
+
+  <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+    <div class="absolute -left-1/4 top-0 h-[600px] w-[600px] rounded-full bg-brand-purple/20 blur-[120px]"></div>
+    <div class="absolute -right-1/4 bottom-0 h-[500px] w-[500px] rounded-full bg-brand-cyan/15 blur-[100px]"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-bg-dark via-bg-dark/95 to-[#12121f]"></div>
+  </div>
+
+  <!-- THYMELEAF: th:replace="~{_layout :: auth-header}" -->
+  <header class="relative border-b border-border/50 bg-bg-dark/60 backdrop-blur-sm">
+    <div class="mx-auto flex max-w-7xl items-center px-4 py-4 sm:px-6 lg:px-8">
+      <a href="index.html" class="flex items-center gap-2.5" aria-label="GameStore — Accueil">
+        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-cyan">
+          <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M6 9h4v6H6V9zm8 0h4v6h-4V9zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zM4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/>
+          </svg>
+        </span>
+        <span class="font-bold text-white">Game<span class="gradient-text">Store</span></span>
+      </a>
+    </div>
+  </header>
+
+  <main class="relative flex flex-1 items-center justify-center px-4 py-10 sm:py-14">
+    <div class="w-full max-w-md">
+
+      <div class="text-center">
+        <h1 class="text-2xl font-bold text-white sm:text-3xl">Rejoignez GameStore</h1>
+        <p class="mt-2 text-sm text-muted">Créez un compte gratuit pour gérer vos achats et clés.</p>
+      </div>
+
+      <!-- THYMELEAF: th:action="@{/inscription}" th:object="${registerForm}" method="post" -->
+      <form class="mt-8 rounded-2xl border border-border bg-bg-card/80 p-6 shadow-xl backdrop-blur-sm sm:p-8 card-glow"
+            data-register-form action="account.html" method="post" novalidate>
+
+        <!-- THYMELEAF: th:if="${#fields.hasErrors('*')}" -->
+        <!-- <ul class="mb-4 space-y-1 rounded-lg border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">
+          <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+        </ul> -->
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label for="firstName" class="block text-sm font-medium text-muted">Prénom</label>
+            <input type="text" id="firstName" name="firstName" required autocomplete="given-name"
+                   class="mt-1.5 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white placeholder-muted focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"
+                   placeholder="Jean">
+            <!-- THYMELEAF: th:field="*{firstName}" -->
+            <!-- THYMELEAF: th:errors="*{firstName}" class="mt-1 text-xs text-error" -->
+          </div>
+          <div>
+            <label for="lastName" class="block text-sm font-medium text-muted">Nom</label>
+            <input type="text" id="lastName" name="lastName" required autocomplete="family-name"
+                   class="mt-1.5 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white placeholder-muted focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"
+                   placeholder="Dupont">
+            <!-- THYMELEAF: th:field="*{lastName}" -->
+            <!-- THYMELEAF: th:errors="*{lastName}" class="mt-1 text-xs text-error" -->
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <label for="email" class="block text-sm font-medium text-muted">Adresse e-mail</label>
+          <input type="email" id="email" name="email" required autocomplete="email"
+                 class="mt-1.5 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white placeholder-muted focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"
+                 placeholder="votre@email.com">
+          <!-- THYMELEAF: th:field="*{email}" -->
+          <!-- THYMELEAF: th:errors="*{email}" class="mt-1 text-xs text-error" -->
+        </div>
+
+        <div class="mt-4">
+          <div class="flex items-center justify-between">
+            <label for="password" class="block text-sm font-medium text-muted">Mot de passe</label>
+            <span data-password-strength class="text-sm font-medium" aria-live="polite"></span>
+          </div>
+          <div class="relative mt-1.5">
+            <input type="password" id="password" name="password" required autocomplete="new-password" minlength="8"
+                   class="w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 pr-10 text-sm text-white placeholder-muted focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"
+                   placeholder="8 caractères minimum">
+            <!-- THYMELEAF: th:field="*{password}" -->
+            <!-- THYMELEAF: th:errors="*{password}" class="mt-1 text-xs text-error" -->
+            <button type="button" data-password-toggle aria-controls="password" aria-label="Afficher le mot de passe"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-muted transition hover:text-white">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </button>
+          </div>
+          <p class="mt-1.5 text-xs text-muted">Utilisez majuscules, chiffres et caractères spéciaux pour un mot de passe fort.</p>
+        </div>
+
+        <div class="mt-4">
+          <label for="confirmPassword" class="block text-sm font-medium text-muted">Confirmer le mot de passe</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" required autocomplete="new-password"
+                 class="mt-1.5 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white placeholder-muted focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"
+                 placeholder="Répétez le mot de passe">
+          <!-- THYMELEAF: th:field="*{confirmPassword}" -->
+          <!-- THYMELEAF: th:errors="*{confirmPassword}" class="mt-1 text-xs text-error" -->
+        </div>
+
+        <label class="mt-4 flex cursor-pointer items-start gap-2">
+          <input type="checkbox" name="acceptTerms" required
+                 class="mt-1 h-4 w-4 rounded border-border bg-bg-dark text-brand-purple focus:ring-brand-purple">
+          <!-- THYMELEAF: th:field="*{acceptTerms}" -->
+          <span class="text-sm text-muted">
+            J'accepte les
+            <a href="#" class="text-brand-cyan-light underline transition hover:text-brand-cyan">CGU</a>
+            et la
+            <a href="#" class="text-brand-cyan-light underline transition hover:text-brand-cyan">politique de confidentialité</a>.
+          </span>
+          <!-- THYMELEAF: th:errors="*{acceptTerms}" class="mt-1 block text-xs text-error" -->
+        </label>
+
+        <!-- THYMELEAF: th:if="${captchaEnabled}" -->
+        <div class="mt-4 rounded-lg border border-dashed border-border bg-bg-dark/50 px-4 py-6 text-center" data-captcha-placeholder>
+          <!-- THYMELEAF: th:utext="${captchaWidget}" -->
+          <svg class="mx-auto h-8 w-8 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+          <p class="mt-2 text-xs text-muted">Vérification CAPTCHA</p>
+          <p class="mt-1 text-[11px] text-muted/70">Placeholder — intégration reCAPTCHA / hCaptcha côté serveur</p>
+        </div>
+
+        <button type="submit" data-register-submit
+                class="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-brand-purple to-brand-purple-light py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60">
+          Créer mon compte
+        </button>
+      </form>
+
+      <p class="mt-6 text-center text-sm text-muted">
+        Déjà inscrit ?
+        <a href="login.html" class="font-medium text-brand-cyan-light transition hover:underline">Se connecter</a>
+        <!-- THYMELEAF: th:href="@{/login}" -->
+      </p>
+    </div>
+  </main>
+
+  <footer class="relative mt-auto border-t border-border/50 bg-bg-card/30 py-6 text-center text-xs text-muted">
+    &copy; 2026 GameStore Platform.
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Parcourez le catalogue GameStore — des milliers de clés de jeux PC, PS5, Xbox et Nintendo.">
+  <title>Catalogue — GameStore Platform</title><!-- th:text="'Catalogue — GameStore Platform'" -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-gaming-bg: #0f0f13;
+      --color-gaming-surface: #1a1a24;
+      --color-gaming-surface-hover: #252532;
+      --color-gaming-border: #2e2e3a;
+      --color-gaming-purple: #8b5cf6;
+      --color-gaming-purple-light: #a855f7;
+      --color-gaming-cyan: #06b6d4;
+      --color-gaming-cyan-light: #22d3ee;
+      --color-gaming-text: #e4e4e7;
+      --color-gaming-muted: #71717a;
+      --color-brand-purple: #8b5cf6;
+      --color-success: #22c55e;
+      --color-error: #ef4444;
+      --color-info: #3b82f6;
+    }
+  </style>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/theme.css">
+</head>
+<body class="bg-gaming-bg text-gaming-text antialiased min-h-screen flex flex-col">
+
+  <!-- th:replace="~{_layout :: navbar}" -->
+  <header class="sticky top-0 z-50 border-b border-gaming-border bg-gaming-bg/90 backdrop-blur-md">
+    <nav class="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8" aria-label="Navigation principale">
+      <a href="index.html" th:href="@{/}" class="flex shrink-0 items-center gap-2.5" aria-label="GameStore — Accueil">
+        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-gaming-purple to-gaming-cyan">
+          <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M6 9h4v6H6V9zm8 0h4v6h-4V9zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zM4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/>
+          </svg>
+        </span>
+        <span class="hidden font-bold text-white sm:inline">Game<span class="gradient-text">Store</span></span>
+      </a>
+      <ul class="hidden items-center gap-5 md:flex lg:gap-6">
+        <!-- th:classappend="${activePage == 'home'} ? 'text-gaming-cyan-light' : 'text-gaming-muted hover:text-white'" -->
+        <li><a href="index.html" th:href="@{/}" class="text-sm font-medium text-gaming-muted transition hover:text-white">Accueil</a></li>
+        <li><a href="catalogue.html" th:href="@{/catalogue}" class="text-sm font-medium text-gaming-cyan-light" aria-current="page">Catalogue</a></li>
+        <li><a href="catalogue.html?promo=true" th:href="@{/promotions}" class="text-sm font-medium text-gaming-muted transition hover:text-white">Promotions</a></li>
+        <li><a href="a-propos.html" th:href="@{/a-propos}" class="text-sm font-medium text-gaming-muted transition hover:text-white">À propos</a></li>
+      </ul>
+      <div class="relative hidden flex-1 max-w-sm lg:block" data-search-wrapper>
+        <form role="search" action="catalogue.html" method="get" th:action="@{/catalogue}">
+          <label for="nav-search" class="sr-only">Rechercher un jeu</label>
+          <div class="relative">
+            <input type="search" id="nav-search" name="q" data-search-input
+                   th:value="${searchQuery}"
+                   class="w-full rounded-lg border border-gaming-border bg-gaming-surface py-2 pl-10 pr-10 text-sm text-white placeholder-gaming-muted focus:border-gaming-purple focus:outline-none focus:ring-1 focus:ring-gaming-purple"
+                   placeholder="Rechercher un jeu…" autocomplete="off">
+            <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gaming-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+        </form>
+        <!-- th:each="suggestion : ${searchSuggestions}" -->
+        <ul data-search-autocomplete class="absolute left-0 right-0 top-full z-50 mt-1 hidden max-h-64 overflow-auto rounded-lg border border-gaming-border bg-gaming-surface py-1 shadow-xl" role="listbox">
+          <li><button type="button" class="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gaming-muted hover:bg-gaming-surface-hover hover:text-white" role="option">Cyberpunk 2077</button></li>
+          <li><button type="button" class="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gaming-muted hover:bg-gaming-surface-hover hover:text-white" role="option">Elden Ring</button></li>
+          <li><button type="button" class="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gaming-cyan-light hover:bg-gaming-surface-hover" role="option">Voir tous les résultats →</button></li>
+        </ul>
+      </div>
+      <div class="ml-auto flex items-center gap-1.5 sm:gap-2">
+        <button type="button" data-search-toggle class="rounded-lg p-2 text-gaming-muted hover:bg-gaming-surface hover:text-white lg:hidden" aria-label="Rechercher">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </button>
+        <a href="cart.html" th:href="@{/panier}" class="relative rounded-lg p-2 text-gaming-muted transition hover:bg-gaming-surface hover:text-white" aria-label="Panier">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gaming-purple px-1 text-[10px] font-bold text-white" th:text="${cartItemCount}">3</span>
+        </a>
+        <div class="hidden items-center gap-2 sm:flex" data-guest-nav>
+          <a href="login.html" th:href="@{/login}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-gaming-muted transition hover:text-white">Connexion</a>
+          <a href="register.html" th:href="@{/register}" class="rounded-lg bg-gaming-purple px-3 py-1.5 text-sm font-medium text-white transition hover:bg-gaming-purple-light">S'inscrire</a>
+        </div>
+        <button type="button" data-menu-toggle class="rounded-lg p-2 text-gaming-muted hover:bg-gaming-surface hover:text-white md:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menu">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </nav>
+    <div data-search-panel-mobile class="hidden border-t border-gaming-border px-4 py-3 lg:hidden">
+      <input type="search" data-search-input-mobile class="w-full rounded-lg border border-gaming-border bg-gaming-surface px-4 py-2 text-sm text-white placeholder-gaming-muted focus:border-gaming-purple focus:outline-none" placeholder="Rechercher un jeu…">
+    </div>
+    <div id="mobile-menu" data-mobile-menu aria-hidden="true" class="border-t border-gaming-border bg-gaming-surface md:hidden">
+      <ul class="flex flex-col gap-1 px-4 py-4">
+        <li><a href="index.html" class="block rounded-lg px-3 py-2 text-sm text-gaming-muted hover:bg-gaming-surface-hover hover:text-white">Accueil</a></li>
+        <li><a href="catalogue.html" class="block rounded-lg px-3 py-2 text-sm font-medium text-gaming-cyan-light bg-gaming-surface-hover">Catalogue</a></li>
+        <li><a href="catalogue.html?promo=true" class="block rounded-lg px-3 py-2 text-sm text-gaming-muted hover:bg-gaming-surface-hover hover:text-white">Promotions</a></li>
+        <li class="border-t border-gaming-border pt-2 mt-2"><a href="login.html" class="block rounded-lg px-3 py-2 text-sm text-gaming-cyan-light">Connexion</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="flex-1">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+
+      <nav aria-label="Fil d'Ariane" class="mb-6">
+        <ol class="flex flex-wrap items-center gap-2 text-sm text-gaming-muted">
+          <li><a href="index.html" th:href="@{/}" class="transition hover:text-gaming-cyan-light">Accueil</a></li>
+          <li aria-hidden="true">/</li>
+          <li><span class="text-white" aria-current="page">Catalogue</span></li>
+        </ol>
+      </nav>
+
+      <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-white sm:text-4xl">Catalogue</h1>
+          <p class="mt-2 text-gaming-muted"><span th:text="${totalResults}">142</span> jeux trouvés</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <button type="button" data-filter-open class="inline-flex items-center gap-2 rounded-lg border border-gaming-border bg-gaming-surface px-4 py-2 text-sm font-medium text-white transition hover:bg-gaming-surface-hover lg:hidden">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+            Filtres
+          </button>
+          <label for="sort" class="sr-only">Trier par</label>
+          <select id="sort" name="sort" data-sort-select th:value="${currentSort}"
+                  class="rounded-lg border border-gaming-border bg-gaming-surface px-4 py-2 text-sm text-white focus:border-gaming-purple focus:outline-none">
+            <option value="relevance" th:selected="${currentSort == 'relevance'}">Pertinence</option>
+            <option value="price-asc" th:selected="${currentSort == 'price-asc'}">Prix ↑</option>
+            <option value="price-desc" th:selected="${currentSort == 'price-desc'}">Prix ↓</option>
+            <option value="rating" th:selected="${currentSort == 'rating'}">Notes</option>
+            <option value="newest" th:selected="${currentSort == 'newest'}">Nouveautés</option>
+          </select>
+          <div class="flex rounded-lg border border-gaming-border bg-gaming-surface p-1" role="group" aria-label="Mode d'affichage">
+            <button type="button" data-view-grid class="rounded-md bg-brand-purple px-3 py-1.5 text-white transition hover:text-white" aria-label="Vue grille" aria-pressed="true">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            </button>
+            <button type="button" data-view-list class="rounded-md px-3 py-1.5 text-gaming-muted transition hover:text-white" aria-label="Vue liste" aria-pressed="false">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-8 lg:flex-row">
+
+        <!-- th:replace="~{fragments/filters :: sidebar}" -->
+        <aside class="hidden w-72 shrink-0 lg:block" aria-label="Filtres de recherche">
+          <div class="sticky top-24 rounded-xl border border-gaming-border bg-gaming-surface p-5">
+            <!-- th:include="~{fragments/filters :: filter-form}" -->
+            <form action="catalogue.html" method="get" th:action="@{/catalogue}">
+              <h2 class="text-sm font-semibold text-white">Recherche</h2>
+              <label for="filter-q" class="sr-only">Rechercher</label>
+              <input type="search" id="filter-q" name="q" th:value="${filters.query}"
+                     class="mt-3 w-full rounded-lg border border-gaming-border bg-gaming-bg px-3 py-2 text-sm text-white placeholder-gaming-muted focus:border-gaming-purple focus:outline-none"
+                     placeholder="Nom du jeu…">
+
+              <h2 class="mt-6 text-sm font-semibold text-white">Genre</h2>
+              <fieldset class="mt-3 space-y-2">
+                <legend class="sr-only">Filtrer par genre</legend>
+                <!-- th:each="genre : ${genres}" -->
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="action" th:value="${genre.code}" th:checked="${#lists.contains(filters.genres, genre.code)}"
+                         class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Action</span><!-- th:text="${genre.label}" -->
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="rpg" th:checked="${#lists.contains(filters.genres, 'rpg')}" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">RPG</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="fps" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">FPS</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="strategy" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Stratégie</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="adventure" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Aventure</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="simulation" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Simulation</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="sport" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Sport</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="indie" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Indé</span>
+                </label>
+              </fieldset>
+
+              <h2 class="mt-6 text-sm font-semibold text-white">Plateforme</h2>
+              <fieldset class="mt-3 space-y-2">
+                <legend class="sr-only">Filtrer par plateforme</legend>
+                <!-- th:each="platform : ${platforms}" -->
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="platform" value="pc" th:value="${platform.code}" th:checked="${#lists.contains(filters.platforms, platform.code)}"
+                         class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="flex h-5 w-5 items-center justify-center rounded bg-gaming-bg text-[10px] font-bold text-white">PC</span>
+                  <span class="text-sm text-gaming-muted">PC (Steam, Epic, GOG)</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="platform" value="ps5" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="flex h-5 w-5 items-center justify-center rounded bg-blue-500/20 text-[10px] font-bold text-blue-400">PS</span>
+                  <span class="text-sm text-gaming-muted">PlayStation 5</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="platform" value="xbox" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="flex h-5 w-5 items-center justify-center rounded bg-green-500/20 text-[10px] font-bold text-green-400">XB</span>
+                  <span class="text-sm text-gaming-muted">Xbox Series X|S</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="platform" value="switch" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="flex h-5 w-5 items-center justify-center rounded bg-red-500/20 text-[10px] font-bold text-red-400">NS</span>
+                  <span class="text-sm text-gaming-muted">Nintendo Switch</span>
+                </label>
+              </fieldset>
+
+              <h2 class="mt-6 text-sm font-semibold text-white">Prix</h2>
+              <div class="mt-3">
+                <label for="price-max" class="sr-only">Prix maximum</label>
+                <input type="range" id="price-max" name="priceMax" min="0" max="100" value="60" th:value="${filters.priceMax}"
+                       class="w-full accent-gaming-purple" aria-describedby="price-max-label">
+                <p id="price-max-label" class="mt-1 text-xs text-gaming-muted">Jusqu'à <span th:text="${filters.priceMax}">60</span> €</p>
+              </div>
+
+              <h2 class="mt-6 text-sm font-semibold text-white">Éditeur</h2>
+              <fieldset class="mt-3 space-y-2">
+                <legend class="sr-only">Filtrer par éditeur</legend>
+                <!-- th:each="publisher : ${publishers}" -->
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="publisher" value="ubisoft" th:value="${publisher.code}" th:checked="${#lists.contains(filters.publishers, publisher.code)}"
+                         class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Ubisoft</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="publisher" value="ea" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Electronic Arts</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="publisher" value="cdpr" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">CD Projekt Red</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="publisher" value="fromsoftware" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">FromSoftware</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="publisher" value="nintendo" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Nintendo</span>
+                </label>
+              </fieldset>
+
+              <h2 class="mt-6 text-sm font-semibold text-white">Note minimale</h2>
+              <fieldset class="mt-3 space-y-2">
+                <legend class="sr-only">Filtrer par note</legend>
+                <!-- th:each="rating : ${ratingOptions}" -->
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="radio" name="minRating" value="4" th:value="${rating.value}" th:checked="${filters.minRating == rating.value}"
+                         class="h-4 w-4 border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="flex items-center gap-0.5 text-yellow-400" aria-hidden="true">★★★★☆</span>
+                  <span class="text-sm text-gaming-muted">4+ étoiles</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="radio" name="minRating" value="3" class="h-4 w-4 border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="flex items-center gap-0.5 text-yellow-400" aria-hidden="true">★★★☆☆</span>
+                  <span class="text-sm text-gaming-muted">3+ étoiles</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="radio" name="minRating" value="0" checked class="h-4 w-4 border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Toutes les notes</span>
+                </label>
+              </fieldset>
+
+              <h2 class="mt-6 text-sm font-semibold text-white">Statut</h2>
+              <fieldset class="mt-3 space-y-2">
+                <legend class="sr-only">Filtrer par statut</legend>
+                <!-- th:each="status : ${statuses}" -->
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="status" value="in-stock" th:value="${status.code}" th:checked="${#lists.contains(filters.statuses, status.code)}"
+                         class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">En stock</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="status" value="preorder" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Précommande</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="status" value="promo" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">En promotion</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="status" value="new" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Nouveauté</span>
+                </label>
+              </fieldset>
+
+              <button type="button" data-filter-reset class="mt-6 w-full rounded-lg border border-gaming-border px-4 py-2 text-sm font-medium text-gaming-muted transition hover:border-gaming-purple hover:text-white">
+                Réinitialiser les filtres
+              </button>
+            </form>
+          </div>
+        </aside>
+
+        <!-- Overlay filtres mobile -->
+        <div data-filter-overlay class="fixed inset-0 z-50 hidden items-start justify-end bg-black/60 lg:hidden" aria-hidden="true">
+          <div class="h-full w-full max-w-sm overflow-y-auto border-l border-gaming-border bg-gaming-surface p-5 shadow-xl">
+            <div class="mb-4 flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-white">Filtres</h2>
+              <button type="button" data-filter-close class="rounded-lg p-2 text-gaming-muted hover:bg-gaming-surface-hover hover:text-white" aria-label="Fermer les filtres">&times;</button>
+            </div>
+            <!-- th:replace="~{fragments/filters :: filter-form}" -->
+            <form action="catalogue.html" method="get" th:action="@{/catalogue}">
+              <label for="filter-q-mobile" class="sr-only">Rechercher</label>
+              <input type="search" id="filter-q-mobile" name="q" th:value="${filters.query}"
+                     class="w-full rounded-lg border border-gaming-border bg-gaming-bg px-3 py-2 text-sm text-white placeholder-gaming-muted focus:border-gaming-purple focus:outline-none"
+                     placeholder="Nom du jeu…">
+              <h3 class="mt-4 text-sm font-semibold text-white">Genre</h3>
+              <fieldset class="mt-2 space-y-2">
+                <!-- th:each="genre : ${genres}" -->
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="action" th:value="${genre.code}" th:checked="${#lists.contains(filters.genres, genre.code)}"
+                         class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Action</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="rpg" th:checked="${#lists.contains(filters.genres, 'rpg')}" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">RPG</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="fps" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">FPS</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="strategy" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Stratégie</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="adventure" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Aventure</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="simulation" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Simulation</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="sport" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Sport</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="genre" value="indie" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">Indé</span>
+                </label>
+              </fieldset>
+              <h3 class="mt-4 text-sm font-semibold text-white">Plateforme</h3>
+              <fieldset class="mt-2 space-y-2">
+                <!-- th:each="platform : ${platforms}" -->
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="platform" value="pc" th:value="${platform.code}" th:checked="${#lists.contains(filters.platforms, platform.code)}"
+                         class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="flex h-5 w-5 items-center justify-center rounded bg-gaming-bg text-[10px] font-bold text-white">PC</span>
+                  <span class="text-sm text-gaming-muted">PC</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="platform" value="ps5" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="flex h-5 w-5 items-center justify-center rounded bg-blue-500/20 text-[10px] font-bold text-blue-400">PS</span>
+                  <span class="text-sm text-gaming-muted">PS5</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="platform" value="xbox" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="flex h-5 w-5 items-center justify-center rounded bg-green-500/20 text-[10px] font-bold text-green-400">XB</span>
+                  <span class="text-sm text-gaming-muted">Xbox</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="platform" value="switch" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="flex h-5 w-5 items-center justify-center rounded bg-red-500/20 text-[10px] font-bold text-red-400">NS</span>
+                  <span class="text-sm text-gaming-muted">Switch</span>
+                </label>
+              </fieldset>
+              <h3 class="mt-4 text-sm font-semibold text-white">Prix max</h3>
+              <input type="range" name="priceMax" min="0" max="100" value="60" th:value="${filters.priceMax}" class="mt-2 w-full accent-gaming-purple" aria-label="Prix maximum">
+              <h3 class="mt-4 text-sm font-semibold text-white">Statut</h3>
+              <fieldset class="mt-2 space-y-2">
+                <!-- th:each="status : ${statuses}" -->
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="status" value="in-stock" th:value="${status.code}" th:checked="${#lists.contains(filters.statuses, status.code)}"
+                         class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">En stock</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2">
+                  <input type="checkbox" name="status" value="promo" class="h-4 w-4 rounded border-gaming-border bg-gaming-bg text-gaming-purple focus:ring-gaming-purple">
+                  <span class="text-sm text-gaming-muted">En promotion</span>
+                </label>
+              </fieldset>
+              <button type="submit" class="mt-4 w-full rounded-lg bg-gaming-purple px-4 py-2 text-sm font-semibold text-white transition hover:bg-gaming-purple-light">Appliquer</button>
+            </form>
+            <button type="button" data-filter-reset class="mt-3 w-full rounded-lg border border-gaming-border px-4 py-2 text-sm font-medium text-gaming-muted transition hover:border-gaming-purple hover:text-white">
+              Réinitialiser les filtres
+            </button>
+          </div>
+        </div>
+
+        <div class="min-w-0 flex-1" data-catalog-wrapper>
+          <!-- th:each="game : ${games}" -->
+          <ul data-catalog-grid class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+            <li data-game-card>
+              <article class="group card-glow gradient-border flex h-full flex-col overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=1" th:href="@{/jeux/{slug}(slug=${game.slug})}" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop" alt="Cyberpunk 2077" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                    <span class="absolute left-3 top-3 rounded bg-gaming-purple px-2 py-0.5 text-xs font-bold text-white">-35%</span>
+                  </figure>
+                </a>
+                <div class="card-body flex flex-1 flex-col p-4">
+                  <span class="text-xs font-medium text-gaming-cyan">PC · Steam</span>
+                  <h2 class="mt-1 font-semibold text-white line-clamp-1"><a href="game-detail.html?id=1" class="hover:text-gaming-cyan-light">Cyberpunk 2077 — Ultimate Edition</a></h2>
+                  <div class="mt-2 flex items-center gap-1 text-yellow-400 text-xs"><span aria-hidden="true">★</span><span class="text-gaming-muted">4,5</span></div>
+                  <div class="mt-auto flex items-center justify-between gap-2 pt-3">
+                    <div><span class="text-lg font-bold text-white">29,99 €</span> <span class="text-sm text-gaming-muted line-through">45,99 €</span></div>
+                    <button type="button" data-add-to-cart th:attr="data-game-id=${game.id}" class="rounded-lg bg-gaming-purple px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gaming-purple-light">Ajouter</button>
+                  </div>
+                </div>
+              </article>
+            </li>
+
+            <li data-game-card>
+              <article class="group card-glow gradient-border flex h-full flex-col overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=2" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=250&fit=crop" alt="Elden Ring" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                    <span class="absolute left-3 top-3 rounded bg-gaming-cyan px-2 py-0.5 text-xs font-bold text-gaming-bg">Nouveau</span>
+                  </figure>
+                </a>
+                <div class="card-body flex flex-1 flex-col p-4">
+                  <span class="text-xs font-medium text-gaming-cyan">PC · Steam</span>
+                  <h2 class="mt-1 font-semibold text-white line-clamp-1"><a href="game-detail.html?id=2">Elden Ring</a></h2>
+                  <div class="mt-2 flex items-center gap-1 text-yellow-400 text-xs"><span aria-hidden="true">★</span><span class="text-gaming-muted">4,9</span></div>
+                  <div class="mt-auto flex items-center justify-between gap-2 pt-3">
+                    <span class="text-lg font-bold text-white">39,99 €</span>
+                    <button type="button" data-add-to-cart class="rounded-lg bg-gaming-purple px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gaming-purple-light">Ajouter</button>
+                  </div>
+                </div>
+              </article>
+            </li>
+
+            <li data-game-card>
+              <article class="group card-glow gradient-border flex h-full flex-col overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=3" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1493710667105-003dca9897c9?w=400&h=250&fit=crop" alt="God of War Ragnarök" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                    <span class="absolute left-3 top-3 rounded bg-gaming-purple px-2 py-0.5 text-xs font-bold text-white">-20%</span>
+                  </figure>
+                </a>
+                <div class="card-body flex flex-1 flex-col p-4">
+                  <span class="text-xs font-medium text-blue-400">PS5</span>
+                  <h2 class="mt-1 font-semibold text-white line-clamp-1"><a href="game-detail.html?id=3">God of War Ragnarök</a></h2>
+                  <div class="mt-2 flex items-center gap-1 text-yellow-400 text-xs"><span aria-hidden="true">★</span><span class="text-gaming-muted">4,8</span></div>
+                  <div class="mt-auto flex items-center justify-between gap-2 pt-3">
+                    <div><span class="text-lg font-bold text-white">47,99 €</span> <span class="text-sm text-gaming-muted line-through">59,99 €</span></div>
+                    <button type="button" data-add-to-cart class="rounded-lg bg-gaming-purple px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gaming-purple-light">Ajouter</button>
+                  </div>
+                </div>
+              </article>
+            </li>
+
+            <li data-game-card>
+              <article class="group card-glow gradient-border flex h-full flex-col overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=4" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=400&h=250&fit=crop" alt="Starfield Premium" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                  </figure>
+                </a>
+                <div class="card-body flex flex-1 flex-col p-4">
+                  <span class="text-xs font-medium text-green-400">Xbox Series</span>
+                  <h2 class="mt-1 font-semibold text-white line-clamp-1"><a href="game-detail.html?id=4">Starfield Premium Edition</a></h2>
+                  <div class="mt-2 flex items-center gap-1 text-yellow-400 text-xs"><span aria-hidden="true">★</span><span class="text-gaming-muted">4,2</span></div>
+                  <div class="mt-auto flex items-center justify-between gap-2 pt-3">
+                    <span class="text-lg font-bold text-white">54,99 €</span>
+                    <button type="button" data-add-to-cart class="rounded-lg bg-gaming-purple px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gaming-purple-light">Ajouter</button>
+                  </div>
+                </div>
+              </article>
+            </li>
+
+            <li data-game-card>
+              <article class="group card-glow gradient-border flex h-full flex-col overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=5" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=400&h=250&fit=crop" alt="Hades II" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                  </figure>
+                </a>
+                <div class="card-body flex flex-1 flex-col p-4">
+                  <span class="text-xs font-medium text-gaming-cyan">PC · Steam</span>
+                  <h2 class="mt-1 font-semibold text-white line-clamp-1"><a href="game-detail.html?id=5">Hades II</a></h2>
+                  <div class="mt-2 flex items-center gap-1 text-yellow-400 text-xs"><span aria-hidden="true">★</span><span class="text-gaming-muted">4,7</span></div>
+                  <div class="mt-auto flex items-center justify-between gap-2 pt-3">
+                    <span class="text-lg font-bold text-white">19,99 €</span>
+                    <button type="button" data-add-to-cart class="rounded-lg bg-gaming-purple px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gaming-purple-light">Ajouter</button>
+                  </div>
+                </div>
+              </article>
+            </li>
+
+            <li data-game-card>
+              <article class="group card-glow gradient-border flex h-full flex-col overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=6" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1612287230202-8440d6985c11?w=400&h=250&fit=crop" alt="Zelda Tears of the Kingdom" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                  </figure>
+                </a>
+                <div class="card-body flex flex-1 flex-col p-4">
+                  <span class="text-xs font-medium text-red-400">Nintendo Switch</span>
+                  <h2 class="mt-1 font-semibold text-white line-clamp-1"><a href="game-detail.html?id=6">The Legend of Zelda: Tears of the Kingdom</a></h2>
+                  <div class="mt-2 flex items-center gap-1 text-yellow-400 text-xs"><span aria-hidden="true">★</span><span class="text-gaming-muted">4,9</span></div>
+                  <div class="mt-auto flex items-center justify-between gap-2 pt-3">
+                    <span class="text-lg font-bold text-white">44,99 €</span>
+                    <button type="button" data-add-to-cart class="rounded-lg bg-gaming-purple px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gaming-purple-light">Ajouter</button>
+                  </div>
+                </div>
+              </article>
+            </li>
+
+            <li data-game-card>
+              <article class="group card-glow gradient-border flex h-full flex-col overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=7" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1614294148960-9aa272832412?w=400&h=250&fit=crop" alt="Marvel's Spider-Man 2" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                    <span class="absolute left-3 top-3 rounded bg-gaming-purple px-2 py-0.5 text-xs font-bold text-white">-15%</span>
+                  </figure>
+                </a>
+                <div class="card-body flex flex-1 flex-col p-4">
+                  <span class="text-xs font-medium text-blue-400">PS5</span>
+                  <h2 class="mt-1 font-semibold text-white line-clamp-1"><a href="game-detail.html?id=7">Marvel's Spider-Man 2</a></h2>
+                  <div class="mt-2 flex items-center gap-1 text-yellow-400 text-xs"><span aria-hidden="true">★</span><span class="text-gaming-muted">4,6</span></div>
+                  <div class="mt-auto flex items-center justify-between gap-2 pt-3">
+                    <div><span class="text-lg font-bold text-white">34,99 €</span> <span class="text-sm text-gaming-muted line-through">40,99 €</span></div>
+                    <button type="button" data-add-to-cart class="rounded-lg bg-gaming-purple px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gaming-purple-light">Ajouter</button>
+                  </div>
+                </div>
+              </article>
+            </li>
+
+            <li data-game-card>
+              <article class="group card-glow gradient-border flex h-full flex-col overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=8" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1560419015-7c2a8ccc5dac?w=400&h=250&fit=crop" alt="Baldur's Gate 3" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                  </figure>
+                </a>
+                <div class="card-body flex flex-1 flex-col p-4">
+                  <span class="text-xs font-medium text-gaming-cyan">PC · Steam</span>
+                  <h2 class="mt-1 font-semibold text-white line-clamp-1"><a href="game-detail.html?id=8">Baldur's Gate 3</a></h2>
+                  <div class="mt-2 flex items-center gap-1 text-yellow-400 text-xs"><span aria-hidden="true">★</span><span class="text-gaming-muted">4,9</span></div>
+                  <div class="mt-auto flex items-center justify-between gap-2 pt-3">
+                    <span class="text-lg font-bold text-white">24,99 €</span>
+                    <button type="button" data-add-to-cart class="rounded-lg bg-gaming-purple px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gaming-purple-light">Ajouter</button>
+                  </div>
+                </div>
+              </article>
+            </li>
+
+            <li data-game-card>
+              <article class="group card-glow gradient-border flex h-full flex-col overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=9" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop" alt="Red Dead Redemption 2" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                    <span class="absolute left-3 top-3 rounded bg-gaming-purple px-2 py-0.5 text-xs font-bold text-white">-50%</span>
+                  </figure>
+                </a>
+                <div class="card-body flex flex-1 flex-col p-4">
+                  <span class="text-xs font-medium text-gaming-cyan">PC · Rockstar</span>
+                  <h2 class="mt-1 font-semibold text-white line-clamp-1"><a href="game-detail.html?id=9">Red Dead Redemption 2</a></h2>
+                  <div class="mt-2 flex items-center gap-1 text-yellow-400 text-xs"><span aria-hidden="true">★</span><span class="text-gaming-muted">4,8</span></div>
+                  <div class="mt-auto flex items-center justify-between gap-2 pt-3">
+                    <div><span class="text-lg font-bold text-white">24,99 €</span> <span class="text-sm text-gaming-muted line-through">49,99 €</span></div>
+                    <button type="button" data-add-to-cart class="rounded-lg bg-gaming-purple px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gaming-purple-light">Ajouter</button>
+                  </div>
+                </div>
+              </article>
+            </li>
+
+            <li data-game-card>
+              <article class="group card-glow gradient-border flex h-full flex-col overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=10" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1606147095345-6185c3e4f813?w=400&h=250&fit=crop" alt="Horizon Forbidden West" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                  </figure>
+                </a>
+                <div class="card-body flex flex-1 flex-col p-4">
+                  <span class="text-xs font-medium text-blue-400">PS5</span>
+                  <h2 class="mt-1 font-semibold text-white line-clamp-1"><a href="game-detail.html?id=10">Horizon Forbidden West</a></h2>
+                  <div class="mt-2 flex items-center gap-1 text-yellow-400 text-xs"><span aria-hidden="true">★</span><span class="text-gaming-muted">4,5</span></div>
+                  <div class="mt-auto flex items-center justify-between gap-2 pt-3">
+                    <span class="text-lg font-bold text-white">49,99 €</span>
+                    <button type="button" data-add-to-cart class="rounded-lg bg-gaming-purple px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gaming-purple-light">Ajouter</button>
+                  </div>
+                </div>
+              </article>
+            </li>
+
+            <li data-game-card>
+              <article class="group card-glow gradient-border flex h-full flex-col overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=11" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1542751110-97427bbecf92?w=400&h=250&fit=crop" alt="Forza Horizon 5" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                  </figure>
+                </a>
+                <div class="card-body flex flex-1 flex-col p-4">
+                  <span class="text-xs font-medium text-green-400">Xbox Series</span>
+                  <h2 class="mt-1 font-semibold text-white line-clamp-1"><a href="game-detail.html?id=11">Forza Horizon 5</a></h2>
+                  <div class="mt-2 flex items-center gap-1 text-yellow-400 text-xs"><span aria-hidden="true">★</span><span class="text-gaming-muted">4,7</span></div>
+                  <div class="mt-auto flex items-center justify-between gap-2 pt-3">
+                    <span class="text-lg font-bold text-white">29,99 €</span>
+                    <button type="button" data-add-to-cart class="rounded-lg bg-gaming-purple px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gaming-purple-light">Ajouter</button>
+                  </div>
+                </div>
+              </article>
+            </li>
+
+            <li data-game-card>
+              <article class="group card-glow gradient-border flex h-full flex-col overflow-hidden rounded-xl bg-gaming-surface transition">
+                <a href="game-detail.html?id=12" class="block">
+                  <figure class="relative aspect-[16/10] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=400&h=250&fit=crop" alt="Diablo IV" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+                    <span class="absolute left-3 top-3 rounded bg-gaming-purple px-2 py-0.5 text-xs font-bold text-white">-30%</span>
+                  </figure>
+                </a>
+                <div class="card-body flex flex-1 flex-col p-4">
+                  <span class="text-xs font-medium text-gaming-cyan">PC · Battle.net</span>
+                  <h2 class="mt-1 font-semibold text-white line-clamp-1"><a href="game-detail.html?id=12">Diablo IV</a></h2>
+                  <div class="mt-2 flex items-center gap-1 text-yellow-400 text-xs"><span aria-hidden="true">★</span><span class="text-gaming-muted">4,3</span></div>
+                  <div class="mt-auto flex items-center justify-between gap-2 pt-3">
+                    <div><span class="text-lg font-bold text-white">34,99 €</span> <span class="text-sm text-gaming-muted line-through">49,99 €</span></div>
+                    <button type="button" data-add-to-cart class="rounded-lg bg-gaming-purple px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gaming-purple-light">Ajouter</button>
+                  </div>
+                </div>
+              </article>
+            </li>
+
+          </ul>
+
+          <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+            <p class="text-sm text-gaming-muted">
+              Affichage <span th:text="${page.from}">1</span>-<span th:text="${page.to}">12</span> sur <span th:text="${page.total}">142</span> résultats
+            </p>
+            <!-- th:replace="~{fragments/pagination :: pagination(page=${page})}" -->
+            <nav aria-label="Pagination">
+              <ul class="flex items-center gap-1">
+                <li><span class="rounded-lg border border-gaming-border px-3 py-2 text-sm text-gaming-muted" aria-disabled="true">Précédent</span></li>
+                <li><span class="rounded-lg bg-gaming-purple px-3 py-2 text-sm font-medium text-white" aria-current="page">1</span></li>
+                <li><a href="catalogue.html?page=2" th:href="@{/catalogue(page=2)}" class="rounded-lg border border-gaming-border px-3 py-2 text-sm text-gaming-muted transition hover:border-gaming-purple hover:text-white">2</a></li>
+                <li><a href="catalogue.html?page=3" th:href="@{/catalogue(page=3)}" class="rounded-lg border border-gaming-border px-3 py-2 text-sm text-gaming-muted transition hover:border-gaming-purple hover:text-white">3</a></li>
+                <li><span class="px-2 text-gaming-muted">…</span></li>
+                <li><a href="catalogue.html?page=12" th:href="@{/catalogue(page=12)}" class="rounded-lg border border-gaming-border px-3 py-2 text-sm text-gaming-muted transition hover:border-gaming-purple hover:text-white">12</a></li>
+                <li><a href="catalogue.html?page=2" th:href="@{/catalogue(page=${page.next})}" class="rounded-lg border border-gaming-border px-3 py-2 text-sm text-gaming-muted transition hover:border-gaming-purple hover:text-white">Suivant</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- th:replace="~{_layout :: footer}" -->
+  <footer class="mt-auto border-t border-gaming-border bg-gaming-surface">
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
+        <div class="lg:col-span-2">
+          <a href="index.html" th:href="@{/}" class="flex items-center gap-2">
+            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-gaming-purple to-gaming-cyan">
+              <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 9h4v6H6V9zm8 0h4v6h-4V9zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zM4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/></svg>
+            </span>
+            <span class="font-bold text-white">GameStore</span>
+          </a>
+          <p class="mt-4 max-w-sm text-sm leading-relaxed text-gaming-muted" th:text="${siteDescription}">
+            Plateforme de vente de licences numériques. Clés officielles PC, PlayStation, Xbox et Nintendo — livraison instantanée.
+          </p>
+          <div class="mt-5 flex gap-3" aria-label="Réseaux sociaux">
+            <a href="#" class="rounded-lg border border-gaming-border p-2 text-gaming-muted transition hover:border-gaming-purple hover:text-gaming-cyan-light" aria-label="Discord">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028 14.09 14.09 0 001.226-1.994.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+            </a>
+            <a href="#" class="rounded-lg border border-gaming-border p-2 text-gaming-muted transition hover:border-gaming-purple hover:text-gaming-cyan-light" aria-label="Twitter / X">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+          </div>
+        </div>
+        <nav aria-label="Liens catalogue">
+          <h3 class="text-sm font-semibold text-white">Catalogue</h3>
+          <ul class="mt-4 space-y-2">
+            <li><a href="catalogue.html" th:href="@{/catalogue}" class="text-sm text-gaming-muted hover:text-gaming-cyan-light">Tous les jeux</a></li>
+            <li><a href="catalogue.html?promo=true" th:href="@{/promotions}" class="text-sm text-gaming-muted hover:text-gaming-cyan-light">Promotions</a></li>
+            <li><a href="catalogue.html?sort=newest" class="text-sm text-gaming-muted hover:text-gaming-cyan-light">Nouveautés</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Liens compte">
+          <h3 class="text-sm font-semibold text-white">Mon Compte</h3>
+          <ul class="mt-4 space-y-2">
+            <li><a href="login.html" th:href="@{/login}" class="text-sm text-gaming-muted hover:text-gaming-cyan-light">Connexion</a></li>
+            <li><a href="register.html" th:href="@{/register}" class="text-sm text-gaming-muted hover:text-gaming-cyan-light">Inscription</a></li>
+            <li><a href="account.html" th:href="@{/compte}" class="text-sm text-gaming-muted hover:text-gaming-cyan-light">Mon espace</a></li>
+            <li><a href="cart.html" th:href="@{/panier}" class="text-sm text-gaming-muted hover:text-gaming-cyan-light">Panier</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Liens aide">
+          <h3 class="text-sm font-semibold text-white">Aide</h3>
+          <ul class="mt-4 space-y-2">
+            <li><a href="#" class="text-sm text-gaming-muted hover:text-gaming-cyan-light">FAQ</a></li>
+            <li><a href="#" class="text-sm text-gaming-muted hover:text-gaming-cyan-light">Support 24/7</a></li>
+            <li><a href="#" class="text-sm text-gaming-muted hover:text-gaming-cyan-light">Remboursements</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Liens légaux" class="sm:col-span-2 lg:col-span-1">
+          <h3 class="text-sm font-semibold text-white">Légal</h3>
+          <ul class="mt-4 space-y-2">
+            <li><a href="#" class="text-sm text-gaming-muted hover:text-gaming-cyan-light">CGV</a></li>
+            <li><a href="#" class="text-sm text-gaming-muted hover:text-gaming-cyan-light">Confidentialité</a></li>
+            <li><a href="#" class="text-sm text-gaming-muted hover:text-gaming-cyan-light">Mentions légales</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="mt-10 flex flex-col items-center justify-between gap-4 border-t border-gaming-border pt-8 sm:flex-row">
+        <p class="text-xs text-gaming-muted">&copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> GameStore Platform. Tous droits réservés.</p>
+        <p class="text-xs text-gaming-muted">Paiement sécurisé · Clés 100 % officielles</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- th:replace="~{_layout :: toasts}" -->
+  <div data-toast-container class="fixed bottom-4 right-4 z-[100] flex flex-col gap-3 max-w-sm w-full pointer-events-none" aria-live="polite" aria-atomic="true">
+    <template id="toast-template">
+      <div class="pointer-events-auto flex items-start gap-3 rounded-lg border px-4 py-3 shadow-xl toast-enter" role="alert">
+        <span data-toast-icon class="shrink-0 mt-0.5"></span>
+        <p data-toast-message class="flex-1 text-sm text-white"></p>
+        <button type="button" data-toast-close class="shrink-0 text-gaming-muted hover:text-white" aria-label="Fermer">&times;</button>
+      </div>
+    </template>
+    <!-- th:if="${flashSuccess}" th:attr="data-flash-type='success',data-flash-message=${flashSuccess}" -->
+    <!-- th:if="${flashError}" th:attr="data-flash-type='error',data-flash-message=${flashError}" -->
+    <!-- th:if="${flashInfo}" th:attr="data-flash-type='info',data-flash-message=${flashInfo}" -->
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
