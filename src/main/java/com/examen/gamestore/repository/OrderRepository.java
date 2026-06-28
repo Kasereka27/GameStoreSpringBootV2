@@ -1,7 +1,9 @@
 package com.examen.gamestore.repository;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +19,8 @@ import com.examen.gamestore.domain.model.LicenseKey;
 import com.examen.gamestore.domain.model.Order;
 import com.examen.gamestore.domain.model.OrderItem;
 import com.examen.gamestore.domain.enums.LicenseKeyStatus;
+import com.examen.gamestore.web.dto.AdminOrderView;
+import com.examen.gamestore.web.dto.DailySalesView;
 import com.examen.gamestore.web.dto.LibraryGameView;
 import com.examen.gamestore.web.dto.OrderSummaryView;
 
@@ -186,6 +190,110 @@ public class OrderRepository {
 				.list();
 	}
 
+	public BigDecimal sumRevenueToday() {
+		BigDecimal sum = jdbcClient.sql("""
+				SELECT COALESCE(SUM(total_amount), 0)
+				FROM orders
+				WHERE status IN ('COMPLETED', 'PAID')
+				  AND created_at >= CURRENT_DATE
+				""")
+				.query(BigDecimal.class)
+				.single();
+		return sum != null ? sum : BigDecimal.ZERO;
+	}
+
+	public long countOrdersToday() {
+		Long count = jdbcClient.sql("""
+				SELECT COUNT(*)
+				FROM orders
+				WHERE created_at >= CURRENT_DATE
+				""")
+				.query(Long.class)
+				.single();
+		return count != null ? count : 0L;
+	}
+
+	public long countByStatus(OrderStatus status) {
+		Long count = jdbcClient.sql("""
+				SELECT COUNT(*) FROM orders WHERE status = :status
+				""")
+				.param("status", status.name())
+				.query(Long.class)
+				.single();
+		return count != null ? count : 0L;
+	}
+
+	public long countPendingOlderThanHours(int hours) {
+		Long count = jdbcClient.sql("""
+				SELECT COUNT(*)
+				FROM orders
+				WHERE status = 'PENDING'
+				  AND created_at < CURRENT_TIMESTAMP - (:hours || ' hours')::INTERVAL
+				""")
+				.param("hours", hours)
+				.query(Long.class)
+				.single();
+		return count != null ? count : 0L;
+	}
+
+	public List<AdminOrderView> findRecentForAdmin(int limit) {
+		return findAllForAdmin(null, limit, 0);
+	}
+
+	public List<AdminOrderView> findAllForAdmin(OrderStatus statusFilter, int limit, int offset) {
+		var spec = new StringBuilder("""
+				SELECT o.id, o.order_number, o.status, o.total_amount, o.created_at,
+				       u.first_name, u.last_name, u.email,
+				       COALESCE(SUM(oi.quantity), 0) AS item_count
+				FROM orders o
+				INNER JOIN users u ON u.id = o.user_id
+				LEFT JOIN order_items oi ON oi.order_id = o.id
+				WHERE 1=1
+				""");
+		if (statusFilter != null) {
+			spec.append(" AND o.status = :status");
+		}
+		spec.append("""
+				 GROUP BY o.id, o.order_number, o.status, o.total_amount, o.created_at,
+				          u.first_name, u.last_name, u.email
+				 ORDER BY o.created_at DESC
+				 LIMIT :limit OFFSET :offset
+				""");
+		var query = jdbcClient.sql(spec.toString())
+				.param("limit", limit)
+				.param("offset", offset);
+		if (statusFilter != null) {
+			query = query.param("status", statusFilter.name());
+		}
+		return query.query(this::mapAdminOrderRow).list();
+	}
+
+	public List<DailySalesView> findDailySalesLastDays(java.time.LocalDate startDate) {
+		return jdbcClient.sql("""
+				SELECT CAST(created_at AS DATE) AS sale_date,
+				       COALESCE(SUM(total_amount), 0) AS revenue,
+				       COUNT(*) AS order_count
+				FROM orders
+				WHERE status IN ('COMPLETED', 'PAID')
+				  AND created_at >= :startDate
+				GROUP BY CAST(created_at AS DATE)
+				ORDER BY sale_date ASC
+				""")
+				.param("startDate", startDate.atStartOfDay())
+				.query((rs, rowNum) -> {
+					DailySalesView view = new DailySalesView();
+					view.setDate(rs.getObject("sale_date", LocalDate.class));
+					view.setRevenue(rs.getBigDecimal("revenue"));
+					view.setOrderCount(rs.getLong("order_count"));
+					return view;
+				})
+				.list();
+	}
+
+	public List<AdminOrderView> findAllForExport() {
+		return findAllForAdmin(null, 10_000, 0);
+	}
+
 	public long countByUserAndGame(UUID userId, UUID gameId) {
 		Long count = jdbcClient.sql("""
 				SELECT COUNT(*)
@@ -198,6 +306,21 @@ public class OrderRepository {
 				.query(Long.class)
 				.single();
 		return count != null ? count : 0L;
+	}
+
+	private AdminOrderView mapAdminOrderRow(ResultSet rs, int rowNum) throws SQLException {
+		AdminOrderView view = new AdminOrderView();
+		view.setId(UUID.fromString(rs.getString("id")));
+		view.setOrderNumber(rs.getString("order_number"));
+		view.setStatus(OrderStatus.fromString(rs.getString("status")));
+		view.setTotalAmount(rs.getBigDecimal("total_amount"));
+		view.setItemCount(rs.getInt("item_count"));
+		view.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
+		String firstName = rs.getString("first_name");
+		String lastName = rs.getString("last_name");
+		view.setCustomerName((firstName + " " + lastName).trim());
+		view.setCustomerEmail(rs.getString("email"));
+		return view;
 	}
 
 	private Order mapOrderRow(ResultSet rs, int rowNum) throws SQLException {

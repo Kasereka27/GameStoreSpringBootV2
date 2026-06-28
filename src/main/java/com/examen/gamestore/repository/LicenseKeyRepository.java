@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.examen.gamestore.domain.enums.LicenseKeyStatus;
 import com.examen.gamestore.domain.model.LicenseKey;
+import com.examen.gamestore.web.dto.GameStockView;
 
 @Repository
 public class LicenseKeyRepository {
@@ -66,6 +67,81 @@ public class LicenseKeyRepository {
 				.param("id", id)
 				.query(this::mapRow)
 				.optional();
+	}
+
+	public List<GameStockView> findStockSummary() {
+		return jdbcClient.sql("""
+				SELECT g.id AS game_id, g.title, g.slug,
+				       COUNT(*) FILTER (WHERE lk.status = 'AVAILABLE') AS available_count,
+				       COUNT(*) FILTER (WHERE lk.status = 'SOLD') AS sold_count,
+				       COUNT(*) AS total_count
+				FROM games g
+				LEFT JOIN license_keys lk ON lk.game_id = g.id
+				GROUP BY g.id, g.title, g.slug
+				ORDER BY available_count ASC, g.title ASC
+				""")
+				.query((rs, rowNum) -> {
+					GameStockView view = new GameStockView();
+					view.setGameId(UUID.fromString(rs.getString("game_id")));
+					view.setGameTitle(rs.getString("title"));
+					view.setGameSlug(rs.getString("slug"));
+					view.setAvailableCount(rs.getInt("available_count"));
+					view.setSoldCount(rs.getInt("sold_count"));
+					view.setTotalCount(rs.getInt("total_count"));
+					return view;
+				})
+				.list();
+	}
+
+	public int countLowStockGames(int threshold) {
+		Long count = jdbcClient.sql("""
+				SELECT COUNT(*) FROM (
+					SELECT game_id
+					FROM license_keys
+					WHERE status = 'AVAILABLE'
+					GROUP BY game_id
+					HAVING COUNT(*) < :threshold
+				) low_stock
+				""")
+				.param("threshold", threshold)
+				.query(Long.class)
+				.single();
+		return count != null ? count.intValue() : 0;
+	}
+
+	public int insertKey(UUID gameId, String keyValue) {
+		return jdbcClient.sql("""
+				INSERT INTO license_keys (id, game_id, key_value, status)
+				VALUES (:id, :gameId, :keyValue, 'AVAILABLE')
+				""")
+				.param("id", UUID.randomUUID())
+				.param("gameId", gameId)
+				.param("keyValue", keyValue.trim())
+				.update();
+	}
+
+	public void releaseKeysForOrder(UUID orderId) {
+		jdbcClient.sql("""
+				UPDATE license_keys
+				SET status = 'AVAILABLE', order_id = NULL, assigned_at = NULL
+				WHERE order_id = :orderId AND status = 'SOLD'
+				""")
+				.param("orderId", orderId)
+				.update();
+	}
+
+	public List<LicenseKey> findByGameId(UUID gameId, int limit) {
+		return jdbcClient.sql("""
+				SELECT id, game_id, key_value, status, order_id, assigned_at
+				FROM license_keys
+				WHERE game_id = :gameId
+				ORDER BY status ASC, id DESC
+				LIMIT :limit
+				""")
+				.param("gameId", gameId)
+				.param("limit", limit)
+				.query(this::mapRow)
+				.list();
 	}
 
 	public List<LicenseKey> findByUserId(UUID userId) {

@@ -97,6 +97,15 @@ public class UserRepository {
 				.update();
 	}
 
+	public long countCreatedToday() {
+		Long count = jdbcClient.sql("""
+				SELECT COUNT(*) FROM users WHERE created_at >= CURRENT_DATE
+				""")
+				.query(Long.class)
+				.single();
+		return count != null ? count : 0L;
+	}
+
 	private User mapUser(ResultSet rs, int rowNum) throws SQLException {
 		User user = new User();
 		user.setId(UUID.fromString(rs.getString("id")));

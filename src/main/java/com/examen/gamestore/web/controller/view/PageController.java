@@ -23,11 +23,6 @@ public class PageController {
 
 	@GetMapping("/admin")
 	public String adminIndex() {
-		return "admin/index";
-	}
-
-	@GetMapping("/admin/dashboard")
-	public String adminDashboard() {
-		return "admin/dashboard";
+		return "redirect:/admin/dashboard";
 	}
 }

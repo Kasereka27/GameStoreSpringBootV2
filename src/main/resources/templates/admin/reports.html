@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_layout :: head('Rapports — Admin GameStore', 'Export et rapports — Administration GameStore.')}"></head>
+<body class="bg-bg-dark text-text antialiased min-h-screen">
+  <div class="flex min-h-screen">
+    <aside th:replace="~{admin/_sidebar :: sidebar(activePage='reports')}"></aside>
+    <div class="admin-content ml-64 flex min-h-screen flex-1 flex-col">
+      <header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-bg-dark/90 px-6 backdrop-blur-md">
+        <nav aria-label="Fil d'Ariane" class="flex items-center gap-2 text-sm">
+          <a th:href="@{/admin/dashboard}" class="text-muted hover:text-white">Admin</a>
+          <svg class="h-4 w-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          <span class="font-medium text-white">Rapports</span>
+        </nav>
+      </header>
+      <main class="flex-1 p-6">
+        <div class="mb-6">
+          <h1 class="text-2xl font-bold text-white">Rapports & export</h1>
+          <p class="mt-1 text-sm text-muted">Téléchargement des données de vente</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 max-w-3xl">
+          <article class="rounded-xl border border-border bg-bg-card p-6">
+            <h2 class="text-lg font-semibold text-white">Export commandes</h2>
+            <p class="mt-2 text-sm text-muted">
+              <span th:text="${orderCount}">0</span> commande(s) au format CSV (UTF-8).
+            </p>
+            <a th:href="@{/admin/reports/orders.csv}"
+               class="mt-4 inline-flex items-center gap-2 rounded-lg bg-brand-purple px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-purple-light">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              Télécharger commandes.csv
+            </a>
+          </article>
+        </div>
+      </main>
+    </div>
+  </div>
+  <div th:replace="~{_layout :: toasts}"></div>
+  <div th:replace="~{_layout :: scripts}"></div>
+</body>
+</html>

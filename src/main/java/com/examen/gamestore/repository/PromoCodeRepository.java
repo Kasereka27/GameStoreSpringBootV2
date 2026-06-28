@@ -3,6 +3,7 @@ package com.examen.gamestore.repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,6 +31,59 @@ public class PromoCodeRepository {
 				.param("code", code)
 				.query(this::mapRow)
 				.optional();
+	}
+
+	public List<PromoCode> findAll() {
+		return jdbcClient.sql("""
+				SELECT id, code, discount_type, discount_value, min_order_amount,
+				       max_usages, usage_count, expires_at, active
+				FROM promo_codes
+				ORDER BY active DESC, code ASC
+				""")
+				.query(this::mapRow)
+				.list();
+	}
+
+	public UUID insert(PromoCode promo) {
+		UUID id = promo.getId() != null ? promo.getId() : UUID.randomUUID();
+		jdbcClient.sql("""
+				INSERT INTO promo_codes (
+					id, code, discount_type, discount_value, min_order_amount,
+					max_usages, usage_count, expires_at, active
+				) VALUES (
+					:id, :code, :discountType, :discountValue, :minOrderAmount,
+					:maxUsages, 0, :expiresAt, :active
+				)
+				""")
+				.param("id", id)
+				.param("code", promo.getCode().toUpperCase())
+				.param("discountType", promo.getDiscountType().name())
+				.param("discountValue", promo.getDiscountValue())
+				.param("minOrderAmount", promo.getMinOrderAmount())
+				.param("maxUsages", promo.getMaxUsages())
+				.param("expiresAt", promo.getExpiresAt())
+				.param("active", promo.isActive())
+				.update();
+		return id;
+	}
+
+	public void updateActive(UUID id, boolean active) {
+		jdbcClient.sql("""
+				UPDATE promo_codes SET active = :active WHERE id = :id
+				""")
+				.param("id", id)
+				.param("active", active)
+				.update();
+	}
+
+	public boolean existsByCode(String code) {
+		Long count = jdbcClient.sql("""
+				SELECT COUNT(*) FROM promo_codes WHERE UPPER(code) = UPPER(:code)
+				""")
+				.param("code", code)
+				.query(Long.class)
+				.single();
+		return count != null && count > 0;
 	}
 
 	public void incrementUsage(UUID id) {
