@@ -59,7 +59,7 @@
 
         <aside class="hidden w-72 shrink-0 lg:block" aria-label="Filtres de recherche">
           <div class="sticky top-24 rounded-xl border border-gaming-border bg-gaming-surface p-5">
-            <div th:replace="~{fragments/filters :: filter-form(${cataloguePath}, ${filters}, ${currentSort}, ${genres}, ${platforms}, null)}"></div>
+            <div th:replace="~{fragments/filters :: filter-form(cataloguePath=${cataloguePath}, filters=${filters}, currentSort=${currentSort}, genres=${genres}, platforms=${platforms}, mobileId='')}"></div>
           </div>
         </aside>
 
@@ -70,21 +70,23 @@
               <h2 class="text-lg font-semibold text-white">Filtres</h2>
               <button type="button" data-filter-close class="rounded-lg p-2 text-gaming-muted hover:bg-gaming-surface-hover hover:text-white" aria-label="Fermer les filtres">&times;</button>
             </div>
-            <div th:replace="~{fragments/filters :: filter-form(${cataloguePath}, ${filters}, ${currentSort}, ${genres}, ${platforms}, 'mobile')}"></div>
+            <div th:replace="~{fragments/filters :: filter-form(cataloguePath=${cataloguePath}, filters=${filters}, currentSort=${currentSort}, genres=${genres}, platforms=${platforms}, mobileId='mobile')}"></div>
           </div>
         </div>
 
         <div class="min-w-0 flex-1" data-catalog-wrapper>
           <p th:if="${#lists.isEmpty(games)}" class="rounded-xl border border-gaming-border bg-gaming-surface p-8 text-center text-gaming-muted">Aucun jeu trouvé pour ces critères.</p>
           <ul th:unless="${#lists.isEmpty(games)}" data-catalog-grid class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            <li th:each="game : ${games}" th:replace="~{fragments/game-card :: catalogueCard(${game})}"></li>
+            <th:block th:each="game : ${games}">
+              <li th:replace="~{fragments/game-card :: catalogueCard(game=${game})}"></li>
+            </th:block>
           </ul>
 
           <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
             <p class="text-sm text-gaming-muted">
               Affichage <span th:text="${page.from}">1</span>-<span th:text="${page.to}">12</span> sur <span th:text="${page.totalResults}">0</span> résultats
             </p>
-            <div th:replace="~{fragments/pagination :: pagination(${page}, ${filters}, ${currentSort}, ${cataloguePath})}"></div>
+            <div th:replace="~{fragments/pagination :: pagination(page=${page}, filters=${filters}, currentSort=${currentSort}, cataloguePath=${cataloguePath})}"></div>
           </div>
         </div>
       </div>

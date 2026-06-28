@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<li th:fragment="card (game)" data-game-card>
+  <article class="group card-glow gradient-border flex h-full flex-col overflow-hidden rounded-xl bg-gaming-surface transition">
+    <a th:href="@{/jeu/{slug}(slug=${game.slug})}" class="block">
+      <figure class="relative aspect-[16/10] overflow-hidden">
+        <img th:src="${game.coverImageUrl}" th:alt="${game.title}"
+             class="h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
+        <span th:if="${game.onPromotion}"
+              class="absolute left-3 top-3 rounded bg-gaming-purple px-2 py-0.5 text-xs font-bold text-white"
+              th:text="'-' + ${game.discountPercent} + '%'">Promo</span>
+        <span th:if="${game.bestseller and !game.onPromotion}"
+              class="absolute left-3 top-3 rounded bg-gaming-cyan px-2 py-0.5 text-xs font-bold text-gaming-bg">Best-seller</span>
+      </figure>
+    </a>
+    <div class="card-body flex flex-1 flex-col p-4">
+      <span class="text-xs font-medium text-gaming-cyan" th:text="${game.platform.displayLabel}">PC</span>
+      <h2 class="mt-1 font-semibold text-white line-clamp-1">
+        <a th:href="@{/jeu/{slug}(slug=${game.slug})}" th:text="${game.title}" class="hover:text-gaming-cyan-light">Titre</a>
+      </h2>
+      <div class="mt-2 flex items-center gap-1 text-yellow-400 text-xs">
+        <span aria-hidden="true">★</span>
+        <span class="text-gaming-muted" th:text="${game.averageRating}">4.5</span>
+      </div>
+      <div class="mt-auto flex items-center justify-between gap-2 pt-3">
+        <div>
+          <span class="text-lg font-bold text-white" th:text="${#numbers.formatDecimal(game.effectivePrice, 1, 2)} + ' €'">29,99 €</span>
+          <span th:if="${game.onPromotion}" class="text-sm text-gaming-muted line-through"
+                th:text="${#numbers.formatDecimal(game.basePrice, 1, 2)} + ' €'">45,99 €</span>
+        </div>
+        <button type="button" data-add-to-cart th:attr="data-game-id=${game.id}"
+                class="rounded-lg bg-gaming-purple px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gaming-purple-light">Ajouter</button>
+      </div>
+    </div>
+  </article>
+</li>
+
+</html>

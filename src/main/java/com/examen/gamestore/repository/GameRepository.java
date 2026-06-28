@@ -135,8 +135,7 @@ public class GameRepository {
 	}
 
 	public List<Game> findSimilarGames(UUID gameId, int limit) {
-		return jdbcClient.sql("""
-				SELECT DISTINCT """ + GAME_COLUMNS + """
+		return jdbcClient.sql("SELECT DISTINCT " + GAME_COLUMNS + """
 				FROM games g
 				INNER JOIN game_genres gg ON gg.game_id = g.id
 				WHERE g.id <> :gameId

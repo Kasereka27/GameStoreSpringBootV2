@@ -108,7 +108,9 @@
 
         <!-- th:each="game : ${bestsellers}" -->
         <ul class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <li th:each="game : ${bestsellers}" th:replace="~{fragments/game-card :: homeCard(${game})}"></li>
+          <th:block th:each="game : ${bestsellers}">
+            <li th:replace="~{fragments/game-card :: homeCard(game=${game})}"></li>
+          </th:block>
         </ul>
       </div>
     </section>
