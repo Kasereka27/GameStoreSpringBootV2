@@ -21,7 +21,7 @@
         <ol class="flex flex-wrap items-center gap-2 text-sm text-muted">
           <li><a href="index.html" class="transition hover:text-brand-cyan-light">Accueil</a></li><!-- th:href="@{/}" -->
           <li aria-hidden="true">/</li>
-          <li><a href="cart.html" class="transition hover:text-brand-cyan-light">Panier</a></li><!-- th:href="@{/panier}" -->
+          <li><a th:href="@{/panier}" class="transition hover:text-brand-cyan-light">Panier</a></li>
           <li aria-hidden="true">/</li>
           <li><span class="font-medium text-white" aria-current="page">Paiement</span></li>
         </ol>
@@ -58,7 +58,8 @@
         Connexion sécurisée SSL — vos données sont chiffrées
       </p>
 
-      <form class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3" data-checkout-form action="#" method="post"><!-- th:action="@{/checkout/payer}" th:object="${checkoutForm}" -->
+      <form class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3" th:action="@{/checkout/payer}" th:object="${checkoutForm}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
         <div class="space-y-6 lg:col-span-2">
 
@@ -71,44 +72,44 @@
             <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label for="firstName" class="block text-sm text-muted">Prénom <span class="text-brand-purple-light">*</span></label>
-                <input type="text" id="firstName" name="firstName" required value="Alex" autocomplete="given-name"
-                       class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"><!-- th:field="*{firstName}" -->
+                <input type="text" id="firstName" th:field="*{firstName}" required autocomplete="given-name"
+                       class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
               </div>
               <div>
                 <label for="lastName" class="block text-sm text-muted">Nom <span class="text-brand-purple-light">*</span></label>
-                <input type="text" id="lastName" name="lastName" required value="Martin" autocomplete="family-name"
-                       class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"><!-- th:field="*{lastName}" -->
+                <input type="text" id="lastName" th:field="*{lastName}" required autocomplete="family-name"
+                       class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
               </div>
               <div class="sm:col-span-2">
                 <label for="email" class="block text-sm text-muted">E-mail <span class="text-brand-purple-light">*</span></label>
-                <input type="email" id="email" name="email" required value="alex.martin@email.com" autocomplete="email"
-                       class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"><!-- th:field="*{email}" -->
+                <input type="email" id="email" th:field="*{email}" required autocomplete="email"
+                       class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
                 <p class="mt-1 text-xs text-muted">Vos clés de jeux seront envoyées à cette adresse</p>
               </div>
               <div class="sm:col-span-2">
                 <label for="phone" class="block text-sm text-muted">Téléphone</label>
-                <input type="tel" id="phone" name="phone" value="+33 6 12 34 56 78" autocomplete="tel"
-                       class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"><!-- th:field="*{phone}" -->
+                <input type="tel" id="phone" th:field="*{phone}" autocomplete="tel"
+                       class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
               </div>
               <div class="sm:col-span-2">
                 <label for="address" class="block text-sm text-muted">Adresse <span class="text-brand-purple-light">*</span></label>
-                <input type="text" id="address" name="address" required value="12 rue des Gamers" autocomplete="street-address"
-                       class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"><!-- th:field="*{address}" -->
+                <input type="text" id="address" th:field="*{address}" required autocomplete="street-address"
+                       class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
               </div>
               <div>
                 <label for="postalCode" class="block text-sm text-muted">Code postal <span class="text-brand-purple-light">*</span></label>
-                <input type="text" id="postalCode" name="postalCode" required value="75001" autocomplete="postal-code"
-                       class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"><!-- th:field="*{postalCode}" -->
+                <input type="text" id="postalCode" th:field="*{postalCode}" required autocomplete="postal-code"
+                       class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
               </div>
               <div>
                 <label for="city" class="block text-sm text-muted">Ville <span class="text-brand-purple-light">*</span></label>
-                <input type="text" id="city" name="city" required value="Paris" autocomplete="address-level2"
-                       class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"><!-- th:field="*{city}" -->
+                <input type="text" id="city" th:field="*{city}" required autocomplete="address-level2"
+                       class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
               </div>
               <div class="sm:col-span-2">
                 <label for="country" class="block text-sm text-muted">Pays <span class="text-brand-purple-light">*</span></label>
-                <select id="country" name="country" required
-                        class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"><!-- th:field="*{country}" -->
+                <select id="country" th:field="*{country}" required
+                        class="mt-1 w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
                   <option value="FR" selected>France</option>
                   <option value="BE">Belgique</option>
                   <option value="CH">Suisse</option>
@@ -208,55 +209,34 @@
           <div class="sticky top-24 rounded-2xl border border-border bg-bg-card p-6 card-glow">
             <h2 id="order-summary-title" class="text-lg font-semibold text-white">Votre commande</h2>
 
-            <ul class="mt-4 space-y-3 border-b border-border pb-4"><!-- th:each="item : ${cart.items}" -->
-              <li class="flex items-center gap-3">
-                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=56&h=40&fit=crop" alt="" class="h-10 w-14 rounded object-cover"><!-- th:src="${item.game.coverUrl}" th:alt="${item.game.title}" -->
+            <ul class="mt-4 space-y-3 border-b border-border pb-4">
+              <li th:each="item : ${cart.items}" class="flex items-center gap-3">
+                <img th:src="${item.coverImageUrl}" th:alt="${item.title}" class="h-10 w-14 rounded object-cover">
                 <div class="min-w-0 flex-1">
-                  <p class="truncate text-sm text-white">Cyberpunk 2077</p><!-- th:text="${item.game.title}" -->
-                  <p class="text-xs text-muted">× 1 · PC</p><!-- th:text="'× ' + ${item.quantity} + ' · ' + ${item.platform.label}" -->
+                  <p class="truncate text-sm text-white" th:text="${item.title}">Jeu</p>
+                  <p class="text-xs text-muted" th:text="'× ' + ${item.quantity} + ' · ' + ${item.platform.displayLabel}">× 1</p>
                 </div>
-                <span class="text-sm font-medium text-white">29,99 €</span><!-- th:text="${#numbers.formatDecimal(item.lineTotal, 1, 2)} + ' €'" -->
-              </li>
-              <li class="flex items-center gap-3">
-                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=56&h=40&fit=crop" alt="" class="h-10 w-14 rounded object-cover">
-                <div class="min-w-0 flex-1">
-                  <p class="truncate text-sm text-white">Elden Ring</p>
-                  <p class="text-xs text-muted">× 1 · PC</p>
-                </div>
-                <span class="text-sm font-medium text-white">39,99 €</span>
-              </li>
-              <li class="flex items-center gap-3">
-                <img src="https://images.unsplash.com/photo-1493710667105-003dca9897c9?w=56&h=40&fit=crop" alt="" class="h-10 w-14 rounded object-cover">
-                <div class="min-w-0 flex-1">
-                  <p class="truncate text-sm text-white">Baldur's Gate 3</p>
-                  <p class="text-xs text-muted">× 1 · PC</p>
-                </div>
-                <span class="text-sm font-medium text-white">24,99 €</span>
+                <span class="text-sm font-medium text-white" th:text="${#numbers.formatDecimal(item.lineTotal, 1, 2)} + ' €'">0,00 €</span>
               </li>
             </ul>
 
             <dl class="mt-4 space-y-2 text-sm">
               <div class="flex justify-between">
                 <dt class="text-muted">Sous-total</dt>
-                <dd class="text-white">94,97 €</dd><!-- th:text="${#numbers.formatDecimal(cart.subtotal, 1, 2)} + ' €'" -->
+                <dd class="text-white" th:text="${#numbers.formatDecimal(cart.subtotal, 1, 2)} + ' €'">0,00 €</dd>
               </div>
-              <div class="flex justify-between">
-                <dt class="text-muted">Remise GAME10</dt>
-                <dd class="text-brand-cyan-light">− 5,00 €</dd><!-- th:text="'− ' + ${#numbers.formatDecimal(cart.discount, 1, 2)} + ' €'" -->
+              <div th:if="${cart.discount != null and cart.discount > 0}" class="flex justify-between">
+                <dt class="text-muted">Remise</dt>
+                <dd class="text-brand-cyan-light" th:text="'− ' + ${#numbers.formatDecimal(cart.discount, 1, 2)} + ' €'">0,00 €</dd>
               </div>
               <div class="flex justify-between border-t border-border pt-2">
                 <dt class="font-semibold text-white">Total</dt>
-                <dd class="text-xl font-bold text-white">89,97 €</dd><!-- th:text="${#numbers.formatDecimal(order.total, 1, 2)} + ' €'" -->
+                <dd class="text-xl font-bold text-white" th:text="${#numbers.formatDecimal(cart.total, 1, 2)} + ' €'">0,00 €</dd>
               </div>
             </dl>
 
-            <button type="submit" data-checkout-submit class="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-brand-purple to-brand-purple-light px-6 py-3.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70">
-              <svg data-checkout-spinner class="hidden h-5 w-5 spinner text-white" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-              <span data-submit-label>Payer 89,97 €</span><!-- th:text="'Payer ' + ${#numbers.formatDecimal(order.total, 1, 2)} + ' €'" -->
+            <button type="submit" class="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-brand-purple to-brand-purple-light px-6 py-3.5 text-sm font-semibold text-white transition hover:opacity-90">
+              <span th:text="'Payer ' + ${#numbers.formatDecimal(cart.total, 1, 2)} + ' €'">Payer</span>
             </button>
             <p class="mt-3 text-center text-xs text-muted">Transaction chiffrée · Conforme PCI-DSS</p>
           </div>

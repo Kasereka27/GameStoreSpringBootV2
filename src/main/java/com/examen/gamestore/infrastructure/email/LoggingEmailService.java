@@ -20,4 +20,11 @@ public class LoggingEmailService implements EmailService {
 	public void sendWelcomeEmail(String to, String firstName) {
 		log.info("[EMAIL] Bienvenue {} ({})", firstName, to);
 	}
+
+	@Override
+	public void sendOrderConfirmation(String to, String firstName, String orderNumber,
+			java.math.BigDecimal totalAmount) {
+		log.info("[EMAIL] Commande {} confirmée pour {} ({}) — total {} €",
+				orderNumber, firstName, to, totalAmount);
+	}
 }

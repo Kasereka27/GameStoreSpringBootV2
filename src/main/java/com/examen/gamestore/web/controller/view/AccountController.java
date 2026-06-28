@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.examen.gamestore.exception.EmailAlreadyExistsException;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.examen.gamestore.service.OrderService;
 import com.examen.gamestore.service.UserService;
 import com.examen.gamestore.web.dto.request.ChangePasswordForm;
 import com.examen.gamestore.web.dto.request.ProfileForm;
@@ -25,10 +26,12 @@ public class AccountController {
 
 	private final UserService userService;
 	private final UserMapper userMapper;
+	private final OrderService orderService;
 
-	public AccountController(UserService userService, UserMapper userMapper) {
+	public AccountController(UserService userService, UserMapper userMapper, OrderService orderService) {
 		this.userService = userService;
 		this.userMapper = userMapper;
+		this.orderService = orderService;
 	}
 
 	@GetMapping({"/compte", "/compte/profil"})
@@ -38,12 +41,16 @@ public class AccountController {
 
 	@GetMapping("/compte/bibliotheque")
 	public String library(@AuthenticationPrincipal UserDetails principal, Model model) {
-		return accountPage(principal, model, "library");
+		populateAccountModel(principal, model, "library");
+		model.addAttribute("library", orderService.getLibrary(resolveUserId(principal)));
+		return "account";
 	}
 
 	@GetMapping("/compte/commandes")
 	public String orders(@AuthenticationPrincipal UserDetails principal, Model model) {
-		return accountPage(principal, model, "orders");
+		populateAccountModel(principal, model, "orders");
+		model.addAttribute("orders", orderService.getOrderSummaries(resolveUserId(principal)));
+		return "account";
 	}
 
 	@PostMapping("/compte/profil")

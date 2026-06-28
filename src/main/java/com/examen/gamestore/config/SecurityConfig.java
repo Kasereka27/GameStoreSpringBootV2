@@ -34,13 +34,13 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(HttpMethod.POST, "/jeu/*/avis").authenticated()
 						.requestMatchers(
-								"/", "/catalogue", "/promotions", "/jeu/**", "/a-propos",
+								"/", "/catalogue", "/promotions", "/jeu/**", "/a-propos", "/panier",
 								"/login", "/register", "/mot-de-passe-oublie",
 								"/reinitialisation-mot-de-passe/**", "/verification-email",
 								"/css/**", "/js/**", "/error")
 						.permitAll()
 						.requestMatchers("/admin/**").hasAnyRole("ADMIN", "SUPERADMIN")
-						.requestMatchers("/compte/**", "/checkout").authenticated()
+						.requestMatchers("/compte/**", "/checkout", "/checkout/**").authenticated()
 						.anyRequest().permitAll())
 				.userDetailsService(userDetailsService)
 				.formLogin(form -> form

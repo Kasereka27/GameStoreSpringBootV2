@@ -11,16 +11,6 @@ public class PageController {
 		return "a-propos";
 	}
 
-	@GetMapping("/panier")
-	public String cart() {
-		return "cart";
-	}
-
-	@GetMapping("/checkout")
-	public String checkout() {
-		return "checkout";
-	}
-
 	@GetMapping("/maintenance")
 	public String maintenance() {
 		return "maintenance";

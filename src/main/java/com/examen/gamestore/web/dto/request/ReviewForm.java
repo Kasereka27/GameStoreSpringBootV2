@@ -9,17 +9,17 @@ public class ReviewForm {
 
 	@Min(1)
 	@Max(5)
-	private int rating;
+	private Integer rating;
 
 	@NotBlank
 	@Size(min = 10, max = 2000)
 	private String content;
 
-	public int getRating() {
+	public Integer getRating() {
 		return rating;
 	}
 
-	public void setRating(int rating) {
+	public void setRating(Integer rating) {
 		this.rating = rating;
 	}
 

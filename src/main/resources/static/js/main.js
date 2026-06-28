@@ -193,14 +193,32 @@
     document.querySelectorAll("[data-add-to-cart]").forEach(function (btn) {
       btn.addEventListener("click", function (e) {
         e.preventDefault();
-        var orig = btn.innerHTML;
-        btn.disabled = true;
-        btn.textContent = "Ajout…";
-        setTimeout(function () {
-          btn.textContent = "✓ Ajouté !";
-          showToast("success", "Jeu ajouté au panier");
-          setTimeout(function () { btn.disabled = false; btn.innerHTML = orig; }, 2000);
-        }, 600);
+        var gameId = btn.getAttribute("data-game-id");
+        if (!gameId) return;
+        var form = document.createElement("form");
+        form.method = "post";
+        form.action = "/panier/ajouter";
+        var csrfMeta = document.querySelector('meta[name="_csrf"]');
+        var csrfParam = document.querySelector('meta[name="_csrf_parameter"]');
+        if (csrfMeta && csrfParam) {
+          var csrfInput = document.createElement("input");
+          csrfInput.type = "hidden";
+          csrfInput.name = csrfParam.getAttribute("content");
+          csrfInput.value = csrfMeta.getAttribute("content");
+          form.appendChild(csrfInput);
+        }
+        var gameInput = document.createElement("input");
+        gameInput.type = "hidden";
+        gameInput.name = "gameId";
+        gameInput.value = gameId;
+        form.appendChild(gameInput);
+        var redirectInput = document.createElement("input");
+        redirectInput.type = "hidden";
+        redirectInput.name = "redirect";
+        redirectInput.value = window.location.pathname;
+        form.appendChild(redirectInput);
+        document.body.appendChild(form);
+        form.submit();
       });
     });
   }

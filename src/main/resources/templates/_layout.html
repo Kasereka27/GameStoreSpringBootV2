@@ -13,6 +13,8 @@
   <title th:text="${pageTitle}">GameStore Platform</title>
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/theme.css">
+  <meta th:if="${_csrf}" name="_csrf" th:content="${_csrf.token}">
+  <meta th:if="${_csrf}" name="_csrf_parameter" th:content="${_csrf.parameterName}">
 </head>
 
 <body class="bg-bg-dark text-text antialiased min-h-screen flex flex-col">
@@ -74,10 +76,9 @@
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
       </button>
 
-      <!-- THYMELEAF: th:href="@{/panier}" -->
-      <a href="cart.html" class="relative rounded-lg p-2 text-muted transition hover:bg-bg-card hover:text-white" aria-label="Panier">
+      <a th:href="@{/panier}" class="relative rounded-lg p-2 text-muted transition hover:bg-bg-card hover:text-white" aria-label="Panier">
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-        <span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-purple px-1 text-[10px] font-bold text-white">3</span><!-- th:text="${cartItemCount}" -->
+        <span th:if="${cartItemCount > 0}" class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-purple px-1 text-[10px] font-bold text-white" th:text="${cartItemCount}">0</span>
       </a>
 
       <div sec:authorize="!isAuthenticated()" class="hidden items-center gap-2 sm:flex">
@@ -216,7 +217,7 @@
           <li><a href="login.html" th:href="@{/login}" class="text-sm text-muted hover:text-brand-cyan-light">Connexion</a></li>
           <li><a href="register.html" th:href="@{/register}" class="text-sm text-muted hover:text-brand-cyan-light">Inscription</a></li>
           <li><a href="account.html" th:href="@{/compte}" class="text-sm text-muted hover:text-brand-cyan-light">Mon espace</a></li>
-          <li><a href="cart.html" th:href="@{/panier}" class="text-sm text-muted hover:text-brand-cyan-light">Panier</a></li>
+          <li><a th:href="@{/panier}" class="text-sm text-muted hover:text-brand-cyan-light">Panier</a></li>
         </ul>
       </nav>
 
