@@ -1,71 +1,17 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_layout :: head('Mon compte — GameStore Platform', 'Mon compte GameStore — Profil, bibliothèque, commandes et sécurité.')}">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Mon compte GameStore — Profil, bibliothèque, commandes et sécurité.">
   <title>Mon compte — GameStore Platform</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <style type="text/tailwindcss">
-    @theme {
-      --color-brand-purple: #7c3aed;
-      --color-brand-purple-light: #8b5cf6;
-      --color-brand-cyan: #06b6d4;
-      --color-brand-cyan-light: #22d3ee;
-      --color-bg-dark: #0f0f13;
-      --color-bg-card: #1a1a24;
-      --color-bg-card-hover: #252532;
-      --color-border: #2e2e3a;
-      --color-text: #e4e4e7;
-      --color-muted: #71717a;
-      --color-success: #22c55e;
-      --color-error: #ef4444;
-      --color-info: #3b82f6;
-      --color-warning: #eab308;
-    }
-  </style>
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/theme.css">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/theme.css">
 </head>
 <body class="bg-bg-dark text-text antialiased min-h-screen flex flex-col">
 
-  <!-- THYMELEAF: th:replace="~{_layout :: navbar}" -->
-  <header class="sticky top-0 z-50 border-b border-border bg-bg-dark/80 backdrop-blur-md">
-    <nav class="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8" aria-label="Navigation principale">
-      <a href="index.html" class="flex shrink-0 items-center gap-2.5" aria-label="GameStore — Accueil">
-        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-cyan">
-          <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M6 9h4v6H6V9zm8 0h4v6h-4V9zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zM4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/>
-          </svg>
-        </span>
-        <span class="hidden font-bold text-white sm:inline">Game<span class="gradient-text">Store</span></span>
-      </a>
-      <ul class="hidden items-center gap-5 md:flex lg:gap-6">
-        <li><a href="index.html" class="text-sm font-medium text-muted transition hover:text-white">Accueil</a></li>
-        <li><a href="catalogue.html" class="text-sm font-medium text-muted transition hover:text-white">Catalogue</a></li>
-        <li><a href="catalogue.html?promo=true" class="text-sm font-medium text-muted transition hover:text-white">Promotions</a></li>
-      </ul>
-      <div class="ml-auto flex items-center gap-2">
-        <a href="cart.html" class="relative rounded-lg p-2 text-muted transition hover:bg-bg-card hover:text-white" aria-label="Panier">
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-          <span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-purple px-1 text-[10px] font-bold text-white">2</span>
-        </a>
-        <div class="relative">
-          <button type="button" data-user-dropdown-toggle class="flex items-center gap-2 rounded-lg border border-border bg-bg-card px-2 py-1.5 text-sm transition hover:border-brand-purple/50" aria-expanded="false" aria-haspopup="true">
-            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-purple to-brand-cyan text-xs font-bold text-white">AM</span><!-- th:text="${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)}" -->
-            <span class="hidden text-white sm:inline">Alex</span><!-- th:text="${user.firstName}" -->
-            <svg class="h-4 w-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-          </button>
-          <ul data-user-dropdown class="absolute right-0 top-full z-50 mt-1 hidden min-w-44 rounded-lg border border-border bg-bg-card py-1 shadow-xl">
-            <li><a href="account.html" class="block px-4 py-2 text-sm text-brand-cyan-light bg-bg-card-hover">Mon compte</a></li>
-            <li><a href="account.html#library" class="block px-4 py-2 text-sm text-muted hover:bg-bg-card-hover hover:text-white">Ma bibliothèque</a></li>
-            <li><a href="account.html#orders" class="block px-4 py-2 text-sm text-muted hover:bg-bg-card-hover hover:text-white">Mes commandes</a></li>
-            <li class="border-t border-border mt-1 pt-1"><a href="login.html" class="block px-4 py-2 text-sm text-error hover:bg-bg-card-hover">Déconnexion</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-  </header>
+    <header th:replace="~{_layout :: navbar}"></header>
 
   <main class="flex-1">
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -74,12 +20,11 @@
         <!-- Sidebar compte -->
         <aside class="w-full shrink-0 lg:w-64">
           <div class="rounded-xl border border-border bg-bg-card p-6 text-center">
-            <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand-purple to-brand-cyan text-2xl font-bold text-white" aria-hidden="true">
-              AM<!-- th:text="${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)}" -->
-            </div>
-            <h1 class="mt-4 text-lg font-bold text-white">Alex Martin</h1><!-- th:text="${user.firstName + ' ' + user.lastName}" -->
-            <p class="mt-1 text-sm text-muted">alex.martin@email.com</p><!-- th:text="${user.email}" -->
-            <p class="mt-1 text-xs text-muted">Membre depuis mars 2024</p><!-- th:text="'Membre depuis ' + ${#temporals.format(user.createdAt, 'MMMM yyyy')}" -->
+            <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand-purple to-brand-cyan text-2xl font-bold text-white" aria-hidden="true"
+                 th:text="${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)}">U</div>
+            <h1 class="mt-4 text-lg font-bold text-white" th:text="${user.displayName}">Utilisateur</h1>
+            <p class="mt-1 text-sm text-muted" th:text="${user.email}">email</p>
+            <p class="mt-1 text-xs text-muted" th:if="${user.createdAt}" th:text="'Membre depuis ' + ${#temporals.format(user.createdAt, 'MMMM yyyy')}">Membre</p>
           </div>
 
           <nav class="mt-4 rounded-xl border border-border bg-bg-card p-2" aria-label="Navigation du compte">
@@ -121,11 +66,12 @@
                 </a>
               </li>
               <li class="border-t border-border pt-1 mt-1">
-                <a href="login.html" data-account-nav data-section="logout"
-                   class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-error transition hover:bg-error/10">
-                  <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                  Déconnexion
-                </a>
+                <form th:action="@{/logout}" method="post">
+                  <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-error transition hover:bg-error/10">
+                    <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    Déconnexion
+                  </button>
+                </form>
               </li>
             </ul>
           </nav>
@@ -141,29 +87,27 @@
               <p class="mt-1 text-sm text-muted">Modifiez vos informations personnelles</p>
             </header>
 
-            <!-- THYMELEAF: th:action="@{/compte/profil}" th:object="${profileForm}" -->
-            <form class="rounded-xl border border-border bg-bg-card p-6 space-y-4" method="post">
+            <div th:if="${profileSuccess}" class="rounded-lg border border-success/30 bg-success/10 px-4 py-3 text-sm text-success">Profil mis à jour.</div>
+
+            <form th:action="@{/compte/profil}" th:object="${profileForm}" class="rounded-xl border border-border bg-bg-card p-6 space-y-4" method="post">
               <div class="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label for="firstName" class="block text-sm font-medium text-muted mb-1">Prénom</label>
-                  <input type="text" id="firstName" name="firstName" value="Alex" th:field="*{firstName}"
+                  <input type="text" id="firstName" th:field="*{firstName}"
                          class="w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
+                  <p th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="mt-1 text-xs text-error"></p>
                 </div>
                 <div>
                   <label for="lastName" class="block text-sm font-medium text-muted mb-1">Nom</label>
-                  <input type="text" id="lastName" name="lastName" value="Martin" th:field="*{lastName}"
+                  <input type="text" id="lastName" th:field="*{lastName}"
                          class="w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
                 </div>
               </div>
               <div>
                 <label for="email" class="block text-sm font-medium text-muted mb-1">Adresse e-mail</label>
-                <input type="email" id="email" name="email" value="alex.martin@email.com" th:field="*{email}"
+                <input type="email" id="email" th:field="*{email}"
                        class="w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
-              </div>
-              <div>
-                <label for="phone" class="block text-sm font-medium text-muted mb-1">Téléphone</label>
-                <input type="tel" id="phone" name="phone" value="+33 6 12 34 56 78" th:field="*{phone}"
-                       class="w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
+                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="mt-1 text-xs text-error"></p>
               </div>
               <div class="flex justify-end pt-2">
                 <button type="submit" class="rounded-lg bg-brand-purple px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-purple-light">Enregistrer</button>
@@ -173,22 +117,23 @@
             <div class="rounded-xl border border-border bg-bg-card p-6">
               <h3 class="text-lg font-semibold text-white">Changer le mot de passe</h3>
               <p class="mt-1 text-sm text-muted">Utilisez un mot de passe fort d'au moins 8 caractères</p>
-              <!-- THYMELEAF: th:action="@{/compte/mot-de-passe}" -->
-              <form class="mt-4 space-y-4" method="post">
+              <div th:if="${passwordChangeSuccess}" class="mt-4 rounded-lg border border-success/30 bg-success/10 px-4 py-3 text-sm text-success">Mot de passe mis à jour.</div>
+              <form th:action="@{/compte/securite/mot-de-passe}" th:object="${changePasswordForm}" class="mt-4 space-y-4" method="post">
                 <div>
                   <label for="currentPassword" class="block text-sm font-medium text-muted mb-1">Mot de passe actuel</label>
-                  <input type="password" id="currentPassword" name="currentPassword"
+                  <input type="password" id="currentPassword" th:field="*{currentPassword}"
                          class="w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
+                  <p th:if="${#fields.hasErrors('currentPassword')}" th:errors="*{currentPassword}" class="mt-1 text-xs text-error"></p>
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label for="newPassword" class="block text-sm font-medium text-muted mb-1">Nouveau mot de passe</label>
-                    <input type="password" id="newPassword" name="newPassword"
+                    <input type="password" id="newPassword" th:field="*{newPassword}"
                            class="w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
                   </div>
                   <div>
-                    <label for="confirmNewPassword" class="block text-sm font-medium text-muted mb-1">Confirmer</label>
-                    <input type="password" id="confirmNewPassword" name="confirmNewPassword"
+                    <label for="confirmPassword" class="block text-sm font-medium text-muted mb-1">Confirmer</label>
+                    <input type="password" id="confirmPassword" th:field="*{confirmPassword}"
                            class="w-full rounded-lg border border-border bg-bg-dark px-4 py-2.5 text-sm text-white focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
                   </div>
                 </div>
@@ -521,32 +466,11 @@
     </div>
   </div>
 
-  <!-- THYMELEAF: th:replace="~{_layout :: footer}" -->
-  <footer class="mt-auto border-t border-border bg-bg-card">
-    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
-        <p class="text-xs text-muted">&copy; 2026 GameStore Platform. Tous droits réservés.</p>
-        <nav class="flex gap-4 text-xs text-muted">
-          <a href="#" class="hover:text-brand-cyan-light">CGV</a>
-          <a href="#" class="hover:text-brand-cyan-light">Confidentialité</a>
-          <a href="#" class="hover:text-brand-cyan-light">Support</a>
-        </nav>
-      </div>
-    </div>
-  </footer>
+    <footer th:replace="~{_layout :: footer}"></footer>
 
-  <!-- THYMELEAF: th:replace="~{_layout :: toasts}" -->
-  <div data-toast-container class="fixed bottom-4 right-4 z-[100] flex flex-col gap-3 max-w-sm w-full pointer-events-none" aria-live="polite" aria-atomic="true">
-    <template id="toast-template">
-      <div class="pointer-events-auto flex items-start gap-3 rounded-lg border px-4 py-3 shadow-xl toast-enter" role="alert">
-        <span data-toast-icon class="shrink-0 mt-0.5"></span>
-        <p data-toast-message class="flex-1 text-sm text-white"></p>
-        <button type="button" data-toast-close class="shrink-0 text-muted hover:text-white" aria-label="Fermer">&times;</button>
-      </div>
-    </template>
-  </div>
+    <div th:replace="~{_layout :: toasts}"></div>
 
-  <script src="js/main.js"></script>
+  <div th:replace="~{_layout :: scripts}"></div>
   <script>
     /* Hash routing pour sections compte */
     document.addEventListener("DOMContentLoaded", function () {

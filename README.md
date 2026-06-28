@@ -581,6 +581,18 @@ PromoCode
 
 ### 6.1 Structure des Packages
 
+> **Consignes impératives — architecture et conventions Spring**
+>
+> L'application suit strictement une **architecture en 3 couches** :
+> **controller → service → repository**, conformément aux **conventions et bonnes pratiques de la communauté Spring** (Spring Boot Reference Documentation, guides officiels, idiomes reconnus du framework).
+>
+> - **Respecter les conventions Spring** : injection par constructeur, annotations au bon endroit (`@RestController`, `@Service`, `@Repository`, `@Configuration`), configuration externalisée (`application.properties` / profils), gestion d'erreurs via `@ControllerAdvice` **uniquement pour les exceptions**, validation Jakarta sur les DTOs, etc.
+> - **Ne pas créer** de packages ou dossiers hors de cette organisation (ex. : `viewmodel`, `advisor` dédié aux données de vue, etc.).
+> - **Ne pas contourner** l'absence de backend en injectant des valeurs fictives via `@ControllerAdvice` / `@ModelAttribute` globaux : les données affichées dans les vues Thymeleaf doivent provenir du **controller**, alimenté par le **service**, lui-même branché sur le **repository**.
+> - Le package **`config/`** sert uniquement à la **configuration Spring** (beans, sécurité, JDBC, cache, CORS, etc.) — notamment pour instancier ou brancher des **composants externes** à Spring. Il ne doit **pas** être utilisé pour préparer le modèle des pages ou simuler des données métier.
+> - Tant que la logique métier n'est pas implémentée, les expressions Thymeleaf dynamiques restent **commentées** dans les templates (contenu statique de prévisualisation), en attendant que le flux controller → service → repository les alimente réellement.
+> - **Ne pas prendre d'initiative** ajoutant des abstractions, dossiers ou patterns non prévus par ce document ni éloignés des pratiques habituelles de l'écosystème Spring.
+
 ```
 com.gamestore
 ├── config/                  # Configurations Spring (Security, CORS, Cache, JDBC, etc.)

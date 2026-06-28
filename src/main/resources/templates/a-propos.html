@@ -1,67 +1,17 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_layout :: head('À propos — GameStore Platform', 'Découvrez GameStore Platform — notre mission, nos valeurs et notre engagement pour la vente de clés de jeux officielles.')}">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Découvrez GameStore Platform — notre mission, nos valeurs et notre engagement pour la vente de clés de jeux officielles.">
   <title>À propos — GameStore Platform</title><!-- th:text="'À propos — GameStore Platform'" -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <style type="text/tailwindcss">
-    @theme {
-      --color-brand-purple: #7c3aed;
-      --color-brand-purple-light: #8b5cf6;
-      --color-brand-cyan: #06b6d4;
-      --color-brand-cyan-light: #22d3ee;
-      --color-bg-dark: #0f0f13;
-      --color-bg-card: #1a1a24;
-      --color-bg-card-hover: #252532;
-      --color-border: #2e2e3a;
-      --color-text: #e4e4e7;
-      --color-muted: #71717a;
-      --color-success: #22c55e;
-      --color-error: #ef4444;
-      --color-info: #3b82f6;
-    }
-  </style>
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/theme.css">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/theme.css">
 </head>
 <body class="bg-bg-dark text-text antialiased min-h-screen flex flex-col">
 
-  <!-- THYMELEAF: th:replace="~{_layout :: navbar}" -->
-  <header class="sticky top-0 z-50 border-b border-border bg-bg-dark/80 backdrop-blur-md">
-    <nav class="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8" aria-label="Navigation principale">
-      <a href="index.html" th:href="@{/}" class="flex shrink-0 items-center gap-2.5" aria-label="GameStore — Accueil">
-        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-cyan">
-          <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 9h4v6H6V9zm8 0h4v6h-4V9zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zM4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/></svg>
-        </span>
-        <span class="hidden font-bold text-white sm:inline">Game<span class="gradient-text">Store</span></span>
-      </a>
-      <ul class="hidden items-center gap-5 md:flex lg:gap-6">
-        <li><a href="index.html" class="text-sm font-medium text-muted transition hover:text-white">Accueil</a></li>
-        <li><a href="catalogue.html" class="text-sm font-medium text-muted transition hover:text-white">Catalogue</a></li>
-        <li><a href="catalogue.html?promo=true" class="text-sm font-medium text-muted transition hover:text-white">Promotions</a></li>
-        <li><a href="a-propos.html" class="text-sm font-medium text-brand-cyan-light" aria-current="page">À propos</a></li>
-      </ul>
-      <div class="ml-auto flex items-center gap-2">
-        <a href="cart.html" class="relative rounded-lg p-2 text-muted hover:bg-bg-card hover:text-white" aria-label="Panier">
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-          <span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-purple px-1 text-[10px] font-bold text-white">3</span>
-        </a>
-        <a href="login.html" class="hidden rounded-lg px-3 py-1.5 text-sm text-muted hover:text-white sm:block">Connexion</a>
-        <button type="button" data-menu-toggle class="rounded-lg p-2 text-muted md:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menu">
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
-      </div>
-    </nav>
-    <div id="mobile-menu" data-mobile-menu aria-hidden="true" class="border-t border-border bg-bg-card md:hidden">
-      <ul class="flex flex-col gap-1 px-4 py-4">
-        <li><a href="index.html" class="block rounded-lg px-3 py-2 text-sm text-muted hover:text-white">Accueil</a></li>
-        <li><a href="catalogue.html" class="block rounded-lg px-3 py-2 text-sm text-muted hover:text-white">Catalogue</a></li>
-        <li><a href="a-propos.html" class="block rounded-lg px-3 py-2 text-sm font-medium text-brand-cyan-light bg-bg-card-hover">À propos</a></li>
-      </ul>
-    </div>
-  </header>
+    <header th:replace="~{_layout :: navbar}"></header>
 
   <main class="flex-1">
 
@@ -258,12 +208,7 @@
 
   </main>
 
-  <!-- THYMELEAF: th:replace="~{_layout :: footer}" -->
-  <footer class="mt-auto border-t border-border bg-bg-card">
-    <div class="mx-auto max-w-7xl px-4 py-8 text-center text-xs text-muted sm:px-6">
-      &copy; 2026 GameStore Platform. <a href="a-propos.html" class="text-brand-cyan-light hover:underline">À propos</a> · <a href="#" class="hover:underline">Contact</a>
-    </div>
-  </footer>
+    <footer th:replace="~{_layout :: footer}"></footer>
 
   <div data-toast-container class="fixed bottom-4 right-4 z-[100] flex flex-col gap-3 max-w-sm w-full pointer-events-none" aria-live="polite">
     <template id="toast-template">
@@ -275,6 +220,6 @@
     </template>
   </div>
 
-  <script src="js/main.js"></script>
+  <div th:replace="~{_layout :: scripts}"></div>
 </body>
 </html>

@@ -1,74 +1,17 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_layout :: head('Paiement — GameStore Platform', 'Finalisez votre commande GameStore — Paiement sécurisé et livraison instantanée.')}">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Finalisez votre commande GameStore — Paiement sécurisé et livraison instantanée.">
   <title>Paiement — GameStore Platform</title><!-- th:text="'Paiement — GameStore Platform'" -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <style type="text/tailwindcss">
-    @theme {
-      --color-brand-purple: #7c3aed;
-      --color-brand-purple-light: #8b5cf6;
-      --color-brand-cyan: #06b6d4;
-      --color-brand-cyan-light: #22d3ee;
-      --color-bg-dark: #0f0f13;
-      --color-bg-card: #1a1a24;
-      --color-bg-card-hover: #252532;
-      --color-border: #2e2e3a;
-      --color-text: #e4e4e7;
-      --color-muted: #71717a;
-      --color-success: #22c55e;
-      --color-error: #ef4444;
-      --color-info: #3b82f6;
-    }
-  </style>
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/theme.css">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/theme.css">
 </head>
 <body class="bg-bg-dark text-text antialiased min-h-screen flex flex-col">
 
-  <!-- THYMELEAF: th:replace="~{_layout :: navbar}" -->
-  <header class="sticky top-0 z-50 border-b border-border bg-bg-dark/80 backdrop-blur-md">
-    <nav class="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8" aria-label="Navigation principale">
-
-      <a href="index.html" class="flex shrink-0 items-center gap-2.5" aria-label="GameStore — Accueil"><!-- th:href="@{/}" -->
-        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-cyan">
-          <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M6 9h4v6H6V9zm8 0h4v6h-4V9zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zM4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/>
-          </svg>
-        </span>
-        <span class="hidden font-bold text-white sm:inline">Game<span class="gradient-text">Store</span></span>
-      </a>
-
-      <ul class="hidden items-center gap-5 md:flex lg:gap-6">
-        <li><a href="index.html" class="text-sm font-medium text-muted transition hover:text-white">Accueil</a></li>
-        <li><a href="catalogue.html" class="text-sm font-medium text-muted transition hover:text-white">Catalogue</a></li>
-        <li><a href="catalogue.html?promo=true" class="text-sm font-medium text-muted transition hover:text-white">Promotions</a></li>
-      </ul>
-
-      <div class="ml-auto flex items-center gap-1.5 sm:gap-2">
-        <a href="cart.html" class="relative rounded-lg p-2 text-muted transition hover:bg-bg-card hover:text-white" aria-label="Panier"><!-- th:href="@{/panier}" -->
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-          <span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-purple px-1 text-[10px] font-bold text-white">3</span>
-        </a>
-        <div class="hidden items-center gap-2 sm:flex" data-guest-nav>
-          <a href="login.html" class="rounded-lg px-3 py-1.5 text-sm font-medium text-muted transition hover:text-white">Connexion</a>
-        </div>
-        <button type="button" data-menu-toggle class="rounded-lg p-2 text-muted hover:bg-bg-card hover:text-white md:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menu">
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
-      </div>
-    </nav>
-
-    <div id="mobile-menu" data-mobile-menu aria-hidden="true" class="border-t border-border bg-bg-card md:hidden">
-      <ul class="flex flex-col gap-1 px-4 py-4">
-        <li><a href="index.html" class="block rounded-lg px-3 py-2 text-sm text-muted hover:bg-bg-card-hover hover:text-white">Accueil</a></li>
-        <li><a href="catalogue.html" class="block rounded-lg px-3 py-2 text-sm text-muted hover:bg-bg-card-hover hover:text-white">Catalogue</a></li>
-        <li><a href="cart.html" class="block rounded-lg px-3 py-2 text-sm text-brand-cyan-light">Mon panier</a></li>
-      </ul>
-    </div>
-  </header>
+    <header th:replace="~{_layout :: navbar}"></header>
 
   <main class="flex-1">
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -361,78 +304,10 @@
     </div>
   </main>
 
-  <!-- THYMELEAF: th:replace="~{_layout :: footer}" -->
-  <footer class="mt-auto border-t border-border bg-bg-card">
-    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
+    <footer th:replace="~{_layout :: footer}"></footer>
 
-        <div class="lg:col-span-2">
-          <a href="index.html" class="flex items-center gap-2">
-            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-cyan">
-              <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 9h4v6H6V9zm8 0h4v6h-4V9zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zM4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/></svg>
-            </span>
-            <span class="font-bold text-white">GameStore</span>
-          </a>
-          <p class="mt-4 max-w-sm text-sm leading-relaxed text-muted">
-            Plateforme de vente de licences numériques. Clés officielles PC, PlayStation, Xbox et Nintendo — livraison instantanée.
-          </p>
-        </div>
+    <div th:replace="~{_layout :: toasts}"></div>
 
-        <nav aria-label="Liens catalogue">
-          <h3 class="text-sm font-semibold text-white">Catalogue</h3>
-          <ul class="mt-4 space-y-2">
-            <li><a href="catalogue.html" class="text-sm text-muted hover:text-brand-cyan-light">Tous les jeux</a></li>
-            <li><a href="catalogue.html?promo=true" class="text-sm text-muted hover:text-brand-cyan-light">Promotions</a></li>
-          </ul>
-        </nav>
-
-        <nav aria-label="Liens compte">
-          <h3 class="text-sm font-semibold text-white">Mon Compte</h3>
-          <ul class="mt-4 space-y-2">
-            <li><a href="login.html" class="text-sm text-muted hover:text-brand-cyan-light">Connexion</a></li>
-            <li><a href="account.html" class="text-sm text-muted hover:text-brand-cyan-light">Mon espace</a></li>
-            <li><a href="cart.html" class="text-sm text-muted hover:text-brand-cyan-light">Panier</a></li>
-          </ul>
-        </nav>
-
-        <nav aria-label="Liens aide">
-          <h3 class="text-sm font-semibold text-white">Aide</h3>
-          <ul class="mt-4 space-y-2">
-            <li><a href="#" class="text-sm text-muted hover:text-brand-cyan-light">FAQ</a></li>
-            <li><a href="#" class="text-sm text-muted hover:text-brand-cyan-light">Support 24/7</a></li>
-          </ul>
-        </nav>
-
-        <nav aria-label="Liens légaux" class="sm:col-span-2 lg:col-span-1">
-          <h3 class="text-sm font-semibold text-white">Légal</h3>
-          <ul class="mt-4 space-y-2">
-            <li><a href="#" class="text-sm text-muted hover:text-brand-cyan-light">CGV</a></li>
-            <li><a href="#" class="text-sm text-muted hover:text-brand-cyan-light">Confidentialité</a></li>
-          </ul>
-        </nav>
-      </div>
-
-      <div class="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
-        <p class="text-xs text-muted">&copy; 2026 GameStore Platform. Tous droits réservés.</p>
-        <p class="flex items-center gap-1.5 text-xs text-muted">
-          <svg class="h-3.5 w-3.5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          Paiement sécurisé SSL · Clés 100 % officielles
-        </p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- THYMELEAF: th:replace="~{_layout :: toasts}" -->
-  <div data-toast-container class="pointer-events-none fixed bottom-4 right-4 z-[100] flex w-full max-w-sm flex-col gap-3" aria-live="polite" aria-atomic="true">
-    <template id="toast-template">
-      <div class="pointer-events-auto flex items-start gap-3 rounded-lg border px-4 py-3 shadow-xl toast-enter" role="alert">
-        <span data-toast-icon class="mt-0.5 shrink-0"></span>
-        <p data-toast-message class="flex-1 text-sm text-white"></p>
-        <button type="button" data-toast-close class="shrink-0 text-muted hover:text-white" aria-label="Fermer">&times;</button>
-      </div>
-    </template>
-  </div>
-
-  <script src="js/main.js"></script>
+  <div th:replace="~{_layout :: scripts}"></div>
 </body>
 </html>

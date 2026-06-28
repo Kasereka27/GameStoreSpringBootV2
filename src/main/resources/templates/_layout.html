@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <!--
   THYMELEAF: Layout partagé GameStore Platform
   Usage: th:replace="~{_layout :: fragmentName}"
@@ -10,27 +10,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" th:content="${pageDescription}" content="GameStore Platform — Boutique de clés de jeux vidéo numériques.">
-  <title th:text="${pageTitle} + ' — GameStore Platform'">GameStore Platform</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <style type="text/tailwindcss">
-    @theme {
-      --color-brand-purple: #7c3aed;
-      --color-brand-purple-light: #8b5cf6;
-      --color-brand-cyan: #06b6d4;
-      --color-brand-cyan-light: #22d3ee;
-      --color-bg-dark: #0f0f13;
-      --color-bg-card: #1a1a24;
-      --color-bg-card-hover: #252532;
-      --color-border: #2e2e3a;
-      --color-text: #e4e4e7;
-      --color-muted: #71717a;
-      --color-success: #22c55e;
-      --color-error: #ef4444;
-      --color-info: #3b82f6;
-    }
-  </style>
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/theme.css">
+  <title th:text="${pageTitle}">GameStore Platform</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/theme.css">
 </head>
 
 <body class="bg-bg-dark text-text antialiased min-h-screen flex flex-col">
@@ -67,7 +49,6 @@
         <label for="nav-search" class="sr-only">Rechercher un jeu</label>
         <div class="relative">
           <input type="search" id="nav-search" name="q" data-search-input
-                 th:value="${searchQuery}"
                  class="w-full rounded-lg border border-border bg-bg-card py-2 pl-10 pr-10 text-sm text-white placeholder-muted focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple"
                  placeholder="Rechercher un jeu…" autocomplete="off">
           <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -96,26 +77,29 @@
       <!-- THYMELEAF: th:href="@{/panier}" -->
       <a href="cart.html" class="relative rounded-lg p-2 text-muted transition hover:bg-bg-card hover:text-white" aria-label="Panier">
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-        <span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-purple px-1 text-[10px] font-bold text-white" th:text="${cartItemCount}">3</span>
+        <span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-purple px-1 text-[10px] font-bold text-white">3</span><!-- th:text="${cartItemCount}" -->
       </a>
 
-      <!-- THYMELEAF: th:if="${!#authorization.expression('isAuthenticated()')}" -->
-      <div class="hidden items-center gap-2 sm:flex" data-guest-nav>
-        <a href="login.html" th:href="@{/login}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-muted transition hover:text-white">Connexion</a>
-        <a href="register.html" th:href="@{/register}" class="rounded-lg bg-brand-purple px-3 py-1.5 text-sm font-medium text-white transition hover:bg-brand-purple-light">S'inscrire</a>
+      <div sec:authorize="!isAuthenticated()" class="hidden items-center gap-2 sm:flex">
+        <a th:href="@{/login}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-muted transition hover:text-white">Connexion</a>
+        <a th:href="@{/register}" class="rounded-lg bg-brand-purple px-3 py-1.5 text-sm font-medium text-white transition hover:bg-brand-purple-light">S'inscrire</a>
       </div>
 
-      <!-- THYMELEAF: th:if="${#authorization.expression('isAuthenticated()')}" -->
-      <div class="relative hidden sm:block" data-user-dropdown-wrapper>
+      <div sec:authorize="isAuthenticated()" class="relative hidden sm:block" data-user-dropdown-wrapper>
         <button type="button" data-user-dropdown-toggle class="flex items-center gap-2 rounded-lg p-1.5 transition hover:bg-bg-card" aria-expanded="false" aria-haspopup="true" aria-label="Menu utilisateur">
-          <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-purple to-brand-cyan text-xs font-bold text-white" th:text="${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)}">AM</span>
+          <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-purple to-brand-cyan text-xs font-bold text-white"
+                th:text="${#strings.substring(#authentication.principal.firstName,0,1) + #strings.substring(#authentication.principal.lastName,0,1)}">U</span>
           <svg class="h-4 w-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
         </button>
         <ul data-user-dropdown class="absolute right-0 top-full z-50 mt-1 hidden min-w-[180px] rounded-lg border border-border bg-bg-card py-1 shadow-xl">
-          <li class="border-b border-border px-4 py-2"><p class="text-sm font-medium text-white" th:text="${user.displayName}">Alex Martin</p><p class="text-xs text-muted" th:text="${user.email}">alex@email.com</p></li>
-          <li><a href="account.html" th:href="@{/compte/profil}" class="block px-4 py-2 text-sm text-muted hover:bg-bg-card-hover hover:text-white">Profil</a></li>
-          <li><a href="account.html#library" th:href="@{/compte/bibliotheque}" class="block px-4 py-2 text-sm text-muted hover:bg-bg-card-hover hover:text-white">Bibliothèque</a></li>
-          <li><a href="account.html#orders" th:href="@{/compte/commandes}" class="block px-4 py-2 text-sm text-muted hover:bg-bg-card-hover hover:text-white">Historique</a></li>
+          <li class="border-b border-border px-4 py-2">
+            <p class="text-sm font-medium text-white" sec:authentication="principal.displayName">Utilisateur</p>
+            <p class="text-xs text-muted" sec:authentication="principal.username">email</p>
+          </li>
+          <li><a th:href="@{/compte/profil}" class="block px-4 py-2 text-sm text-muted hover:bg-bg-card-hover hover:text-white">Profil</a></li>
+          <li><a th:href="@{/compte/bibliotheque}" class="block px-4 py-2 text-sm text-muted hover:bg-bg-card-hover hover:text-white">Bibliothèque</a></li>
+          <li><a th:href="@{/compte/commandes}" class="block px-4 py-2 text-sm text-muted hover:bg-bg-card-hover hover:text-white">Historique</a></li>
+          <li sec:authorize="hasAnyRole('ADMIN','SUPERADMIN')"><a th:href="@{/admin/dashboard}" class="block px-4 py-2 text-sm text-muted hover:bg-bg-card-hover hover:text-white">Administration</a></li>
           <li><form th:action="@{/logout}" method="post"><button type="submit" class="block w-full px-4 py-2 text-left text-sm text-error hover:bg-bg-card-hover">Déconnexion</button></form></li>
         </ul>
       </div>
@@ -147,6 +131,41 @@
 
 <!-- Contenu principal injecté par les pages : th:replace="~{::main}" -->
 
+<!-- THYMELEAF: th:fragment="auth-background" -->
+<div th:fragment="auth-background" class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+  <div class="absolute -left-1/4 top-0 h-[600px] w-[600px] rounded-full bg-brand-purple/20 blur-[120px]"></div>
+  <div class="absolute -right-1/4 bottom-0 h-[500px] w-[500px] rounded-full bg-brand-cyan/15 blur-[100px]"></div>
+  <div class="absolute inset-0 bg-gradient-to-br from-bg-dark via-bg-dark/95 to-[#12121f]"></div>
+</div>
+
+<!-- THYMELEAF: th:fragment="auth-header" -->
+<header th:fragment="auth-header" class="relative border-b border-border/50 bg-bg-dark/60 backdrop-blur-sm">
+  <div class="mx-auto flex max-w-7xl items-center px-4 py-4 sm:px-6 lg:px-8">
+    <a href="index.html" th:href="@{/}" class="flex items-center gap-2.5" aria-label="GameStore — Accueil">
+      <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-cyan">
+        <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M6 9h4v6H6V9zm8 0h4v6h-4V9zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zM4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/>
+        </svg>
+      </span>
+      <span class="font-bold text-white">Game<span class="gradient-text">Store</span></span>
+    </a>
+  </div>
+</header>
+
+<!-- THYMELEAF: th:fragment="logo-header" -->
+<header th:fragment="logo-header" class="border-b border-border bg-bg-dark">
+  <div class="mx-auto flex max-w-7xl items-center justify-center px-4 py-4 sm:px-6">
+    <a href="index.html" th:href="@{/}" class="flex items-center gap-2.5" aria-label="GameStore — Accueil">
+      <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-cyan">
+        <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M6 9h4v6H6V9zm8 0h4v6h-4V9zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zM4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/>
+        </svg>
+      </span>
+      <span class="font-bold text-white">Game<span class="gradient-text">Store</span></span>
+    </a>
+  </div>
+</header>
+
 <!-- ═══════════════════════════════════════════════════════════
      THYMELEAF: th:fragment="footer"
      ═══════════════════════════════════════════════════════════ -->
@@ -162,9 +181,9 @@
           </span>
           <span class="font-bold text-white">GameStore</span>
         </a>
-        <p class="mt-4 max-w-sm text-sm leading-relaxed text-muted" th:text="${siteDescription}">
+        <p class="mt-4 max-w-sm text-sm leading-relaxed text-muted">
           Plateforme de vente de licences numériques. Clés officielles PC, PlayStation, Xbox et Nintendo — livraison instantanée.
-        </p>
+        </p><!-- th:text="${siteDescription}" -->
         <!-- Réseaux sociaux -->
         <div class="mt-5 flex gap-3" aria-label="Réseaux sociaux">
           <a href="#" class="rounded-lg border border-border p-2 text-muted transition hover:border-brand-purple hover:text-brand-cyan-light" aria-label="Discord">
@@ -250,9 +269,21 @@
   <!-- THYMELEAF: th:if="${flashInfo}" th:attr="data-flash-type='info',data-flash-message=${flashInfo}" -->
 </div>
 
+<!-- THYMELEAF: th:fragment="minimal-footer" -->
+<footer th:fragment="minimal-footer" class="border-t border-border bg-bg-dark py-6">
+  <div class="mx-auto max-w-7xl px-4 text-center sm:px-6">
+    <p class="text-xs text-muted">&copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> GameStore Platform. Tous droits réservés.</p>
+  </div>
+</footer>
+
+<!-- THYMELEAF: th:fragment="auth-footer" -->
+<footer th:fragment="auth-footer" class="relative mt-auto border-t border-border/50 bg-bg-card/30 py-6 text-center text-xs text-muted">
+  &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> GameStore Platform.
+</footer>
+
 <!-- THYMELEAF: th:fragment="scripts" -->
 <div th:fragment="scripts">
-  <script src="js/main.js"></script>
+  <script src="/js/main.js"></script>
 </div>
 
 </body>

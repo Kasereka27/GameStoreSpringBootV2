@@ -1,110 +1,20 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_layout :: head('Jeux — Admin GameStore', 'Gestion des jeux — Administration GameStore.')}">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Gestion des jeux — Administration GameStore.">
   <title>Jeux — Admin GameStore</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <style type="text/tailwindcss">
-    @theme {
-      --color-brand-purple: #7c3aed;
-      --color-brand-purple-light: #8b5cf6;
-      --color-brand-cyan: #06b6d4;
-      --color-brand-cyan-light: #22d3ee;
-      --color-bg-dark: #0f0f13;
-      --color-bg-card: #1a1a24;
-      --color-bg-card-hover: #252532;
-      --color-border: #2e2e3a;
-      --color-text: #e4e4e7;
-      --color-muted: #71717a;
-      --color-success: #22c55e;
-      --color-error: #ef4444;
-      --color-info: #3b82f6;
-      --color-warning: #eab308;
-    }
-  </style>
-  <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/theme.css">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/theme.css">
 </head>
 <body class="bg-bg-dark text-text antialiased min-h-screen">
 
   <div class="flex min-h-screen">
 
     <!-- Sidebar admin -->
-    <!-- THYMELEAF: th:replace="~{admin/_sidebar :: sidebar(activePage='games')}" -->
-    <aside class="admin-sidebar fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border">
-      <div class="flex h-16 items-center gap-2.5 border-b border-border px-5">
-        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-cyan">
-          <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M6 9h4v6H6V9zm8 0h4v6h-4V9zM8 11h2v2H8v-2zm6 0h2v2h-2v-2zM4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/>
-          </svg>
-        </span>
-        <div>
-          <p class="text-sm font-bold text-white">GameStore</p>
-          <p class="text-[10px] uppercase tracking-wider text-muted">Administration</p>
-        </div>
-      </div>
-      <nav class="flex-1 overflow-y-auto px-3 py-4" aria-label="Menu administration">
-        <ul class="space-y-1">
-          <li>
-            <a href="dashboard.html" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-bg-card-hover hover:text-white">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-              Dashboard
-            </a>
-          </li>
-          <li>
-            <a href="games.html" class="flex items-center gap-3 rounded-lg bg-brand-purple/20 px-3 py-2.5 text-sm font-medium text-brand-cyan-light">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              Jeux
-            </a>
-          </li>
-          <li>
-            <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-bg-card-hover hover:text-white">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-              Licences
-            </a>
-          </li>
-          <li>
-            <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-bg-card-hover hover:text-white">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-              Commandes
-              <span class="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-error px-1.5 text-[10px] font-bold text-white">12</span>
-            </a>
-          </li>
-          <li>
-            <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-bg-card-hover hover:text-white">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-              Utilisateurs
-            </a>
-          </li>
-          <li>
-            <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-bg-card-hover hover:text-white">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
-              Promotions
-            </a>
-          </li>
-          <li>
-            <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-bg-card-hover hover:text-white">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-              Rapports
-            </a>
-          </li>
-          <li>
-            <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-bg-card-hover hover:text-white">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              Paramètres
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <div class="border-t border-border p-4">
-        <a href="../index.html" class="flex items-center gap-2 text-xs text-muted transition hover:text-brand-cyan-light">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-          Retour au site
-        </a>
-      </div>
-    </aside>
+        <aside th:replace="~{admin/_sidebar :: sidebar(activePage='games')}"></aside>
 
     <div class="admin-content ml-64 flex min-h-screen flex-1 flex-col">
 
@@ -133,12 +43,12 @@
         <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 class="text-2xl font-bold text-white">Gestion des jeux</h1>
-            <p class="mt-1 text-sm text-muted"><!-- th:text="${totalGames} + ' jeux au catalogue'" -->248 jeux au catalogue</p>
+            <p class="mt-1 text-sm text-muted"><span th:text="${totalGames}">0</span> jeux au catalogue</p>
           </div>
-          <button type="button" data-add-game class="inline-flex items-center gap-2 rounded-lg bg-brand-purple px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-purple-light">
+          <a th:href="@{/admin/games/new}" class="inline-flex items-center gap-2 rounded-lg bg-brand-purple px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-purple-light">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Ajouter un jeu
-          </button>
+          </a>
         </div>
 
         <!-- Filtres & recherche -->
@@ -146,7 +56,7 @@
         <form class="mb-6 flex flex-col gap-3 rounded-xl border border-border bg-bg-card p-4 sm:flex-row sm:items-end sm:flex-wrap" role="search">
           <div class="flex-1 min-w-[200px]">
             <label for="search-games" class="block text-xs font-medium text-muted mb-1">Rechercher</label>
-            <input type="search" id="search-games" name="q" placeholder="Titre, SKU…" th:value="${searchQuery}"
+            <input type="search" id="search-games" name="q" placeholder="Titre, SKU…"
                    class="w-full rounded-lg border border-border bg-bg-dark px-4 py-2 text-sm text-white placeholder-muted focus:border-brand-purple focus:outline-none focus:ring-1 focus:ring-brand-purple">
           </div>
           <div class="w-full sm:w-40">
@@ -195,137 +105,32 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-border">
-                <!-- th:each="game : ${games}" -->
-                <tr class="hover:bg-bg-card-hover/50">
+                <tr th:each="game : ${games}" class="hover:bg-bg-card-hover/50">
                   <td class="px-4 py-3">
-                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=48&h=32&fit=crop" alt="Cyberpunk 2077" class="h-10 w-14 rounded object-cover" loading="lazy"><!-- th:src="${game.coverUrl}" th:alt="${game.title}" -->
+                    <img th:src="${game.coverImageUrl}" th:alt="${game.title}" class="h-10 w-14 rounded object-cover" loading="lazy">
                   </td>
                   <td class="px-4 py-3">
-                    <p class="font-medium text-white">Cyberpunk 2077</p><!-- th:text="${game.title}" -->
-                    <p class="text-xs text-muted">SKU: GS-CP2077-PC</p><!-- th:text="'SKU: ' + ${game.sku}" -->
+                    <p class="font-medium text-white" th:text="${game.title}">Titre</p>
+                    <p class="text-xs text-muted" th:text="${game.slug}">slug</p>
                   </td>
-                  <td class="px-4 py-3"><span class="rounded bg-bg-card-hover px-2 py-0.5 text-xs text-white">PC</span></td>
-                  <td class="px-4 py-3 font-semibold text-white">41,99 €</td><!-- th:text="${#numbers.formatDecimal(game.price, 1, 2)} + ' €'" -->
-                  <td class="px-4 py-3"><span class="rounded-full bg-success/20 px-2.5 py-1 text-xs font-medium text-success">Actif</span></td>
-                  <td class="px-4 py-3"><span class="text-white">142</span></td><!-- th:text="${game.stock}" -->
+                  <td class="px-4 py-3">
+                    <span class="rounded bg-bg-card-hover px-2 py-0.5 text-xs text-white" th:text="${game.platform.displayLabel}">PC</span>
+                  </td>
+                  <td class="px-4 py-3 font-semibold text-white" th:text="${#numbers.formatDecimal(game.effectivePrice, 1, 2)} + ' €'">0 €</td>
+                  <td class="px-4 py-3">
+                    <span class="rounded-full bg-success/20 px-2.5 py-1 text-xs font-medium text-success" th:text="${game.status}">ACTIVE</span>
+                  </td>
+                  <td class="px-4 py-3"><span class="text-muted text-xs">—</span></td>
                   <td class="px-4 py-3">
                     <div class="flex items-center justify-end gap-1">
-                      <button type="button" data-edit-game class="rounded-lg p-2 text-muted hover:bg-bg-card-hover hover:text-brand-cyan-light" aria-label="Modifier Cyberpunk 2077">
+                      <a th:href="@{/admin/games/{id}/edit(id=${game.id})}" class="rounded-lg p-2 text-muted hover:bg-bg-card-hover hover:text-brand-cyan-light" aria-label="Modifier">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                      </button>
-                      <button type="button" data-toggle-game class="rounded-lg p-2 text-muted hover:bg-bg-card-hover hover:text-warning" aria-label="Désactiver">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                      </button>
-                      <button type="button" data-delete-game class="rounded-lg p-2 text-muted hover:bg-error/10 hover:text-error" aria-label="Supprimer">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="hover:bg-bg-card-hover/50">
-                  <td class="px-4 py-3">
-                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=48&h=32&fit=crop" alt="Elden Ring" class="h-10 w-14 rounded object-cover" loading="lazy">
-                  </td>
-                  <td class="px-4 py-3">
-                    <p class="font-medium text-white">Elden Ring</p>
-                    <p class="text-xs text-muted">SKU: GS-ELDEN-PC</p>
-                  </td>
-                  <td class="px-4 py-3"><span class="rounded bg-bg-card-hover px-2 py-0.5 text-xs text-white">PC</span></td>
-                  <td class="px-4 py-3 font-semibold text-white">48,99 €</td>
-                  <td class="px-4 py-3"><span class="rounded-full bg-success/20 px-2.5 py-1 text-xs font-medium text-success">Actif</span></td>
-                  <td class="px-4 py-3"><span class="text-warning font-medium">3</span></td>
-                  <td class="px-4 py-3">
-                    <div class="flex items-center justify-end gap-1">
-                      <button type="button" data-edit-game class="rounded-lg p-2 text-muted hover:bg-bg-card-hover hover:text-brand-cyan-light" aria-label="Modifier Elden Ring">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                      </button>
-                      <button type="button" data-toggle-game class="rounded-lg p-2 text-muted hover:bg-bg-card-hover hover:text-warning" aria-label="Désactiver">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                      </button>
-                      <button type="button" data-delete-game class="rounded-lg p-2 text-muted hover:bg-error/10 hover:text-error" aria-label="Supprimer">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="hover:bg-bg-card-hover/50">
-                  <td class="px-4 py-3">
-                    <img src="https://images.unsplash.com/photo-1493710667105-003dca9897c9?w=48&h=32&fit=crop" alt="Baldur's Gate 3" class="h-10 w-14 rounded object-cover" loading="lazy">
-                  </td>
-                  <td class="px-4 py-3">
-                    <p class="font-medium text-white">Baldur's Gate 3</p>
-                    <p class="text-xs text-muted">SKU: GS-BG3-PC</p>
-                  </td>
-                  <td class="px-4 py-3">
-                    <span class="rounded bg-bg-card-hover px-2 py-0.5 text-xs text-white">PC</span>
-                    <span class="rounded bg-bg-card-hover px-2 py-0.5 text-xs text-blue-400 ml-1">PS5</span>
-                  </td>
-                  <td class="px-4 py-3 font-semibold text-white">41,99 €</td>
-                  <td class="px-4 py-3"><span class="rounded-full bg-success/20 px-2.5 py-1 text-xs font-medium text-success">Actif</span></td>
-                  <td class="px-4 py-3"><span class="text-white">87</span></td>
-                  <td class="px-4 py-3">
-                    <div class="flex items-center justify-end gap-1">
-                      <button type="button" data-edit-game class="rounded-lg p-2 text-muted hover:bg-bg-card-hover hover:text-brand-cyan-light" aria-label="Modifier">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                      </button>
-                      <button type="button" data-toggle-game class="rounded-lg p-2 text-muted hover:bg-bg-card-hover hover:text-warning" aria-label="Désactiver">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                      </button>
-                      <button type="button" data-delete-game class="rounded-lg p-2 text-muted hover:bg-error/10 hover:text-error" aria-label="Supprimer">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="hover:bg-bg-card-hover/50">
-                  <td class="px-4 py-3">
-                    <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=48&h=32&fit=crop" alt="Starfield" class="h-10 w-14 rounded object-cover" loading="lazy">
-                  </td>
-                  <td class="px-4 py-3">
-                    <p class="font-medium text-white">Starfield Premium</p>
-                    <p class="text-xs text-muted">SKU: GS-SF-XBOX</p>
-                  </td>
-                  <td class="px-4 py-3"><span class="rounded bg-bg-card-hover px-2 py-0.5 text-xs text-green-400">Xbox</span></td>
-                  <td class="px-4 py-3 font-semibold text-white">54,99 €</td>
-                  <td class="px-4 py-3"><span class="rounded-full bg-warning/20 px-2.5 py-1 text-xs font-medium text-warning">Brouillon</span></td>
-                  <td class="px-4 py-3"><span class="text-white">24</span></td>
-                  <td class="px-4 py-3">
-                    <div class="flex items-center justify-end gap-1">
-                      <button type="button" data-edit-game class="rounded-lg p-2 text-muted hover:bg-bg-card-hover hover:text-brand-cyan-light" aria-label="Modifier">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                      </button>
-                      <button type="button" data-toggle-game class="rounded-lg p-2 text-muted hover:bg-bg-card-hover hover:text-success" aria-label="Activer">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                      </button>
-                      <button type="button" data-delete-game class="rounded-lg p-2 text-muted hover:bg-error/10 hover:text-error" aria-label="Supprimer">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="hover:bg-bg-card-hover/50">
-                  <td class="px-4 py-3">
-                    <img src="https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=48&h=32&fit=crop" alt="Black Myth: Wukong" class="h-10 w-14 rounded object-cover" loading="lazy">
-                  </td>
-                  <td class="px-4 py-3">
-                    <p class="font-medium text-white">Black Myth: Wukong</p>
-                    <p class="text-xs text-muted">SKU: GS-BMW-PC</p>
-                  </td>
-                  <td class="px-4 py-3"><span class="rounded bg-bg-card-hover px-2 py-0.5 text-xs text-white">PC</span></td>
-                  <td class="px-4 py-3 font-semibold text-white">59,99 €</td>
-                  <td class="px-4 py-3"><span class="rounded-full bg-success/20 px-2.5 py-1 text-xs font-medium text-success">Actif</span></td>
-                  <td class="px-4 py-3"><span class="text-error font-medium">0</span></td>
-                  <td class="px-4 py-3">
-                    <div class="flex items-center justify-end gap-1">
-                      <button type="button" data-edit-game class="rounded-lg p-2 text-muted hover:bg-bg-card-hover hover:text-brand-cyan-light" aria-label="Modifier">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                      </button>
-                      <button type="button" data-toggle-game class="rounded-lg p-2 text-muted hover:bg-bg-card-hover hover:text-warning" aria-label="Désactiver">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                      </button>
-                      <button type="button" data-delete-game class="rounded-lg p-2 text-muted hover:bg-error/10 hover:text-error" aria-label="Supprimer">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                      </button>
+                      </a>
+                      <form th:action="@{/admin/games/{id}/deactivate(id=${game.id})}" method="post" class="inline">
+                        <button type="submit" class="rounded-lg p-2 text-muted hover:bg-bg-card-hover hover:text-warning" aria-label="Désactiver">
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </button>
+                      </form>
                     </div>
                   </td>
                 </tr>
@@ -461,6 +266,6 @@
     </template>
   </div>
 
-  <script src="../js/main.js"></script>
+  <div th:replace="~{_layout :: scripts}"></div>
 </body>
 </html>

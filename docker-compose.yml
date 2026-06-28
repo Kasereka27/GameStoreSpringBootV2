@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: gamestore-postgres
+    environment:
+      POSTGRES_DB: gamestore
+      POSTGRES_USER: gamestore
+      POSTGRES_PASSWORD: gamestore
+    ports:
+      - "5432:5432"
+    volumes:
+      - gamestore_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gamestore -d gamestore"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: gamestore-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - gamestore_redis_data:/data
+
+  adminer:
+    image: adminer:4
+    container_name: gamestore-adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  gamestore_pg_data:
+  gamestore_redis_data:
