@@ -23,4 +23,6 @@ public interface UserService {
 	void requestPasswordReset(String email);
 
 	void resetPassword(ResetPasswordForm form);
+
+	void deactivateAccount(UUID userId);
 }

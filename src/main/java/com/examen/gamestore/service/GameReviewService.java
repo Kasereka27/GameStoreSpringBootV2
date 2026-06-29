@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.examen.gamestore.domain.model.GameReview;
+import com.examen.gamestore.web.dto.AdminReviewView;
 import com.examen.gamestore.web.dto.RatingDistribution;
 import com.examen.gamestore.web.dto.request.ReviewForm;
 
@@ -17,4 +18,12 @@ public interface GameReviewService {
 	Optional<GameReview> getUserReview(UUID gameId, UUID userId);
 
 	void submitReview(UUID gameId, UUID userId, ReviewForm form);
+
+	void updateReview(UUID gameId, UUID userId, ReviewForm form);
+
+	void deleteReview(UUID gameId, UUID userId);
+
+	List<AdminReviewView> listReviewsForAdmin(UUID gameId, int page, int pageSize);
+
+	void deleteReviewByAdmin(UUID reviewId);
 }

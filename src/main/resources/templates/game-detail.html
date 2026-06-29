@@ -241,6 +241,29 @@
             </ul>
 
             <div sec:authorize="isAuthenticated()" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+              <form th:if="${userAlreadyReviewed}"
+                    class="mt-8 rounded-xl border border-gaming-border bg-gaming-surface p-6"
+                    th:action="@{/jeu/{slug}/avis/modifier(slug=${game.slug})}" th:object="${reviewForm}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <h3 class="text-lg font-semibold text-white">Modifier votre avis</h3>
+                <div class="mt-4">
+                  <select th:field="*{rating}" required class="mt-2 w-full rounded-lg border border-gaming-border bg-gaming-bg px-4 py-2 text-sm text-white">
+                    <option value="5">5 — Excellent</option>
+                    <option value="4">4 — Très bien</option>
+                    <option value="3">3 — Correct</option>
+                    <option value="2">2 — Décevant</option>
+                    <option value="1">1 — Mauvais</option>
+                  </select>
+                </div>
+                <textarea th:field="*{content}" rows="4" required class="mt-4 w-full rounded-lg border border-gaming-border bg-gaming-bg px-4 py-3 text-sm text-white"></textarea>
+                <div class="mt-4 flex gap-3">
+                  <button type="submit" class="rounded-lg bg-gaming-purple px-6 py-2.5 text-sm font-semibold text-white">Mettre à jour</button>
+                </div>
+              </form>
+              <form th:if="${userAlreadyReviewed}" th:action="@{/jeu/{slug}/avis/supprimer(slug=${game.slug})}" method="post" class="mt-3">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit" class="text-sm text-red-400 hover:underline" onclick="return confirm('Supprimer votre avis ?')">Supprimer mon avis</button>
+              </form>
               <form th:if="${!userAlreadyReviewed}"
                     class="mt-8 rounded-xl border border-gaming-border bg-gaming-surface p-6"
                     th:action="@{/jeu/{slug}/avis(slug=${game.slug})}" th:object="${reviewForm}" method="post"
@@ -268,7 +291,6 @@
                   Publier mon avis
                 </button>
               </form>
-              <p th:if="${userAlreadyReviewed}" class="mt-8 text-sm text-gaming-muted">Vous avez déjà publié un avis pour ce jeu.</p>
             </div>
             <p sec:authorize="!isAuthenticated()" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
                class="mt-8 text-sm text-gaming-muted">

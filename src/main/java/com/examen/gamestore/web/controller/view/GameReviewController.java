@@ -54,4 +54,45 @@ public class GameReviewController {
 
 		return "redirect:/jeu/" + slug + "#reviews-title";
 	}
+
+	@PostMapping("/jeu/{slug}/avis/modifier")
+	public String updateReview(
+			@PathVariable String slug,
+			@Valid @ModelAttribute("reviewForm") ReviewForm reviewForm,
+			BindingResult bindingResult,
+			@AuthenticationPrincipal GameStoreUserDetails user,
+			RedirectAttributes redirectAttributes) {
+
+		if (bindingResult.hasErrors()) {
+			redirectAttributes.addFlashAttribute("reviewError", "Veuillez saisir une note (1-5) et un commentaire (10 caractères minimum).");
+			return "redirect:/jeu/" + slug + "#reviews-title";
+		}
+
+		var game = gameService.getGameBySlug(slug);
+		try {
+			reviewService.updateReview(game.getId(), user.getUser().getId(), reviewForm);
+			redirectAttributes.addFlashAttribute("successMessage", "Votre avis a été mis à jour.");
+		}
+		catch (IllegalStateException ex) {
+			redirectAttributes.addFlashAttribute("reviewError", ex.getMessage());
+		}
+		return "redirect:/jeu/" + slug + "#reviews-title";
+	}
+
+	@PostMapping("/jeu/{slug}/avis/supprimer")
+	public String deleteReview(
+			@PathVariable String slug,
+			@AuthenticationPrincipal GameStoreUserDetails user,
+			RedirectAttributes redirectAttributes) {
+
+		var game = gameService.getGameBySlug(slug);
+		try {
+			reviewService.deleteReview(game.getId(), user.getUser().getId());
+			redirectAttributes.addFlashAttribute("successMessage", "Votre avis a été supprimé.");
+		}
+		catch (IllegalStateException ex) {
+			redirectAttributes.addFlashAttribute("reviewError", ex.getMessage());
+		}
+		return "redirect:/jeu/" + slug + "#reviews-title";
+	}
 }

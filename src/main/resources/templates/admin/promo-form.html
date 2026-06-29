@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_layout :: head('Modifier promo — Admin', 'Édition code promo.')}"></head>
+<body class="bg-bg-dark text-text antialiased min-h-screen">
+<div class="flex min-h-screen">
+  <aside th:replace="~{admin/_sidebar :: sidebar(activePage='promos')}"></aside>
+  <div class="admin-content ml-64 flex flex-1 flex-col p-6 max-w-lg">
+    <div th:replace="~{admin/_alerts :: alerts}"></div>
+    <h1 class="text-2xl font-bold text-white mb-4">Modifier <span th:text="${promo.code}">CODE</span></h1>
+    <form th:action="@{/admin/promos/{id}(id=${promo.id})}" th:object="${promoForm}" method="post" class="space-y-4 rounded-xl border border-border bg-bg-card p-6">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+      <p class="text-sm text-muted">Code : <span class="text-white font-mono" th:text="${promo.code}">CODE</span></p>
+      <select th:field="*{discountType}" class="w-full rounded-lg border border-border bg-bg-dark px-3 py-2 text-sm text-white">
+        <option th:each="t : ${discountTypes}" th:value="${t}" th:text="${t}"></option>
+      </select>
+      <input type="number" th:field="*{discountValue}" step="0.01" required class="w-full rounded-lg border border-border bg-bg-dark px-3 py-2 text-sm text-white">
+      <input type="number" th:field="*{minOrderAmount}" step="0.01" placeholder="Montant min." class="w-full rounded-lg border border-border bg-bg-dark px-3 py-2 text-sm text-white">
+      <input type="number" th:field="*{maxUsages}" placeholder="Utilisations max." class="w-full rounded-lg border border-border bg-bg-dark px-3 py-2 text-sm text-white">
+      <label class="flex items-center gap-2 text-sm text-white"><input type="checkbox" th:field="*{active}"> Actif</label>
+      <button type="submit" class="rounded-lg bg-brand-purple px-4 py-2 text-sm text-white">Enregistrer</button>
+    </form>
+  </div>
+</div>
+<div th:replace="~{_layout :: scripts}"></div>
+</body>
+</html>

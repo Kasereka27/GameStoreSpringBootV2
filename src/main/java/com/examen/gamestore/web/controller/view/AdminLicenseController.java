@@ -3,15 +3,16 @@ package com.examen.gamestore.web.controller.view;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.stream.Collectors;
-
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -88,5 +89,25 @@ public class AdminLicenseController {
 		redirectAttributes.addFlashAttribute("successMessage",
 				imported + " clé(s) importée(s) avec succès.");
 		return "redirect:/admin/licenses";
+	}
+
+	@GetMapping("/admin/licenses/game/{gameId}")
+	public String gameKeys(@PathVariable UUID gameId, @RequestParam(defaultValue = "1") int page, Model model) {
+		model.addAttribute("game", gameService.getGameById(gameId));
+		model.addAttribute("keys", licenseKeyAdminService.listKeysByGame(gameId, page, 50));
+		model.addAttribute("page", page);
+		return "admin/license-game";
+	}
+
+	@PostMapping("/admin/licenses/keys/{keyId}/delete")
+	public String deleteKey(@PathVariable UUID keyId, @RequestParam UUID gameId, RedirectAttributes redirectAttributes) {
+		try {
+			licenseKeyAdminService.deleteKey(keyId);
+			redirectAttributes.addFlashAttribute("successMessage", "Clé supprimée.");
+		}
+		catch (IllegalStateException ex) {
+			redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+		}
+		return "redirect:/admin/licenses/game/" + gameId;
 	}
 }

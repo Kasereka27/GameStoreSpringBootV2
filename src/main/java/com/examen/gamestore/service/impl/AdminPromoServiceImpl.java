@@ -43,6 +43,32 @@ public class AdminPromoServiceImpl implements AdminPromoService {
 	}
 
 	@Override
+	public PromoCode getById(UUID id) {
+		return promoCodeRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Code promo introuvable."));
+	}
+
+	@Override
+	@Transactional
+	public void update(UUID id, PromoCodeForm form) {
+		PromoCode promo = getById(id);
+		promo.setDiscountType(form.getDiscountType());
+		promo.setDiscountValue(form.getDiscountValue());
+		promo.setMinOrderAmount(form.getMinOrderAmount());
+		promo.setMaxUsages(form.getMaxUsages());
+		promo.setExpiresAt(form.getExpiresAt());
+		promo.setActive(form.isActive());
+		promoCodeRepository.update(promo);
+	}
+
+	@Override
+	@Transactional
+	public void delete(UUID id) {
+		getById(id);
+		promoCodeRepository.deleteById(id);
+	}
+
+	@Override
 	@Transactional
 	public void setActive(UUID id, boolean active) {
 		promoCodeRepository.updateActive(id, active);

@@ -2,6 +2,7 @@ package com.examen.gamestore.web.dto.request;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,8 @@ public class GameForm {
 
 	@DecimalMin("0.0")
 	private BigDecimal discountedPrice;
+
+	private LocalDate discountEndDate;
 
 	@NotNull
 	private Platform platform;
@@ -138,6 +141,14 @@ public class GameForm {
 
 	public void setDiscountedPrice(BigDecimal discountedPrice) {
 		this.discountedPrice = discountedPrice;
+	}
+
+	public LocalDate getDiscountEndDate() {
+		return discountEndDate;
+	}
+
+	public void setDiscountEndDate(LocalDate discountEndDate) {
+		this.discountEndDate = discountEndDate;
 	}
 
 	public Platform getPlatform() {

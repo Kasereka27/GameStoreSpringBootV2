@@ -87,8 +87,14 @@ public class CatalogueController {
 		model.addAttribute("pageDescription", game.getShortDescription());
 
 		if (user != null) {
-			model.addAttribute("userAlreadyReviewed",
-					reviewService.getUserReview(game.getId(), user.getUser().getId()).isPresent());
+			var userReview = reviewService.getUserReview(game.getId(), user.getUser().getId());
+			model.addAttribute("userAlreadyReviewed", userReview.isPresent());
+			userReview.ifPresent(review -> {
+				ReviewForm form = new ReviewForm();
+				form.setRating(review.getRating());
+				form.setContent(review.getContent());
+				model.addAttribute("reviewForm", form);
+			});
 		}
 		else {
 			model.addAttribute("userAlreadyReviewed", false);

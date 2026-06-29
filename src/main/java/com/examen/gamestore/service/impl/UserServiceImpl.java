@@ -124,4 +124,10 @@ public class UserServiceImpl implements UserService {
 		userRepository.updatePassword(token.getUserId(), passwordEncoder.encode(form.getPassword()));
 		tokenRepository.markUsed(token.getId());
 	}
+
+	@Override
+	@Transactional
+	public void deactivateAccount(UUID userId) {
+		userRepository.setEnabled(userId, false);
+	}
 }

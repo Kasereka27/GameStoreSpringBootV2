@@ -120,6 +120,16 @@ public class CartController {
 		return "redirect:/panier";
 	}
 
+	@PostMapping("/panier/vider")
+	public String clearCart(
+			HttpSession session,
+			@AuthenticationPrincipal GameStoreUserDetails user,
+			RedirectAttributes redirectAttributes) {
+		cartService.clearCart(session, resolveUserId(user));
+		redirectAttributes.addFlashAttribute("cartSuccess", "Panier vidé.");
+		return "redirect:/panier";
+	}
+
 	private void populateCartModel(HttpSession session, GameStoreUserDetails user, Model model) {
 		model.addAttribute("cart", cartService.getCart(session, resolveUserId(user)));
 		model.addAttribute("activePage", "cart");

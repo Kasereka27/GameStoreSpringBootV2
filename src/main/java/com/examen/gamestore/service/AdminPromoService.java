@@ -12,5 +12,11 @@ public interface AdminPromoService {
 
 	UUID create(PromoCodeForm form);
 
+	PromoCode getById(UUID id);
+
+	void update(UUID id, PromoCodeForm form);
+
+	void delete(UUID id);
+
 	void setActive(UUID id, boolean active);
 }

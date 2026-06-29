@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_layout :: head('Modifier genre — Admin', 'Modifier un genre.')}"></head>
+<body class="bg-bg-dark text-text antialiased min-h-screen">
+<div class="flex min-h-screen">
+  <aside th:replace="~{admin/_sidebar :: sidebar(activePage='genres')}"></aside>
+  <div class="admin-content ml-64 flex flex-1 flex-col p-6">
+    <div th:replace="~{admin/_alerts :: alerts}"></div>
+    <h1 class="text-2xl font-bold text-white mb-4">Modifier le genre</h1>
+    <form th:action="@{/admin/genres/{id}(id=${genre.id})}" th:object="${genreForm}" method="post" class="max-w-md space-y-4 rounded-xl border border-border bg-bg-card p-6">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+      <input type="text" th:field="*{label}" required class="w-full rounded-lg border border-border bg-bg-dark px-3 py-2 text-sm text-white">
+      <input type="text" th:field="*{slug}" class="w-full rounded-lg border border-border bg-bg-dark px-3 py-2 text-sm text-white">
+      <button type="submit" class="rounded-lg bg-brand-purple px-4 py-2 text-sm text-white">Enregistrer</button>
+    </form>
+  </div>
+</div>
+<div th:replace="~{_layout :: scripts}"></div>
+</body>
+</html>

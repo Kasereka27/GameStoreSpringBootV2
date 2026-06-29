@@ -3,6 +3,7 @@ package com.examen.gamestore.repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -104,6 +105,94 @@ public class UserRepository {
 				.query(Long.class)
 				.single();
 		return count != null ? count : 0L;
+	}
+
+	public List<User> findAll(String query, UserRole role, Boolean enabled, int limit, int offset) {
+		var sql = new StringBuilder("""
+				SELECT id, email, password_hash, first_name, last_name, role,
+				       enabled, email_verified, created_at, updated_at
+				FROM users WHERE 1=1
+				""");
+		if (query != null && !query.isBlank()) {
+			sql.append(" AND (LOWER(email) LIKE :q OR LOWER(first_name) LIKE :q OR LOWER(last_name) LIKE :q)");
+		}
+		if (role != null) {
+			sql.append(" AND role = :role");
+		}
+		if (enabled != null) {
+			sql.append(" AND enabled = :enabled");
+		}
+		sql.append(" ORDER BY created_at DESC LIMIT :limit OFFSET :offset");
+
+		var spec = jdbcClient.sql(sql.toString())
+				.param("limit", limit)
+				.param("offset", offset);
+		if (query != null && !query.isBlank()) {
+			spec = spec.param("q", "%" + query.toLowerCase() + "%");
+		}
+		if (role != null) {
+			spec = spec.param("role", role.name());
+		}
+		if (enabled != null) {
+			spec = spec.param("enabled", enabled);
+		}
+		return spec.query(this::mapUser).list();
+	}
+
+	public long countAll(String query, UserRole role, Boolean enabled) {
+		var sql = new StringBuilder("SELECT COUNT(*) FROM users WHERE 1=1");
+		if (query != null && !query.isBlank()) {
+			sql.append(" AND (LOWER(email) LIKE :q OR LOWER(first_name) LIKE :q OR LOWER(last_name) LIKE :q)");
+		}
+		if (role != null) {
+			sql.append(" AND role = :role");
+		}
+		if (enabled != null) {
+			sql.append(" AND enabled = :enabled");
+		}
+		var spec = jdbcClient.sql(sql.toString());
+		if (query != null && !query.isBlank()) {
+			spec = spec.param("q", "%" + query.toLowerCase() + "%");
+		}
+		if (role != null) {
+			spec = spec.param("role", role.name());
+		}
+		if (enabled != null) {
+			spec = spec.param("enabled", enabled);
+		}
+		Long count = spec.query(Long.class).single();
+		return count != null ? count : 0L;
+	}
+
+	public void updateAdminFields(UUID id, UserRole role, boolean enabled, boolean emailVerified) {
+		jdbcClient.sql("""
+				UPDATE users SET role = :role, enabled = :enabled, email_verified = :emailVerified,
+					updated_at = CURRENT_TIMESTAMP
+				WHERE id = :id
+				""")
+				.param("id", id)
+				.param("role", role.name())
+				.param("enabled", enabled)
+				.param("emailVerified", emailVerified)
+				.update();
+	}
+
+	public long countByRole(UserRole role) {
+		Long count = jdbcClient.sql("SELECT COUNT(*) FROM users WHERE role = :role AND enabled = TRUE")
+				.param("role", role.name())
+				.query(Long.class)
+				.single();
+		return count != null ? count : 0L;
+	}
+
+	public void setEnabled(UUID id, boolean enabled) {
+		jdbcClient.sql("""
+				UPDATE users SET enabled = :enabled, updated_at = CURRENT_TIMESTAMP
+				WHERE id = :id
+				""")
+				.param("id", id)
+				.param("enabled", enabled)
+				.update();
 	}
 
 	private User mapUser(ResultSet rs, int rowNum) throws SQLException {

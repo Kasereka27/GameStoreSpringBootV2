@@ -88,6 +88,69 @@ public class GameReviewRepository {
 				.collect(java.util.stream.Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
+	public Optional<GameReview> findById(UUID id) {
+		return jdbcClient.sql("""
+				SELECT r.id, r.game_id, r.user_id, r.rating, r.content,
+				       r.verified_purchase, r.helpful_count, r.created_at,
+				       u.first_name, u.last_name
+				FROM game_reviews r
+				INNER JOIN users u ON u.id = r.user_id
+				WHERE r.id = :id
+				""")
+				.param("id", id)
+				.query(this::mapReviewRow)
+				.optional();
+	}
+
+	public void update(UUID id, int rating, String content) {
+		jdbcClient.sql("""
+				UPDATE game_reviews SET rating = :rating, content = :content WHERE id = :id
+				""")
+				.param("id", id)
+				.param("rating", rating)
+				.param("content", content)
+				.update();
+	}
+
+	public void deleteById(UUID id) {
+		jdbcClient.sql("DELETE FROM game_reviews WHERE id = :id")
+				.param("id", id)
+				.update();
+	}
+
+	public List<com.examen.gamestore.web.dto.AdminReviewView> findAllForAdmin(UUID gameId, int limit, int offset) {
+		var sql = new StringBuilder("""
+				SELECT r.id, r.game_id, g.title, g.slug, r.rating, r.content, r.created_at,
+				       u.first_name, u.last_name
+				FROM game_reviews r
+				INNER JOIN games g ON g.id = r.game_id
+				INNER JOIN users u ON u.id = r.user_id
+				WHERE 1=1
+				""");
+		if (gameId != null) {
+			sql.append(" AND r.game_id = :gameId");
+		}
+		sql.append(" ORDER BY r.created_at DESC LIMIT :limit OFFSET :offset");
+		var spec = jdbcClient.sql(sql.toString())
+				.param("limit", limit)
+				.param("offset", offset);
+		if (gameId != null) {
+			spec = spec.param("gameId", gameId);
+		}
+		return spec.query((rs, rowNum) -> {
+			var view = new com.examen.gamestore.web.dto.AdminReviewView();
+			view.setId(UUID.fromString(rs.getString("id")));
+			view.setGameId(UUID.fromString(rs.getString("game_id")));
+			view.setGameTitle(rs.getString("title"));
+			view.setGameSlug(rs.getString("slug"));
+			view.setRating(rs.getInt("rating"));
+			view.setContent(rs.getString("content"));
+			view.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
+			view.setAuthorName(rs.getString("first_name") + " " + rs.getString("last_name"));
+			return view;
+		}).list();
+	}
+
 	public void refreshGameRatingStats(UUID gameId) {
 		jdbcClient.sql("""
 				UPDATE games SET

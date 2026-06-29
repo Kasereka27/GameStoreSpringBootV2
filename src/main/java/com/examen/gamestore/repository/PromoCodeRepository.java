@@ -67,6 +67,39 @@ public class PromoCodeRepository {
 		return id;
 	}
 
+	public Optional<PromoCode> findById(UUID id) {
+		return jdbcClient.sql("""
+				SELECT id, code, discount_type, discount_value, min_order_amount,
+				       max_usages, usage_count, expires_at, active
+				FROM promo_codes WHERE id = :id
+				""")
+				.param("id", id)
+				.query(this::mapRow)
+				.optional();
+	}
+
+	public void update(PromoCode promo) {
+		jdbcClient.sql("""
+				UPDATE promo_codes SET
+					discount_type = :discountType, discount_value = :discountValue,
+					min_order_amount = :minOrderAmount, max_usages = :maxUsages,
+					expires_at = :expiresAt, active = :active
+				WHERE id = :id
+				""")
+				.param("id", promo.getId())
+				.param("discountType", promo.getDiscountType().name())
+				.param("discountValue", promo.getDiscountValue())
+				.param("minOrderAmount", promo.getMinOrderAmount())
+				.param("maxUsages", promo.getMaxUsages())
+				.param("expiresAt", promo.getExpiresAt())
+				.param("active", promo.isActive())
+				.update();
+	}
+
+	public void deleteById(UUID id) {
+		jdbcClient.sql("DELETE FROM promo_codes WHERE id = :id").param("id", id).update();
+	}
+
 	public void updateActive(UUID id, boolean active) {
 		jdbcClient.sql("""
 				UPDATE promo_codes SET active = :active WHERE id = :id

@@ -3,22 +3,26 @@ package com.examen.gamestore.web.controller.view;
 import java.util.UUID;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.examen.gamestore.exception.EmailAlreadyExistsException;
-import org.springframework.security.core.userdetails.UserDetails;
 import com.examen.gamestore.service.OrderService;
 import com.examen.gamestore.service.UserService;
 import com.examen.gamestore.web.dto.request.ChangePasswordForm;
 import com.examen.gamestore.web.dto.request.ProfileForm;
 import com.examen.gamestore.web.mapper.UserMapper;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @Controller
@@ -51,6 +55,18 @@ public class AccountController {
 		populateAccountModel(principal, model, "orders");
 		model.addAttribute("orders", orderService.getOrderSummaries(resolveUserId(principal)));
 		return "account";
+	}
+
+	@GetMapping("/compte/commandes/{id}")
+	public String orderDetail(
+			@PathVariable UUID id,
+			@AuthenticationPrincipal UserDetails principal,
+			Model model) {
+		var order = orderService.getOrderForUser(id, resolveUserId(principal));
+		model.addAttribute("order", order);
+		model.addAttribute("items", order.getItems());
+		model.addAttribute("user", userService.getById(resolveUserId(principal)));
+		return "account-order-detail";
 	}
 
 	@PostMapping("/compte/profil")
@@ -101,6 +117,19 @@ public class AccountController {
 			populateAccountModel(principal, model, "security");
 			return "account";
 		}
+	}
+
+	@PostMapping("/compte/supprimer")
+	public String deactivateAccount(
+			@AuthenticationPrincipal UserDetails principal,
+			HttpServletRequest request,
+			HttpServletResponse response,
+			RedirectAttributes redirectAttributes) {
+		var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+		userService.deactivateAccount(resolveUserId(principal));
+		new SecurityContextLogoutHandler().logout(request, response, auth);
+		redirectAttributes.addFlashAttribute("successMessage", "Votre compte a été désactivé.");
+		return "redirect:/";
 	}
 
 	private String accountPage(UserDetails principal, Model model, String activeSection) {

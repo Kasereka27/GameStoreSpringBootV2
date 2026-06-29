@@ -83,6 +83,13 @@
             <a th:href="@{/checkout}" class="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-brand-purple to-brand-purple-light px-6 py-3.5 text-sm font-semibold text-white transition hover:opacity-90">
               Passer commande
             </a>
+
+            <form th:if="${cart.itemCount > 0}" th:action="@{/panier/vider}" method="post" class="mt-3">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+              <button type="submit" class="w-full rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-muted transition hover:border-error/40 hover:text-error">
+                Vider le panier
+              </button>
+            </form>
           </div>
         </aside>
       </div>

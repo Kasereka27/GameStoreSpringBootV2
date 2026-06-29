@@ -256,13 +256,13 @@ public class GameRepository {
 		jdbcClient.sql("""
 				INSERT INTO games (
 					id, title, slug, short_description, long_description,
-					publisher, developer, release_date, base_price, discounted_price,
+					publisher, developer, release_date, base_price, discounted_price, discount_end_date,
 					platform, pegi_rating, status, cover_image_url, trailer_url,
 					min_specs, recommended_specs, supported_languages,
 					featured, bestseller, created_at, updated_at
 				) VALUES (
 					:id, :title, :slug, :shortDescription, :longDescription,
-					:publisher, :developer, :releaseDate, :basePrice, :discountedPrice,
+					:publisher, :developer, :releaseDate, :basePrice, :discountedPrice, :discountEndDate,
 					:platform, :pegiRating, :status, :coverImageUrl, :trailerUrl,
 					:minSpecs, :recommendedSpecs, :supportedLanguages,
 					:featured, :bestseller, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
@@ -278,6 +278,7 @@ public class GameRepository {
 				.param("releaseDate", game.getReleaseDate())
 				.param("basePrice", game.getBasePrice())
 				.param("discountedPrice", game.getDiscountedPrice())
+				.param("discountEndDate", game.getDiscountEndDate())
 				.param("platform", game.getPlatform().name())
 				.param("pegiRating", game.getPegiRating() != null ? game.getPegiRating().name() : null)
 				.param("status", game.getStatus().name())
@@ -299,7 +300,7 @@ public class GameRepository {
 					short_description = :shortDescription, long_description = :longDescription,
 					publisher = :publisher, developer = :developer,
 					release_date = :releaseDate, base_price = :basePrice,
-					discounted_price = :discountedPrice, platform = :platform,
+					discounted_price = :discountedPrice, discount_end_date = :discountEndDate, platform = :platform,
 					pegi_rating = :pegiRating, status = :status,
 					cover_image_url = :coverImageUrl, trailer_url = :trailerUrl,
 					min_specs = :minSpecs, recommended_specs = :recommendedSpecs,
@@ -318,6 +319,7 @@ public class GameRepository {
 				.param("releaseDate", game.getReleaseDate())
 				.param("basePrice", game.getBasePrice())
 				.param("discountedPrice", game.getDiscountedPrice())
+				.param("discountEndDate", game.getDiscountEndDate())
 				.param("platform", game.getPlatform().name())
 				.param("pegiRating", game.getPegiRating() != null ? game.getPegiRating().name() : null)
 				.param("status", game.getStatus().name())

@@ -56,6 +56,24 @@ public class LicenseKeyAdminServiceImpl implements LicenseKeyAdminService {
 		return imported;
 	}
 
+	@Override
+	public List<com.examen.gamestore.web.dto.LicenseKeyListView> listKeysByGame(UUID gameId, int page, int pageSize) {
+		gameRepository.findById(gameId)
+				.orElseThrow(() -> new GameNotFoundException(gameId.toString()));
+		int size = Math.max(pageSize, 1);
+		int offset = (Math.max(page, 1) - 1) * size;
+		return licenseKeyRepository.findDetailedByGameId(gameId, size, offset);
+	}
+
+	@Override
+	@Transactional
+	public void deleteKey(UUID keyId) {
+		int deleted = licenseKeyRepository.deleteIfAvailable(keyId);
+		if (deleted == 0) {
+			throw new IllegalStateException("Seules les clés disponibles peuvent être supprimées.");
+		}
+	}
+
 	private String parseKeyLine(String line) {
 		if (line.contains(",")) {
 			String[] parts = line.split(",", 2);

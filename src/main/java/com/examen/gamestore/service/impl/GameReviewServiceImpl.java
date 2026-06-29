@@ -73,6 +73,40 @@ public class GameReviewServiceImpl implements GameReviewService {
 		reviewRepository.refreshGameRatingStats(gameId);
 	}
 
+	@Override
+	@Transactional
+	public void updateReview(UUID gameId, UUID userId, ReviewForm form) {
+		GameReview existing = reviewRepository.findByGameIdAndUserId(gameId, userId)
+				.orElseThrow(() -> new IllegalStateException("Avis introuvable."));
+		reviewRepository.update(existing.getId(), form.getRating(), form.getContent().trim());
+		reviewRepository.refreshGameRatingStats(gameId);
+	}
+
+	@Override
+	@Transactional
+	public void deleteReview(UUID gameId, UUID userId) {
+		GameReview existing = reviewRepository.findByGameIdAndUserId(gameId, userId)
+				.orElseThrow(() -> new IllegalStateException("Avis introuvable."));
+		reviewRepository.deleteById(existing.getId());
+		reviewRepository.refreshGameRatingStats(gameId);
+	}
+
+	@Override
+	public List<com.examen.gamestore.web.dto.AdminReviewView> listReviewsForAdmin(UUID gameId, int page, int pageSize) {
+		int size = Math.max(pageSize, 1);
+		int offset = (Math.max(page, 1) - 1) * size;
+		return reviewRepository.findAllForAdmin(gameId, size, offset);
+	}
+
+	@Override
+	@Transactional
+	public void deleteReviewByAdmin(UUID reviewId) {
+		GameReview review = reviewRepository.findById(reviewId)
+				.orElseThrow(() -> new IllegalArgumentException("Avis introuvable."));
+		reviewRepository.deleteById(reviewId);
+		reviewRepository.refreshGameRatingStats(review.getGameId());
+	}
+
 	private void ensureGameExists(UUID gameId) {
 		if (gameRepository.findById(gameId).isEmpty()) {
 			throw new GameNotFoundException(gameId.toString());

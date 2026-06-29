@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_layout :: head('Clés — Admin', 'Listing des clés par jeu.')}"></head>
+<body class="bg-bg-dark text-text antialiased min-h-screen">
+<div class="flex min-h-screen">
+  <aside th:replace="~{admin/_sidebar :: sidebar(activePage='licenses')}"></aside>
+  <div class="admin-content ml-64 flex flex-1 flex-col p-6">
+    <div th:replace="~{admin/_alerts :: alerts}"></div>
+    <a th:href="@{/admin/licenses}" class="text-sm text-muted hover:text-white">← Stock</a>
+    <h1 class="text-2xl font-bold text-white mt-2" th:text="${game.title}">Jeu</h1>
+    <table class="mt-6 w-full text-sm rounded-xl border border-border bg-bg-card">
+      <thead class="bg-bg-dark/50 border-b border-border">
+        <tr><th class="px-6 py-3 text-muted">Clé</th><th class="px-6 py-3 text-muted">Statut</th><th class="px-6 py-3 text-muted">Commande</th><th class="px-6 py-3 text-muted"></th></tr>
+      </thead>
+      <tbody class="divide-y divide-border">
+        <tr th:each="k : ${keys}">
+          <td class="px-6 py-4 font-mono text-brand-cyan-light" th:text="${k.keyValue}">KEY</td>
+          <td class="px-6 py-4" th:text="${k.status}">AVAILABLE</td>
+          <td class="px-6 py-4 text-muted" th:text="${k.orderNumber != null ? k.orderNumber : '—'}">—</td>
+          <td class="px-6 py-4">
+            <form th:if="${k.status.name() == 'AVAILABLE'}" th:action="@{/admin/licenses/keys/{id}/delete(id=${k.id})}" method="post" class="inline">
+              <input type="hidden" name="gameId" th:value="${game.id}">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+              <button type="submit" class="text-error text-xs" onclick="return confirm('Supprimer cette clé ?')">Supprimer</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div th:replace="~{_layout :: scripts}"></div>
+</body>
+</html>

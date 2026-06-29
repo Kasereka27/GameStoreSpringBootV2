@@ -74,6 +74,12 @@
             </div>
 
             <div>
+              <label for="discountEndDate" class="mb-1 block text-sm font-medium text-muted">Fin de promo</label>
+              <input id="discountEndDate" type="date" th:field="*{discountEndDate}"
+                     class="w-full rounded-lg border border-border bg-bg-dark px-4 py-2 text-white focus:border-brand-purple focus:outline-none">
+            </div>
+
+            <div>
               <label for="platform" class="mb-1 block text-sm font-medium text-muted">Plateforme *</label>
               <select id="platform" th:field="*{platform}"
                       class="w-full rounded-lg border border-border bg-bg-dark px-4 py-2 text-white focus:border-brand-purple focus:outline-none">

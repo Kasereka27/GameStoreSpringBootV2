@@ -88,11 +88,16 @@
                   <span th:unless="${promo.active}" class="rounded-full bg-muted/20 px-2 py-1 text-xs text-muted">Inactif</span>
                 </td>
                 <td class="px-6 py-4">
+                  <a th:href="@{/admin/promos/{id}/edit(id=${promo.id})}" class="text-brand-cyan-light text-xs mr-2">Modifier</a>
                   <form th:action="@{/admin/promos/{id}/toggle(id=${promo.id})}" method="post" class="inline">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                     <input type="hidden" name="active" th:value="${!promo.active}">
                     <button type="submit" class="text-xs text-brand-cyan-light hover:underline"
                             th:text="${promo.active} ? 'Désactiver' : 'Activer'">Toggle</button>
+                  </form>
+                  <form th:action="@{/admin/promos/{id}/delete(id=${promo.id})}" method="post" class="inline ml-2">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit" class="text-error text-xs" onclick="return confirm('Supprimer ce code ?')">Supprimer</button>
                   </form>
                 </td>
               </tr>

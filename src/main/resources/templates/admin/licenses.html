@@ -56,6 +56,7 @@
                   <th class="px-6 py-3 font-medium text-muted">Vendues</th>
                   <th class="px-6 py-3 font-medium text-muted">Total</th>
                   <th class="px-6 py-3 font-medium text-muted">Alerte</th>
+                  <th class="px-6 py-3 font-medium text-muted">Actions</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-border">
@@ -71,6 +72,9 @@
                   <td class="px-6 py-4">
                     <span th:if="${stock.lowStock}" class="rounded-full bg-error/20 px-2 py-1 text-xs font-medium text-error">Stock faible</span>
                     <span th:unless="${stock.lowStock}" class="text-xs text-muted">OK</span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <a th:href="@{/admin/licenses/game/{id}(id=${stock.gameId})}" class="text-brand-cyan-light text-xs">Voir les clés</a>
                   </td>
                 </tr>
               </tbody>

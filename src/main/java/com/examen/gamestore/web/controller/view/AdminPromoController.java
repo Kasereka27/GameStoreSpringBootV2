@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.examen.gamestore.domain.enums.DiscountType;
+import com.examen.gamestore.domain.model.PromoCode;
 import com.examen.gamestore.service.AdminPromoService;
 import com.examen.gamestore.web.dto.request.PromoCodeForm;
 
@@ -60,6 +61,47 @@ public class AdminPromoController {
 			model.addAttribute("discountTypes", DiscountType.values());
 			return "admin/promos";
 		}
+		return "redirect:/admin/promos";
+	}
+
+	@GetMapping("/admin/promos/{id}/edit")
+	public String editPromo(@PathVariable UUID id, Model model) {
+		PromoCode promo = adminPromoService.getById(id);
+		PromoCodeForm form = new PromoCodeForm();
+		form.setCode(promo.getCode());
+		form.setDiscountType(promo.getDiscountType());
+		form.setDiscountValue(promo.getDiscountValue());
+		form.setMinOrderAmount(promo.getMinOrderAmount());
+		form.setMaxUsages(promo.getMaxUsages());
+		form.setExpiresAt(promo.getExpiresAt());
+		form.setActive(promo.isActive());
+		model.addAttribute("promo", promo);
+		model.addAttribute("promoForm", form);
+		model.addAttribute("discountTypes", DiscountType.values());
+		return "admin/promo-form";
+	}
+
+	@PostMapping("/admin/promos/{id}")
+	public String updatePromo(
+			@PathVariable UUID id,
+			@Valid @ModelAttribute("promoForm") PromoCodeForm form,
+			BindingResult bindingResult,
+			Model model,
+			RedirectAttributes redirectAttributes) {
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("promo", adminPromoService.getById(id));
+			model.addAttribute("discountTypes", DiscountType.values());
+			return "admin/promo-form";
+		}
+		adminPromoService.update(id, form);
+		redirectAttributes.addFlashAttribute("successMessage", "Code promo mis à jour.");
+		return "redirect:/admin/promos";
+	}
+
+	@PostMapping("/admin/promos/{id}/delete")
+	public String deletePromo(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
+		adminPromoService.delete(id);
+		redirectAttributes.addFlashAttribute("successMessage", "Code promo supprimé.");
 		return "redirect:/admin/promos";
 	}
 

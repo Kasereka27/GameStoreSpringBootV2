@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.examen.gamestore.domain.enums.LicenseKeyStatus;
 import com.examen.gamestore.domain.model.LicenseKey;
 import com.examen.gamestore.web.dto.GameStockView;
+import com.examen.gamestore.web.dto.LicenseKeyListView;
 
 @Repository
 public class LicenseKeyRepository {
@@ -128,6 +129,37 @@ public class LicenseKeyRepository {
 				""")
 				.param("orderId", orderId)
 				.update();
+	}
+
+	public int deleteIfAvailable(UUID id) {
+		return jdbcClient.sql("""
+				DELETE FROM license_keys WHERE id = :id AND status = 'AVAILABLE'
+				""")
+				.param("id", id)
+				.update();
+	}
+
+	public List<LicenseKeyListView> findDetailedByGameId(UUID gameId, int limit, int offset) {
+		return jdbcClient.sql("""
+				SELECT lk.id, lk.key_value, lk.status, o.order_number
+				FROM license_keys lk
+				LEFT JOIN orders o ON o.id = lk.order_id
+				WHERE lk.game_id = :gameId
+				ORDER BY lk.status ASC, lk.id DESC
+				LIMIT :limit OFFSET :offset
+				""")
+				.param("gameId", gameId)
+				.param("limit", limit)
+				.param("offset", offset)
+				.query((rs, rowNum) -> {
+					LicenseKeyListView view = new LicenseKeyListView();
+					view.setId(UUID.fromString(rs.getString("id")));
+					view.setKeyValue(rs.getString("key_value"));
+					view.setStatus(LicenseKeyStatus.fromString(rs.getString("status")));
+					view.setOrderNumber(rs.getString("order_number"));
+					return view;
+				})
+				.list();
 	}
 
 	public List<LicenseKey> findByGameId(UUID gameId, int limit) {
