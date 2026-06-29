@@ -24,13 +24,12 @@ import com.examen.gamestore.repository.OrderRepository;
 import com.examen.gamestore.repository.PromoCodeRepository;
 import com.examen.gamestore.service.CartService;
 import com.examen.gamestore.service.OrderService;
+import com.examen.gamestore.service.cart.CartScope;
 import com.examen.gamestore.web.dto.CartItemView;
 import com.examen.gamestore.web.dto.CartView;
 import com.examen.gamestore.web.dto.LibraryGameView;
 import com.examen.gamestore.web.dto.OrderSummaryView;
 import com.examen.gamestore.web.dto.request.CheckoutForm;
-
-import jakarta.servlet.http.HttpSession;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -56,8 +55,8 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	@Transactional
-	public Order checkout(UUID userId, CheckoutForm form, HttpSession session) {
-		CartView cart = cartService.getCart(session, userId);
+	public Order checkout(UUID userId, CheckoutForm form, CartScope cartScope) {
+		CartView cart = cartService.getCart(cartScope, userId);
 		if (cart.isEmpty()) {
 			throw new EmptyCartException();
 		}
@@ -68,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
 			}
 		}
 
-		PromoCode promo = cartService.resolvePromo(session);
+		PromoCode promo = cartService.resolvePromo(cartScope);
 		UUID promoId = promo != null ? promo.getId() : null;
 
 		Order order = new Order();
@@ -121,7 +120,7 @@ public class OrderServiceImpl implements OrderService {
 			promoCodeRepository.incrementUsage(promo.getId());
 		}
 
-		cartService.clearCart(session, userId);
+		cartService.clearCart(cartScope, userId);
 
 		emailService.sendOrderConfirmation(
 				form.getEmail(),

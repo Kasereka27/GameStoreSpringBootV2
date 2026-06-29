@@ -1,0 +1,409 @@
+### GameStore — Collection de requêtes HTTP
+### Client : VS Code REST Client (extension humao.rest-client)
+### Prérequis : application démarrée sur le port 8083
+### Swagger UI : http://localhost:8083/swagger-ui.html
+###
+### Les requêtes marquées # @name alimentent les références {{nom.response...}}.
+### Exécuter d'abord la requête source (ex. loginDemo), puis les requêtes dépendantes.
+
+@baseUrl = http://localhost:8083
+
+# Comptes démo (seed Flyway)
+@demoEmail = demo@gamestore.local
+@demoPassword = Demo1234!
+@adminEmail = admin@gamestore.local
+@adminPassword = Admin123!
+
+# Jeux démo
+@gameIdEldenRing = c3000001-0000-4000-8000-000000000002
+@gameIdCyberpunk = c3000001-0000-4000-8000-000000000001
+@gameSlugEldenRing = elden-ring
+@gameSlugCyberpunk = cyberpunk-2077
+
+###############################################################################
+# AUTHENTIFICATION — /api/auth
+###############################################################################
+
+### Inscription (nouvel utilisateur)
+# @name register
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "firstName": "Test",
+  "lastName": "API",
+  "email": "test-api-{{$timestamp}}@example.local",
+  "password": "Test1234!",
+  "confirmPassword": "Test1234!",
+  "acceptTerms": true
+}
+
+### Connexion — client démo
+# @name loginDemo
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "{{demoEmail}}",
+  "password": "{{demoPassword}}"
+}
+
+### Connexion — admin
+# @name loginAdmin
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "password": "{{adminPassword}}"
+}
+
+### Renouveler le token (refresh) — exécuter loginDemo avant
+# @name refreshTokens
+POST {{baseUrl}}/api/auth/refresh
+Content-Type: application/json
+Accept: application/json
+
+{
+  "refreshToken": "{{loginDemo.response.body.refreshToken}}"
+}
+
+### Déconnexion (révoque le refresh token)
+# Scénario 4 : exécuter refreshTokens avant cette requête.
+# Sinon, remplacer par {{loginDemo.response.body.refreshToken}}
+POST {{baseUrl}}/api/auth/logout
+Content-Type: application/json
+Accept: application/json
+
+{
+  "refreshToken": "{{refreshTokens.response.body.refreshToken}}"
+}
+
+### Mot de passe oublié
+POST {{baseUrl}}/api/auth/forgot-password
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "{{demoEmail}}"
+}
+
+### Réinitialisation mot de passe (token reçu par e-mail)
+POST {{baseUrl}}/api/auth/reset-password
+Content-Type: application/json
+Accept: application/json
+
+{
+  "token": "COLLER-LE-TOKEN-ICI",
+  "password": "Nouveau1234!",
+  "confirmPassword": "Nouveau1234!"
+}
+
+### Vérification e-mail (non implémentée — 501)
+GET {{baseUrl}}/api/auth/verify-email?token=EXEMPLE-TOKEN
+Accept: application/json
+
+### Connexion — identifiants invalides (401)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "{{demoEmail}}",
+  "password": "mauvais-mot-de-passe"
+}
+
+###############################################################################
+# CATALOGUE — /api/games (public)
+###############################################################################
+
+### Liste paginée des jeux
+GET {{baseUrl}}/api/games?page=1&pageSize=12
+Accept: application/json
+
+### Recherche avec filtres
+GET {{baseUrl}}/api/games/search?q=ring&genre=rpg&genre=action&platform=PC&priceMin=0&priceMax=100&sort=relevance&page=1&pageSize=12&promoOnly=false
+Accept: application/json
+
+### Jeux en vedette
+GET {{baseUrl}}/api/games/featured?limit=10
+Accept: application/json
+
+### Détail d'un jeu par slug
+GET {{baseUrl}}/api/games/{{gameSlugEldenRing}}
+Accept: application/json
+
+### Détail — slug inconnu (404)
+GET {{baseUrl}}/api/games/jeu-inexistant-xyz
+Accept: application/json
+
+###############################################################################
+# PANIER — /api/cart
+# Invité : header X-Cart-Session (renvoyé par le serveur)
+# Connecté : Authorization Bearer (panier lié au compte)
+###############################################################################
+
+### [Invité] Ajouter un article au panier
+# @name guestAddToCart
+POST {{baseUrl}}/api/cart/items
+Content-Type: application/json
+Accept: application/json
+
+{
+  "gameId": "{{gameIdEldenRing}}"
+}
+
+### [Invité] Voir le panier — exécuter guestAddToCart avant
+GET {{baseUrl}}/api/cart
+Accept: application/json
+X-Cart-Session: {{guestAddToCart.response.headers.X-Cart-Session}}
+
+### [Invité] Modifier la quantité d'un article — exécuter guestAddToCart avant
+PUT {{baseUrl}}/api/cart/items/{{guestAddToCart.response.body.items[0].id}}
+Content-Type: application/json
+Accept: application/json
+X-Cart-Session: {{guestAddToCart.response.headers.X-Cart-Session}}
+
+{
+  "quantity": 2
+}
+
+### [Invité] Supprimer un article — exécuter guestAddToCart avant
+DELETE {{baseUrl}}/api/cart/items/{{guestAddToCart.response.body.items[0].id}}
+Accept: application/json
+X-Cart-Session: {{guestAddToCart.response.headers.X-Cart-Session}}
+
+### [Connecté] Ajouter un article — exécuter loginDemo avant
+# @name userAddToCart
+POST {{baseUrl}}/api/cart/items
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{loginDemo.response.body.accessToken}}
+
+{
+  "gameId": "{{gameIdCyberpunk}}"
+}
+
+### [Connecté] Voir le panier — exécuter loginDemo avant
+GET {{baseUrl}}/api/cart
+Accept: application/json
+Authorization: Bearer {{loginDemo.response.body.accessToken}}
+
+### [Connecté] Appliquer un code promo (GAME10 = -10 %) — exécuter loginDemo avant
+POST {{baseUrl}}/api/cart/promo
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{loginDemo.response.body.accessToken}}
+
+{
+  "code": "GAME10"
+}
+
+### [Connecté] Supprimer un article — exécuter userAddToCart avant
+DELETE {{baseUrl}}/api/cart/items/{{userAddToCart.response.body.items[0].id}}
+Accept: application/json
+Authorization: Bearer {{loginDemo.response.body.accessToken}}
+
+###############################################################################
+# COMMANDES — /api/orders (JWT obligatoire)
+###############################################################################
+
+### Préparer le panier avant checkout (exécuter si panier vide) — exécuter loginDemo avant
+POST {{baseUrl}}/api/cart/items
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{loginDemo.response.body.accessToken}}
+
+{
+  "gameId": "{{gameIdEldenRing}}"
+}
+
+### Checkout — créer une commande — exécuter loginDemo avant
+# @name checkout
+POST {{baseUrl}}/api/orders/checkout
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{loginDemo.response.body.accessToken}}
+
+{
+  "firstName": "Alex",
+  "lastName": "Martin",
+  "email": "{{demoEmail}}",
+  "phone": "0600000000",
+  "address": "1 rue du Jeu",
+  "postalCode": "69001",
+  "city": "Lyon",
+  "country": "FR",
+  "paymentMethod": "card"
+}
+
+### Historique des commandes — exécuter loginDemo avant
+GET {{baseUrl}}/api/orders
+Accept: application/json
+Authorization: Bearer {{loginDemo.response.body.accessToken}}
+
+### Détail d'une commande — exécuter checkout avant
+GET {{baseUrl}}/api/orders/{{checkout.response.body.id}}
+Accept: application/json
+Authorization: Bearer {{loginDemo.response.body.accessToken}}
+
+### Détail commande d'un autre utilisateur (404) — exécuter checkout puis loginAdmin avant
+GET {{baseUrl}}/api/orders/{{checkout.response.body.id}}
+Accept: application/json
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+### Checkout — panier vide (400) — exécuter loginDemo avant
+POST {{baseUrl}}/api/orders/checkout
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{loginDemo.response.body.accessToken}}
+
+{
+  "firstName": "Alex",
+  "lastName": "Martin",
+  "email": "{{demoEmail}}",
+  "address": "1 rue du Jeu",
+  "postalCode": "69001",
+  "city": "Lyon",
+  "country": "FR",
+  "paymentMethod": "card"
+}
+
+###############################################################################
+# BIBLIOTHÈQUE — /api/library (JWT obligatoire)
+###############################################################################
+
+### Liste des jeux achetés — exécuter loginDemo avant
+GET {{baseUrl}}/api/library
+Accept: application/json
+Authorization: Bearer {{loginDemo.response.body.accessToken}}
+
+### Clé d'activation d'un jeu — exécuter loginDemo avant
+GET {{baseUrl}}/api/library/{{gameIdEldenRing}}/key
+Accept: application/json
+Authorization: Bearer {{loginDemo.response.body.accessToken}}
+
+### Clé — jeu non possédé (404) — exécuter loginDemo avant
+GET {{baseUrl}}/api/library/c3000001-0000-4000-8000-000000009999/key
+Accept: application/json
+Authorization: Bearer {{loginDemo.response.body.accessToken}}
+
+###############################################################################
+# ADMIN — /api/admin (JWT + rôle ADMIN / SUPERADMIN)
+###############################################################################
+
+### Créer un jeu — exécuter loginAdmin avant
+# @name adminCreateGame
+POST {{baseUrl}}/api/admin/games
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+{
+  "title": "Mon Jeu API",
+  "slug": "mon-jeu-api-{{$timestamp}}",
+  "shortDescription": "Jeu créé via l'API REST.",
+  "longDescription": "Description longue du jeu de test.",
+  "publisher": "GameStore Studio",
+  "developer": "Dev Team",
+  "releaseDate": "2026-06-01",
+  "basePrice": 29.99,
+  "discountedPrice": 24.99,
+  "discountEndDate": "2026-12-31",
+  "platform": "PC",
+  "status": "ACTIVE",
+  "coverImageUrl": "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800",
+  "trailerUrl": "https://www.youtube.com/watch?v=example",
+  "pegiRating": "PEGI_16",
+  "minSpecs": "CPU i5, 8 Go RAM",
+  "recommendedSpecs": "CPU i7, 16 Go RAM",
+  "supportedLanguages": "FR, EN",
+  "genreSlugs": ["action", "rpg"],
+  "tagSlugs": ["solo", "open-world"],
+  "screenshotUrls": "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800",
+  "featured": false,
+  "bestseller": false
+}
+
+### Modifier un jeu — exécuter adminCreateGame avant
+PUT {{baseUrl}}/api/admin/games/{{adminCreateGame.response.body.id}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+{
+  "title": "Mon Jeu API (modifié)",
+  "slug": "mon-jeu-api-modifie-{{$timestamp}}",
+  "shortDescription": "Version mise à jour.",
+  "basePrice": 39.99,
+  "platform": "PC",
+  "status": "ACTIVE",
+  "genreSlugs": ["rpg"],
+  "tagSlugs": ["solo"]
+}
+
+### Désactiver un jeu — exécuter adminCreateGame avant
+DELETE {{baseUrl}}/api/admin/games/{{adminCreateGame.response.body.id}}
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+### Créer un jeu — utilisateur non admin (403) — exécuter loginDemo avant
+POST {{baseUrl}}/api/admin/games
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{loginDemo.response.body.accessToken}}
+
+{
+  "title": "Tentative interdite",
+  "slug": "tentative-interdite",
+  "basePrice": 19.99,
+  "platform": "PC"
+}
+
+### Modifier un jeu inexistant (404) — exécuter loginAdmin avant
+PUT {{baseUrl}}/api/admin/games/c3000001-0000-4000-8000-000000009999
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+{
+  "title": "Jeu fantôme",
+  "slug": "jeu-fantome",
+  "basePrice": 9.99,
+  "platform": "PC"
+}
+
+###############################################################################
+# SCÉNARIOS COMPLETS (ordre recommandé)
+###############################################################################
+
+# --- Scénario 1 : Parcours invité ---
+# 1. guestAddToCart
+# 2. [Invité] Voir le panier
+# 3. [Invité] Modifier la quantité
+# 4. [Invité] Supprimer un article
+
+# --- Scénario 2 : Achat client ---
+# 1. loginDemo
+# 2. userAddToCart
+# 3. [Connecté] Appliquer un code promo
+# 4. Préparer le panier avant checkout
+# 5. checkout
+# 6. Historique des commandes
+# 7. Détail d'une commande
+# 8. Liste des jeux achetés
+# 9. Clé d'activation d'un jeu
+
+# --- Scénario 3 : Admin catalogue ---
+# 1. loginAdmin
+# 2. adminCreateGame
+# 3. Modifier un jeu
+# 4. Désactiver un jeu
+
+# --- Scénario 4 : Auth complète ---
+# 1. register
+# 2. loginDemo (ou login avec le compte créé)
+# 3. refreshTokens
+# 4. Déconnexion

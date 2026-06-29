@@ -18,10 +18,9 @@ import com.examen.gamestore.repository.GameRepository;
 import com.examen.gamestore.repository.LicenseKeyRepository;
 import com.examen.gamestore.repository.PromoCodeRepository;
 import com.examen.gamestore.service.CartService;
+import com.examen.gamestore.service.cart.CartScope;
 import com.examen.gamestore.web.dto.CartItemView;
 import com.examen.gamestore.web.dto.CartView;
-
-import jakarta.servlet.http.HttpSession;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -47,24 +46,24 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public CartView getCart(HttpSession session, UUID userId) {
-		mergeGuestCartIfNeeded(session, userId);
-		List<CartItem> items = loadItems(session, userId);
-		return buildCartView(items, getPromoCode(session));
+	public CartView getCart(CartScope scope, UUID userId) {
+		mergeGuestCartIfNeeded(scope, userId);
+		List<CartItem> items = loadItems(scope, userId);
+		return buildCartView(items, scope.getPromoCode());
 	}
 
 	@Override
-	public int getItemCount(HttpSession session, UUID userId) {
-		mergeGuestCartIfNeeded(session, userId);
+	public int getItemCount(CartScope scope, UUID userId) {
+		mergeGuestCartIfNeeded(scope, userId);
 		if (userId != null) {
 			return cartRepository.countByUserId(userId);
 		}
-		return cartRepository.countBySessionId(resolveSessionCartId(session));
+		return cartRepository.countBySessionId(scope.getOrCreateGuestSessionId());
 	}
 
 	@Override
 	@Transactional
-	public void addGame(UUID gameId, HttpSession session, UUID userId) {
+	public void addGame(UUID gameId, CartScope scope, UUID userId) {
 		var game = gameRepository.findById(gameId)
 				.orElseThrow(() -> new GameNotFoundException(gameId.toString()));
 		if (game.getStatus() != GameStatus.ACTIVE) {
@@ -74,25 +73,25 @@ public class CartServiceImpl implements CartService {
 			throw new InsufficientStockException(game.getTitle());
 		}
 
-		mergeGuestCartIfNeeded(session, userId);
+		mergeGuestCartIfNeeded(scope, userId);
 
 		if (userId != null) {
-			addOrIncrement(userId, null, gameId, session);
+			addOrIncrement(userId, null, gameId);
 		}
 		else {
-			addOrIncrement(null, resolveSessionCartId(session), gameId, session);
+			addOrIncrement(null, scope.getOrCreateGuestSessionId(), gameId);
 		}
 	}
 
 	@Override
 	@Transactional
-	public void updateQuantity(UUID itemId, int quantity, HttpSession session, UUID userId) {
+	public void updateQuantity(UUID itemId, int quantity, CartScope scope, UUID userId) {
 		if (quantity < 1 || quantity > 10) {
 			throw new IllegalArgumentException("Quantité invalide.");
 		}
 		var item = cartRepository.findById(itemId)
 				.orElseThrow(() -> new IllegalArgumentException("Article introuvable."));
-		assertOwnership(item, session, userId);
+		assertOwnership(item, scope, userId);
 
 		if (licenseKeyRepository.countAvailableByGameId(item.getGameId()) < quantity) {
 			throw new InsufficientStockException(item.getGame().getTitle());
@@ -102,38 +101,38 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	@Transactional
-	public void removeItem(UUID itemId, HttpSession session, UUID userId) {
+	public void removeItem(UUID itemId, CartScope scope, UUID userId) {
 		var item = cartRepository.findById(itemId)
 				.orElseThrow(() -> new IllegalArgumentException("Article introuvable."));
-		assertOwnership(item, session, userId);
+		assertOwnership(item, scope, userId);
 		cartRepository.deleteById(itemId);
 	}
 
 	@Override
-	public void applyPromoCode(String code, HttpSession session, UUID userId) {
+	public void applyPromoCode(String code, CartScope scope, UUID userId) {
 		PromoCode promo = promoCodeRepository.findByCode(code)
 				.orElseThrow(() -> new InvalidPromoCodeException("Code promo invalide."));
 		if (!promo.isValidNow()) {
 			throw new InvalidPromoCodeException("Ce code promo n'est plus valide.");
 		}
-		CartView cart = getCart(session, userId);
+		CartView cart = getCart(scope, userId);
 		if (promo.calculateDiscount(cart.getSubtotal()).compareTo(BigDecimal.ZERO) <= 0
 				&& cart.getSubtotal().compareTo(BigDecimal.ZERO) > 0
 				&& promo.getMinOrderAmount() != null) {
 			throw new InvalidPromoCodeException(
 					"Montant minimum requis : " + promo.getMinOrderAmount() + " €");
 		}
-		session.setAttribute(CART_PROMO_CODE, promo.getCode());
+		scope.setPromoCode(promo.getCode());
 	}
 
 	@Override
-	public void clearPromoCode(HttpSession session) {
-		session.removeAttribute(CART_PROMO_CODE);
+	public void clearPromoCode(CartScope scope) {
+		scope.clearPromoCode();
 	}
 
 	@Override
-	public PromoCode resolvePromo(HttpSession session) {
-		String code = getPromoCode(session);
+	public PromoCode resolvePromo(CartScope scope) {
+		String code = scope.getPromoCode();
 		if (code == null || code.isBlank()) {
 			return null;
 		}
@@ -141,17 +140,17 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public void clearCart(HttpSession session, UUID userId) {
+	public void clearCart(CartScope scope, UUID userId) {
 		if (userId != null) {
 			cartRepository.clearByUserId(userId);
 		}
 		else {
-			cartRepository.clearBySessionId(resolveSessionCartId(session));
+			cartRepository.clearBySessionId(scope.getOrCreateGuestSessionId());
 		}
-		clearPromoCode(session);
+		clearPromoCode(scope);
 	}
 
-	private void addOrIncrement(UUID userId, String sessionId, UUID gameId, HttpSession session) {
+	private void addOrIncrement(UUID userId, String sessionId, UUID gameId) {
 		List<CartItem> items = userId != null
 				? cartRepository.findByUserId(userId)
 				: cartRepository.findBySessionId(sessionId);
@@ -169,36 +168,22 @@ public class CartServiceImpl implements CartService {
 		}
 	}
 
-	private void mergeGuestCartIfNeeded(HttpSession session, UUID userId) {
-		if (userId == null || Boolean.TRUE.equals(session.getAttribute(CART_MERGED))) {
+	private void mergeGuestCartIfNeeded(CartScope scope, UUID userId) {
+		if (userId == null || scope.isGuestCartMerged()) {
 			return;
 		}
-		String guestSessionId = (String) session.getAttribute(CART_SESSION_ID);
+		String guestSessionId = scope.getOrCreateGuestSessionId();
 		if (guestSessionId != null) {
 			cartRepository.mergeSessionToUser(guestSessionId, userId);
 		}
-		session.setAttribute(CART_MERGED, true);
+		scope.markGuestCartMerged();
 	}
 
-	private List<CartItem> loadItems(HttpSession session, UUID userId) {
+	private List<CartItem> loadItems(CartScope scope, UUID userId) {
 		if (userId != null) {
 			return cartRepository.findByUserId(userId);
 		}
-		return cartRepository.findBySessionId(resolveSessionCartId(session));
-	}
-
-	private String resolveSessionCartId(HttpSession session) {
-		String sessionId = (String) session.getAttribute(CART_SESSION_ID);
-		if (sessionId == null) {
-			sessionId = UUID.randomUUID().toString();
-			session.setAttribute(CART_SESSION_ID, sessionId);
-		}
-		return sessionId;
-	}
-
-	private String getPromoCode(HttpSession session) {
-		Object value = session.getAttribute(CART_PROMO_CODE);
-		return value != null ? value.toString() : null;
+		return cartRepository.findBySessionId(scope.getOrCreateGuestSessionId());
 	}
 
 	private CartView buildCartView(List<CartItem> items, String promoCode) {
@@ -239,13 +224,13 @@ public class CartServiceImpl implements CartService {
 		return view;
 	}
 
-	private void assertOwnership(CartItem item, HttpSession session, UUID userId) {
+	private void assertOwnership(CartItem item, CartScope scope, UUID userId) {
 		if (userId != null) {
 			if (item.getUserId() == null || !item.getUserId().equals(userId)) {
 				throw new IllegalArgumentException("Accès refusé.");
 			}
 		}
-		else if (item.getSessionId() == null || !item.getSessionId().equals(resolveSessionCartId(session))) {
+		else if (item.getSessionId() == null || !item.getSessionId().equals(scope.getOrCreateGuestSessionId())) {
 			throw new IllegalArgumentException("Accès refusé.");
 		}
 	}

@@ -17,6 +17,7 @@ import com.examen.gamestore.exception.InsufficientStockException;
 import com.examen.gamestore.exception.InvalidPromoCodeException;
 import com.examen.gamestore.infrastructure.security.GameStoreUserDetails;
 import com.examen.gamestore.service.CartService;
+import com.examen.gamestore.service.cart.HttpSessionCartScope;
 import com.examen.gamestore.web.dto.request.PromoForm;
 
 import jakarta.servlet.http.HttpSession;
@@ -49,7 +50,7 @@ public class CartController {
 			RedirectAttributes redirectAttributes) {
 
 		try {
-			cartService.addGame(gameId, session, resolveUserId(user));
+			cartService.addGame(gameId, new HttpSessionCartScope(session), resolveUserId(user));
 			redirectAttributes.addFlashAttribute("cartSuccess", "Jeu ajouté au panier.");
 		}
 		catch (InsufficientStockException ex) {
@@ -70,7 +71,7 @@ public class CartController {
 			RedirectAttributes redirectAttributes) {
 
 		try {
-			cartService.updateQuantity(itemId, quantity, session, resolveUserId(user));
+			cartService.updateQuantity(itemId, quantity, new HttpSessionCartScope(session), resolveUserId(user));
 		}
 		catch (IllegalArgumentException | InsufficientStockException ex) {
 			redirectAttributes.addFlashAttribute("cartError", ex.getMessage());
@@ -86,7 +87,7 @@ public class CartController {
 			RedirectAttributes redirectAttributes) {
 
 		try {
-			cartService.removeItem(itemId, session, resolveUserId(user));
+			cartService.removeItem(itemId, new HttpSessionCartScope(session), resolveUserId(user));
 			redirectAttributes.addFlashAttribute("cartSuccess", "Article retiré du panier.");
 		}
 		catch (IllegalArgumentException ex) {
@@ -111,7 +112,7 @@ public class CartController {
 		}
 
 		try {
-			cartService.applyPromoCode(promoForm.getCode(), session, resolveUserId(user));
+			cartService.applyPromoCode(promoForm.getCode(), new HttpSessionCartScope(session), resolveUserId(user));
 			redirectAttributes.addFlashAttribute("promoSuccess", "Code promo appliqué.");
 		}
 		catch (InvalidPromoCodeException ex) {
@@ -125,13 +126,13 @@ public class CartController {
 			HttpSession session,
 			@AuthenticationPrincipal GameStoreUserDetails user,
 			RedirectAttributes redirectAttributes) {
-		cartService.clearCart(session, resolveUserId(user));
+		cartService.clearCart(new HttpSessionCartScope(session), resolveUserId(user));
 		redirectAttributes.addFlashAttribute("cartSuccess", "Panier vidé.");
 		return "redirect:/panier";
 	}
 
 	private void populateCartModel(HttpSession session, GameStoreUserDetails user, Model model) {
-		model.addAttribute("cart", cartService.getCart(session, resolveUserId(user)));
+		model.addAttribute("cart", cartService.getCart(new HttpSessionCartScope(session), resolveUserId(user)));
 		model.addAttribute("activePage", "cart");
 	}
 

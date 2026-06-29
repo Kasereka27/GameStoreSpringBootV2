@@ -1,839 +1,590 @@
-# Cahier des Charges — Application Web E-Commerce de Vente de Licences de Jeux Vidéo
+# GameStore Platform
 
-**Projet :** GameStore Platform  
-**Framework :** Spring Boot (Java)  
-**Version du document :** 1.0  
-**Date :** Juin 2026
+Plateforme e-commerce de vente de **licences de jeux vidéo** (clés d'activation numériques).  
+Le projet combine une **interface web** (Thymeleaf) et une **API REST** documentée (OpenAPI / Swagger), construite avec **Spring Boot 4** et **Java 25**.
 
----
-
-## 1. Présentation du Projet
-
-### 1.1 Contexte
-
-Le marché des jeux vidéo numériques est en pleine expansion. De plus en plus de joueurs préfèrent acheter des licences numériques (clés de jeux) plutôt que des supports physiques. Ce projet vise à développer une plateforme e-commerce moderne permettant l'achat, la gestion et la distribution de licences de jeux vidéo sous forme de clés d'activation numériques.
-
-### 1.2 Objectifs
-
-- Offrir une expérience d'achat fluide et sécurisée pour les licences de jeux vidéo numériques
-- Gérer un catalogue de jeux varié avec des informations détaillées (genre, éditeur, plateforme)
-- Automatiser la distribution des clés d'activation après paiement confirmé
-- Fournir un tableau de bord administrateur complet pour la gestion du catalogue, du stock et des commandes
-- Assurer une sécurité robuste des données clients et des transactions
-
-### 1.3 Périmètre
-
-Le système couvrira les modules suivants :
-- Gestion du catalogue de jeux et des licences
-- Authentification et gestion des utilisateurs
-- Panier d'achat et processus de commande
-- Intégration de passerelle de paiement
-- Distribution automatique des clés d'activation
-- Interface d'administration
-- Notifications par email
+| | |
+|---|---|
+| **URL locale** | http://localhost:8083 |
+| **Swagger UI** | http://localhost:8083/swagger-ui.html |
+| **Adminer (BDD)** | http://localhost:8080 |
+| **Fichier de requêtes HTTP** | [`http/gamestore-api.http`](http/gamestore-api.http) |
 
 ---
 
-## 2. Parties Prenantes
+## Table des matières
 
-| Rôle | Responsabilités |
-|------|-----------------|
-| **Chef de projet** | Pilotage global, validation des livrables |
-| **Développeur Backend** | Architecture Spring Boot, APIs REST, base de données |
-| **Développeur Frontend** | Interface utilisateur (Thymeleaf) |
-| **Administrateur** | Gestion du catalogue, stock, commandes |
-| **Client (utilisateur final)** | Navigation, achat, gestion de son compte |
-
----
-
-## 3. Spécifications Fonctionnelles
-
-### 3.1 Module Authentification & Gestion des Utilisateurs
-
-#### 3.1.1 Inscription
-
-- Formulaire d'inscription avec les champs : nom, prénom, email, mot de passe, confirmation mot de passe
-- Validation des données (format email, complexité du mot de passe)
-- Envoi d'un email de confirmation de compte
-- Activation du compte via lien dans l'email
-- Protection contre les inscriptions automatisées (CAPTCHA)
-
-#### 3.1.2 Connexion
-
-- Authentification par email/mot de passe
-- Option "Se souvenir de moi" (Remember Me) via token persistant
-- Connexion OAuth2 (Google, optionnel : Steam, Discord)
-- Verrouillage du compte après N tentatives échouées (configurable)
-- Récupération de mot de passe par email
-
-#### 3.1.3 Profil Utilisateur
-
-- Modification des informations personnelles
-- Changement de mot de passe
-- Historique des commandes
-- Bibliothèque des jeux achetés (licences)
-- Gestion des adresses de facturation
-
-#### 3.1.4 Rôles et Permissions
-
-| Rôle | Permissions |
-|------|-------------|
-| `ROLE_GUEST` | Consultation du catalogue uniquement |
-| `ROLE_USER` | Achat, consultation de son compte, bibliothèque |
-| `ROLE_ADMIN` | Toutes les fonctions + tableau de bord admin |
-| `ROLE_SUPERADMIN` | Gestion des administrateurs, paramètres système |
+1. [Fonctionnalités](#fonctionnalités)
+2. [Stack technique](#stack-technique)
+3. [Prérequis](#prérequis)
+4. [Installation et démarrage](#installation-et-démarrage)
+5. [Configuration](#configuration)
+6. [Comptes et données de démonstration](#comptes-et-données-de-démonstration)
+7. [Interface web](#interface-web)
+8. [API REST](#api-rest)
+9. [Tester l'API](#tester-lapi)
+10. [Tests automatisés](#tests-automatisés)
+11. [Structure du projet](#structure-du-projet)
+12. [Architecture](#architecture)
+13. [Sécurité](#sécurité)
+14. [Développement](#développement)
+15. [Limites connues](#limites-connues)
 
 ---
 
-### 3.2 Module Catalogue de Jeux
+## Fonctionnalités
 
-#### 3.2.1 Structure d'un Jeu
+### Interface web (Thymeleaf)
 
-Chaque jeu devra contenir les informations suivantes :
+| Module | Description |
+|--------|-------------|
+| **Catalogue** | Accueil, liste des jeux, filtres, promotions, fiche produit |
+| **Authentification** | Inscription, connexion, mot de passe oublié / réinitialisation |
+| **Panier** | Ajout, modification des quantités, codes promo, persistance session |
+| **Checkout** | Commande simulée, attribution automatique des clés, e-mail de confirmation |
+| **Compte client** | Profil, bibliothèque, historique et détail des commandes |
+| **Avis** | Notation et commentaires sur les jeux achetés |
+| **Administration** | Dashboard, jeux, clés, commandes, utilisateurs, promos, genres, tags, avis, rapports CSV |
 
-- Titre du jeu
-- Description courte et longue
-- Images (miniature, galerie de captures d'écran)
-- Vidéo de présentation (URL YouTube/Vimeo, optionnel)
-- Éditeur / Développeur
-- Date de sortie
-- Genre(s) (Action, RPG, Stratégie, Sport, etc.)
-- Plateforme(s) compatible(s) (PC, PlayStation, Xbox, Nintendo Switch)
-- Classification d'âge (PEGI)
-- Langue(s) supportée(s)
-- Configuration minimale et recommandée (pour PC)
-- Prix de base
-- Prix promotionnel (avec date début/fin de promotion)
-- Statut : Actif, Inactif, Bientôt disponible (Pre-order)
-- Étiquettes/Tags (Open World, Multijoueur, Solo, etc.)
+### API REST (`/api/**`)
 
-#### 3.2.2 Gestion du Stock de Licences
-
-- Chaque jeu dispose d'un pool de clés d'activation
-- Import de clés en masse (fichier CSV ou saisie directe)
-- Indicateur de stock disponible
-- Alertes de stock faible (seuil configurable)
-- Statut des clés : Disponible, Vendu, Réservé, Invalide
-- Traçabilité : chaque clé est liée à une commande et un utilisateur
-
-#### 3.2.3 Navigation et Recherche
-
-- Page d'accueil avec jeux en vedette, nouveautés, promotions
-- Filtres avancés : genre, plateforme, prix (fourchette), éditeur, date de sortie, note
-- Recherche textuelle avec autocomplétion
-- Tri : pertinence, prix croissant/décroissant, meilleures ventes, nouveautés, notes
-- Pagination ou chargement infini
-- Vue en grille et vue en liste
-
-#### 3.2.4 Fiche Produit
-
-- Toutes les informations du jeu
-- Galerie d'images avec zoom
-- Bouton "Ajouter au panier" ou "Acheter maintenant"
-- Système de notation et d'avis utilisateurs (note de 1 à 5 étoiles + commentaire)
-- Jeux similaires (recommandations)
-- Badge "Meilleure vente", "Promo", "Nouveau"
+| Module | Description |
+|--------|-------------|
+| **Auth** | Inscription, login JWT, refresh, logout, mot de passe oublié |
+| **Catalogue** | Liste, recherche, jeux en vedette, détail par slug |
+| **Panier** | CRUD panier (invité via `X-Cart-Session` ou connecté via JWT) |
+| **Commandes** | Checkout, historique, détail |
+| **Bibliothèque** | Jeux achetés, clés d'activation |
+| **Admin** | CRUD jeux (création, modification, désactivation) |
 
 ---
 
-### 3.3 Module Panier et Commandes
-
-#### 3.3.1 Panier
-
-- Ajout/suppression d'articles
-- Modification des quantités (si multi-licences autorisées)
-- Affichage du sous-total, remises éventuelles, total
-- Persistance du panier (en session pour invités, en base pour utilisateurs connectés)
-- Sauvegarde du panier entre les sessions
-
-#### 3.3.2 Application de Codes Promo
-
-- Code promo à saisir manuellement
-- Types de remises : pourcentage, montant fixe, livraison offerte
-- Conditions d'utilisation : date d'expiration, nombre d'utilisations max, montant minimum
-
-#### 3.3.3 Processus de Commande (Checkout)
-
-1. **Récapitulatif du panier** — liste des articles, total
-2. **Informations de facturation** — adresse de facturation
-3. **Paiement** — choix du moyen de paiement et saisie des informations
-4. **Confirmation** — récapitulatif final avant validation
-5. **Traitement** — paiement, attribution des clés, envoi de l'email de confirmation
-
-#### 3.3.4 États d'une Commande
-
-| État | Description |
-|------|-------------|
-| `PENDING` | Commande créée, en attente de paiement |
-| `PAID` | Paiement confirmé |
-| `PROCESSING` | Attribution des clés en cours |
-| `COMPLETED` | Clés envoyées au client |
-| `CANCELLED` | Commande annulée |
-| `REFUNDED` | Remboursement effectué |
-| `FAILED` | Échec du paiement |
-
----
-
-### 3.4 Module Paiement
-
-#### 3.4.1 Moyens de Paiement Supportés
-
-- Carte bancaire (Visa, MasterCard) via Stripe ou PayPal
-- PayPal
-- Paiement mobile money (Orange Money, M-Pesa — optionnel selon la région cible)
-
-#### 3.4.2 Sécurité des Paiements
-
-- Conformité PCI-DSS : aucune donnée de carte stockée sur les serveurs
-- Utilisation d'un prestataire de paiement certifié (Stripe recommandé)
-- Vérification 3D Secure
-- Détection de fraude basique (montant anormal, adresse suspecte)
-- Webhook pour confirmer les paiements de manière asynchrone
-
-#### 3.4.3 Facturation
-
-- Génération automatique d'une facture PDF après paiement
-- Envoi de la facture par email
-- Disponibilité de la facture dans l'espace client
-
----
-
-### 3.5 Module Distribution des Licences
-
-- Après confirmation du paiement, attribution automatique d'une clé disponible pour chaque jeu acheté
-- Envoi immédiat des clés par email (format HTML soigné)
-- Affichage des clés dans l'espace client (bibliothèque)
-- Mécanisme de réessai en cas d'échec d'envoi d'email
-- Journalisation de chaque attribution de clé (audit trail)
-- Gestion des litiges : possibilité de renvoyer une clé (admin uniquement)
-
----
-
-### 3.6 Module Avis et Notations
-
-- Publication d'un avis uniquement si le jeu a été acheté (avis vérifiés)
-- Note de 1 à 5 étoiles + titre + commentaire
-- Modération des avis (approbation manuelle ou automatique)
-- Signalement d'un avis inapproprié
-- Affichage de la note moyenne et du nombre d'avis
-
----
-
-### 3.7 Module Administration (Backoffice)
-
-#### 3.7.1 Tableau de Bord
-
-- KPIs clés : chiffre d'affaires du jour/mois, nombre de commandes, nouveaux inscrits
-- Graphiques : évolution des ventes, jeux les plus vendus
-- Alertes : stock faible, commandes en attente, avis en attente de modération
-
-#### 3.7.2 Gestion du Catalogue
-
-- CRUD complet des jeux (création, modification, suppression logique)
-- Import/export du catalogue en CSV/Excel
-- Gestion des images (upload, recadrage)
-- Activation/désactivation d'un jeu
-
-#### 3.7.3 Gestion des Licences (Clés)
-
-- Import de clés en masse (CSV)
-- Suivi du stock par jeu
-- Visualisation du statut de chaque clé
-- Invalidation d'une clé
-
-#### 3.7.4 Gestion des Commandes
-
-- Liste des commandes avec filtres
-- Détail d'une commande
-- Modification manuelle du statut
-- Remboursement via interface (déclenche le remboursement Stripe)
-
-#### 3.7.5 Gestion des Utilisateurs
-
-- Liste des utilisateurs avec filtres
-- Détail d'un utilisateur (profil, historique)
-- Activation/désactivation d'un compte
-- Attribution/révocation de rôle
-
-#### 3.7.6 Gestion des Promotions
-
-- Création de codes promo
-- Définition des promotions par jeu ou catégorie
-- Suivi de l'utilisation des codes promo
-
-#### 3.7.7 Rapports et Export
-
-- Rapport de ventes (par période, par jeu, par catégorie)
-- Export CSV/Excel/PDF
-- Rapport d'inventaire des clés
-
----
-
-### 3.8 Module Notifications
-
-| Événement | Canal | Destinataire |
-|-----------|-------|--------------|
-| Inscription | Email | Utilisateur |
-| Confirmation de commande | Email | Utilisateur |
-| Envoi des clés | Email | Utilisateur |
-| Récupération de mot de passe | Email | Utilisateur |
-| Stock faible | Email / Dashboard | Admin |
-| Nouvelle commande | Dashboard | Admin |
-| Avis en attente de modération | Dashboard | Admin |
-
----
-
-## 4. Spécifications Techniques
-
-### 4.1 Stack Technologique
-
-> **Décision d'architecture — Accès aux données**  
-> Pour ce projet, **nous n'utilisons pas d'ORM** (pas de Hibernate, pas de Spring Data JPA).  
-> La communication avec la base de données repose sur **des requêtes SQL écrites manuellement**, exécutées via **Spring JDBC** (`JdbcClient`).  
-> Les scripts de schéma et les évolutions de structure sont versionnés avec **Flyway** ; les classes du domaine sont de simples **POJOs** (sans annotations de mapping).
-
-#### Backend
-
-| Composant | Technologie | Version recommandée |
-|-----------|-------------|---------------------|
-| Framework | Spring Boot | 3.x |
-| Langage | Java | 21 (LTS) |
-| Sécurité | Spring Security + JWT / Spring Session | — |
-| OAuth2 | Spring Security OAuth2 Client | — |
-| Persistance | Spring JDBC — `JdbcClient` (SQL manuel, sans ORM) | — |
-| Base de données | PostgreSQL (production) / H2 (tests) | PostgreSQL 16 |
-| Migration BDD | Flyway | — |
-| Email | Spring Mail + Thymeleaf Templates | — |
-| Paiement | Stripe Java SDK | — |
-| Génération PDF | iText / Apache PDFBox | — |
-| Cache | Redis (Spring Cache) | — |
-| Messaging (optionnel) | Spring Events / RabbitMQ | — |
-| Tests | JUnit 5 + Mockito + Testcontainers | — |
-| Build | Maven ou Gradle | — |
-| Documentation API | SpringDoc OpenAPI (Swagger UI) | — |
-
-#### Frontend
-
-**Option A — Serveur-side (recommandé pour démarrer rapidement) :**
-| Composant | Technologie |
-|-----------|-------------|
-| Template Engine | Thymeleaf |
-| CSS Framework | Bootstrap 5 / Tailwind CSS |
-| JavaScript | Vanilla JS + Alpine.js |
-
-**Option B — SPA découplée (pour scalabilité) :**
-| Composant | Technologie |
-|-----------|-------------|
-| Framework JS | React 18 / Angular 17 |
-| UI Library | Material UI / Ant Design |
-| HTTP Client | Axios |
-| State Management | Redux / Zustand |
-
-#### Infrastructure & DevOps
+## Stack technique
 
 | Composant | Technologie |
 |-----------|-------------|
-| Containerisation | Docker + Docker Compose |
-| Reverse Proxy | Nginx |
-| CI/CD | GitHub Actions / GitLab CI |
-| Stockage des images | AWS S3 / Cloudinary |
-| Monitoring | Spring Boot Actuator + Prometheus + Grafana |
-| Logs | SLF4J + Logback + ELK Stack (optionnel) |
+| Framework | Spring Boot 4.1 |
+| Langage | Java 25 |
+| Vue web | Thymeleaf + Tailwind CSS 4 |
+| Persistance | Spring JDBC (`JdbcClient`) — **sans ORM** |
+| Base de données | PostgreSQL 16 (dev) / H2 en mémoire (tests) |
+| Migrations | Flyway |
+| Sécurité | Spring Security — formulaire (web) + JWT (API) |
+| Documentation API | SpringDoc OpenAPI 2.7 |
+| E-mail | Spring Mail (`LoggingEmailService` en dev) |
+| Build | Maven |
+| Conteneurs | Docker Compose (PostgreSQL, Redis, Adminer) |
+
+> **Redis** est présent dans Docker Compose mais **n'est pas encore utilisé** par l'application Java.
 
 ---
 
-### 4.2 Architecture Applicative
+## Prérequis
 
-L'application suivra une architecture **MVC en couches** (Layered Architecture) avec les couches suivantes :
-
-```
-┌──────────────────────────────────────────┐
-│           Couche Présentation            │
-│    (Controllers REST / Thymeleaf Views)  │
-├──────────────────────────────────────────┤
-│           Couche Service                 │
-│    (Business Logic / DTOs / Mappers)     │
-├──────────────────────────────────────────┤
-│           Couche Repository (DAO)          │
-│    (JdbcClient — requêtes SQL manuelles)  │
-├──────────────────────────────────────────┤
-│           Couche Domaine                 │
-│    (POJOs / Value Objects / Enums)       │
-└──────────────────────────────────────────┘
-```
-
-Les composants transversaux incluent :
-- **Security Layer** : Filtres JWT, contrôle d'accès par annotations (`@PreAuthorize`)
-- **Exception Handling** : `@ControllerAdvice` global avec réponses d'erreur standardisées
-- **Validation** : Bean Validation (Jakarta Validation) sur les DTOs
-- **Audit** : Champs `createdAt`, `updatedAt`, `createdBy` gérés explicitement dans les requêtes SQL ou via triggers PostgreSQL
-- **Events** : Spring Application Events pour découpler la logique métier (ex : envoi d'email après paiement)
+- **JDK 25**
+- **Maven 3.9+** (ou `./mvnw`)
+- **Docker Desktop** (pour PostgreSQL en développement)
+- **Node.js** (optionnel en local — Maven installe Node via `frontend-maven-plugin` pour compiler le CSS)
 
 ---
 
-### 4.3 Modèle de Données (Entités Principales)
+## Installation et démarrage
 
-Les structures ci-dessous décrivent le **schéma relationnel cible**. Elles sont implémentées en base via **Flyway** et mappées côté Java vers des **POJOs** ; les relations (`ManyToMany`, `OneToMany`, etc.) sont résolues par des **jointures SQL explicites** dans la couche repository, sans ORM.
+### 1. Cloner le dépôt
 
-#### Entités Clés
-
-```
-User
- ├── id (UUID)
- ├── email (unique)
- ├── passwordHash
- ├── firstName, lastName
- ├── role (ENUM)
- ├── enabled (boolean)
- ├── emailVerified (boolean)
- └── createdAt, updatedAt
-
-Game
- ├── id (UUID)
- ├── title, slug (unique)
- ├── shortDescription, longDescription
- ├── publisher, developer
- ├── releaseDate
- ├── basePrice (BigDecimal)
- ├── discountedPrice (nullable)
- ├── discountEndDate (nullable)
- ├── platform (ENUM : PC, PS5, XBOX, SWITCH)
- ├── pegiRating (ENUM)
- ├── status (ENUM : ACTIVE, INACTIVE, PRE_ORDER)
- ├── genres (ManyToMany)
- ├── tags (ManyToMany)
- └── images (OneToMany)
-
-LicenseKey
- ├── id (UUID)
- ├── keyValue (encrypted)
- ├── game (ManyToOne)
- ├── status (ENUM : AVAILABLE, SOLD, RESERVED, INVALID)
- ├── order (ManyToOne, nullable)
- └── assignedAt (nullable)
-
-Order
- ├── id (UUID)
- ├── orderNumber (unique, auto-généré)
- ├── user (ManyToOne)
- ├── status (ENUM)
- ├── totalAmount (BigDecimal)
- ├── paymentMethod
- ├── paymentIntentId (Stripe)
- ├── orderItems (OneToMany)
- └── createdAt, updatedAt
-
-OrderItem
- ├── id (UUID)
- ├── order (ManyToOne)
- ├── game (ManyToOne)
- ├── licenseKey (OneToOne)
- ├── unitPrice (BigDecimal)
- └── quantity
-
-Review
- ├── id (UUID)
- ├── user (ManyToOne)
- ├── game (ManyToOne)
- ├── rating (1-5)
- ├── title, content
- ├── status (ENUM : PENDING, APPROVED, REJECTED)
- └── createdAt
-
-CartItem
- ├── id (UUID)
- ├── user (ManyToOne, nullable)
- ├── sessionId (nullable — pour invités)
- ├── game (ManyToOne)
- └── quantity
-
-PromoCode
- ├── id (UUID)
- ├── code (unique)
- ├── discountType (ENUM : PERCENTAGE, FIXED_AMOUNT)
- ├── discountValue (BigDecimal)
- ├── minOrderAmount (nullable)
- ├── maxUsages (nullable)
- ├── usageCount
- ├── expiresAt (nullable)
- └── active (boolean)
+```bash
+git clone <url-du-repo>
+cd gamestore
 ```
 
----
+### 2. Démarrer la base de données
 
-### 4.4 API REST — Principaux Endpoints
-
-#### Authentification
-
-| Méthode | Endpoint | Description | Accès |
-|---------|----------|-------------|-------|
-| POST | `/api/auth/register` | Inscription | Public |
-| POST | `/api/auth/login` | Connexion (JWT) | Public |
-| POST | `/api/auth/refresh` | Renouvellement du token | Authentifié |
-| POST | `/api/auth/logout` | Déconnexion | Authentifié |
-| GET | `/api/auth/verify-email` | Vérification email | Public |
-| POST | `/api/auth/forgot-password` | Demande de réinitialisation | Public |
-| POST | `/api/auth/reset-password` | Réinitialisation | Public |
-
-#### Catalogue
-
-| Méthode | Endpoint | Description | Accès |
-|---------|----------|-------------|-------|
-| GET | `/api/games` | Liste paginée des jeux | Public |
-| GET | `/api/games/{slug}` | Détail d'un jeu | Public |
-| GET | `/api/games/search` | Recherche avec filtres | Public |
-| GET | `/api/games/featured` | Jeux en vedette | Public |
-| POST | `/api/admin/games` | Créer un jeu | Admin |
-| PUT | `/api/admin/games/{id}` | Modifier un jeu | Admin |
-| DELETE | `/api/admin/games/{id}` | Désactiver un jeu | Admin |
-
-#### Panier
-
-| Méthode | Endpoint | Description | Accès |
-|---------|----------|-------------|-------|
-| GET | `/api/cart` | Voir le panier | Authentifié / Session |
-| POST | `/api/cart/items` | Ajouter un article | Authentifié / Session |
-| PUT | `/api/cart/items/{id}` | Modifier une quantité | Authentifié / Session |
-| DELETE | `/api/cart/items/{id}` | Supprimer un article | Authentifié / Session |
-| POST | `/api/cart/promo` | Appliquer un code promo | Authentifié |
-
-#### Commandes
-
-| Méthode | Endpoint | Description | Accès |
-|---------|----------|-------------|-------|
-| POST | `/api/orders/checkout` | Créer une commande | Authentifié |
-| GET | `/api/orders` | Historique des commandes | Authentifié |
-| GET | `/api/orders/{id}` | Détail d'une commande | Authentifié (propriétaire) |
-| POST | `/api/webhooks/stripe` | Webhook Stripe | Interne (signature) |
-
-#### Bibliothèque
-
-| Méthode | Endpoint | Description | Accès |
-|---------|----------|-------------|-------|
-| GET | `/api/library` | Liste des jeux achetés | Authentifié |
-| GET | `/api/library/{gameId}/key` | Voir la clé d'un jeu | Authentifié |
-
----
-
-### 4.5 Sécurité
-
-- **Authentification** : JWT (Access Token 15min + Refresh Token 7 jours) avec stockage en HttpOnly Cookie
-- **Autorisation** : Spring Security avec `@PreAuthorize` basé sur les rôles
-- **Protection CSRF** : Activée pour les formulaires Thymeleaf, désactivée pour l'API REST stateless
-- **CORS** : Configuration stricte avec liste blanche d'origines autorisées
-- **Protection des données** : Chiffrement des clés d'activation en base (AES-256)
-- **Injection SQL** : Prévenue via requêtes paramétrées (`JdbcClient`, paramètres nommés) — jamais de concaténation de chaînes utilisateur dans le SQL
-- **XSS** : Échappement Thymeleaf automatique, Content Security Policy header
-- **Rate Limiting** : Bucket4j pour limiter les tentatives de connexion et les appels API
-- **HTTPS** : Obligatoire en production (certificat SSL/TLS via Let's Encrypt)
-- **Secrets** : Variables d'environnement (pas de clés en dur dans le code), gestion via Spring Cloud Config ou Vault
-
----
-
-### 4.6 Performance
-
-- **Cache** : Redis pour le catalogue (TTL 10 minutes), sessions utilisateurs
-- **Pagination** : Toutes les listes paginées (max 50 items par page)
-- **Chargement ciblé** : Requêtes SQL dédiées par cas d'usage (éviter les `SELECT *` inutiles, pas de chargement automatique des associations)
-- **Optimisation des requêtes** : Index sur les colonnes fréquemment filtrées (title, slug, status, platform), jointures SQL explicites et pagination en base (`LIMIT` / `OFFSET`)
-- **Compression** : Gzip activé sur Nginx
-- **CDN** : Images servies via CDN (Cloudinary ou AWS CloudFront)
-
----
-
-## 5. Contraintes et Exigences Non-Fonctionnelles
-
-### 5.1 Performances
-
-| Indicateur | Cible |
-|------------|-------|
-| Temps de réponse API (P95) | < 300 ms |
-| Temps de chargement page (LCP) | < 2.5 s |
-| Disponibilité (uptime) | ≥ 99.5% |
-| Transactions simultanées | 100 TPS minimum |
-| Taille base de données initiale | Support jusqu'à 10 000 jeux, 100 000 utilisateurs |
-
-### 5.2 Sécurité
-
-- Conformité RGPD (droit à l'oubli, export des données personnelles)
-- Aucune donnée bancaire stockée en clair
-- Journaux d'audit pour toutes les actions sensibles (admin, paiements)
-- Tests de sécurité (OWASP Top 10) avant mise en production
-
-### 5.3 Maintenabilité
-
-- Code couvert par des tests unitaires et d'intégration (couverture ≥ 80%)
-- Documentation technique (JavaDoc, README, diagrammes d'architecture)
-- Documentation API via Swagger UI accessible à `/swagger-ui.html`
-- Respect des conventions de code (checkstyle, SonarQube)
-- Architecture modulaire facilitant l'ajout de nouvelles fonctionnalités
-
-### 5.4 Accessibilité
-
-- Conformité WCAG 2.1 niveau AA
-- Support des navigateurs modernes (Chrome, Firefox, Edge, Safari — 2 dernières versions)
-- Interface responsive (mobile-first) : smartphones, tablettes, ordinateurs
-- Support du mode sombre
-
----
-
-## 6. Architecture des Modules Spring Boot
-
-### 6.1 Structure des Packages
-
-> **Consignes impératives — architecture et conventions Spring**
->
-> L'application suit strictement une **architecture en 3 couches** :
-> **controller → service → repository**, conformément aux **conventions et bonnes pratiques de la communauté Spring** (Spring Boot Reference Documentation, guides officiels, idiomes reconnus du framework).
->
-> - **Respecter les conventions Spring** : injection par constructeur, annotations au bon endroit (`@RestController`, `@Service`, `@Repository`, `@Configuration`), configuration externalisée (`application.properties` / profils), gestion d'erreurs via `@ControllerAdvice` **uniquement pour les exceptions**, validation Jakarta sur les DTOs, etc.
-> - **Ne pas créer** de packages ou dossiers hors de cette organisation (ex. : `viewmodel`, `advisor` dédié aux données de vue, etc.).
-> - **Ne pas contourner** l'absence de backend en injectant des valeurs fictives via `@ControllerAdvice` / `@ModelAttribute` globaux : les données affichées dans les vues Thymeleaf doivent provenir du **controller**, alimenté par le **service**, lui-même branché sur le **repository**.
-> - Le package **`config/`** sert uniquement à la **configuration Spring** (beans, sécurité, JDBC, cache, CORS, etc.) — notamment pour instancier ou brancher des **composants externes** à Spring. Il ne doit **pas** être utilisé pour préparer le modèle des pages ou simuler des données métier.
-> - Tant que la logique métier n'est pas implémentée, les expressions Thymeleaf dynamiques restent **commentées** dans les templates (contenu statique de prévisualisation), en attendant que le flux controller → service → repository les alimente réellement.
-> - **Ne pas prendre d'initiative** ajoutant des abstractions, dossiers ou patterns non prévus par ce document ni éloignés des pratiques habituelles de l'écosystème Spring.
-
-```
-com.gamestore
-├── config/                  # Configurations Spring (Security, CORS, Cache, JDBC, etc.)
-├── domain/                  # POJOs du domaine, Enums, Value Objects (sans ORM)
-│   ├── model/
-│   └── enums/
-├── repository/              # DAO JDBC — requêtes SQL manuelles (JdbcClient)
-├── service/                 # Logique métier
-│   ├── impl/
-│   └── interfaces/
-├── web/                     # Controllers et DTOs
-│   ├── controller/
-│   │   ├── api/             # REST Controllers
-│   │   └── view/            # Thymeleaf Controllers (si Option A)
-│   ├── dto/
-│   │   ├── request/
-│   │   └── response/
-│   └── mapper/              # MapStruct ou Mapper manuel
-├── infrastructure/          # Services externes
-│   ├── email/
-│   ├── payment/
-│   ├── storage/
-│   └── security/
-├── event/                   # Spring Application Events
-├── exception/               # Custom Exceptions + GlobalExceptionHandler
-└── util/                    # Classes utilitaires
+```bash
+docker compose up -d
 ```
 
-### 6.2 Dépendances Maven Clés (pom.xml)
+Services lancés :
 
-```xml
-<!-- Spring Boot Starters -->
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-web</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-jdbc</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-security</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-mail</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-validation</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-cache</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-actuator</artifactId>
-</dependency>
+| Service | Port | Identifiants |
+|---------|------|--------------|
+| PostgreSQL | 5432 | `gamestore` / `gamestore` — base `gamestore` |
+| Adminer | 8080 | Système : PostgreSQL, serveur : `postgres`, user/pass : `gamestore` |
+| Redis | 6379 | *(non utilisé par l'app pour l'instant)* |
 
-<!-- Base de données -->
-<dependency>
-    <groupId>org.postgresql</groupId>
-    <artifactId>postgresql</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.flywaydb</groupId>
-    <artifactId>flyway-core</artifactId>
-</dependency>
+### 3. Lancer l'application
 
-<!-- JWT -->
-<dependency>
-    <groupId>io.jsonwebtoken</groupId>
-    <artifactId>jjwt-api</artifactId>
-    <version>0.12.6</version>
-</dependency>
+```bash
+./mvnw spring-boot:run
+```
 
-<!-- Redis -->
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-redis</artifactId>
-</dependency>
+Au premier démarrage, Maven installe Node/npm et compile Tailwind CSS automatiquement.
 
-<!-- Stripe -->
-<dependency>
-    <groupId>com.stripe</groupId>
-    <artifactId>stripe-java</artifactId>
-    <version>26.x.x</version>
-</dependency>
+L'application écoute sur **http://localhost:8083**.  
+Flyway applique les migrations et insère les **données de démonstration**.
 
-<!-- MapStruct -->
-<dependency>
-    <groupId>org.mapstruct</groupId>
-    <artifactId>mapstruct</artifactId>
-    <version>1.6.3</version>
-</dependency>
+### 4. Vérifier que tout fonctionne
 
-<!-- Swagger -->
-<dependency>
-    <groupId>org.springdoc</groupId>
-    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-    <version>2.7.0</version>
-</dependency>
+- Page d'accueil : http://localhost:8083/
+- Swagger : http://localhost:8083/swagger-ui.html
+- API catalogue : http://localhost:8083/api/games?page=1
 
-<!-- Tests -->
-<dependency>
-    <groupId>org.testcontainers</groupId>
-    <artifactId>postgresql</artifactId>
-    <scope>test</scope>
-</dependency>
+---
+
+## Configuration
+
+Fichiers principaux :
+
+| Fichier | Rôle |
+|---------|------|
+| `application.properties` | Port, profil actif, JWT, Swagger |
+| `application-dev.properties` | Datasource PostgreSQL locale |
+| `application-test.properties` | H2 en mémoire pour les tests |
+
+Variables importantes (`application.properties`) :
+
+```properties
+server.port=8083
+spring.profiles.active=dev
+
+app.jwt.secret=${JWT_SECRET:change-me-in-production-min-256-bits-long-secret-key}
+app.jwt.access-token-expiration=15m
+app.jwt.refresh-token-expiration=7d
+app.auth.auto-verify-email=true
+```
+
+En production, définir **`JWT_SECRET`** via variable d'environnement (clé d'au moins 256 bits).
+
+---
+
+## Comptes et données de démonstration
+
+### Utilisateurs (seed Flyway `V3`)
+
+| Rôle | E-mail | Mot de passe |
+|------|--------|--------------|
+| Admin | `admin@gamestore.local` | `Admin123!` |
+| Client | `demo@gamestore.local` | `Demo1234!` |
+
+### Jeux (extrait — seed `V2`)
+
+| Jeu | Slug | ID |
+|-----|------|----|
+| Cyberpunk 2077 | `cyberpunk-2077` | `c3000001-0000-4000-8000-000000000001` |
+| Elden Ring | `elden-ring` | `c3000001-0000-4000-8000-000000000002` |
+
+6 jeux, genres, tags, avis, clés de licence et code promo **`GAME10`** (-10 %) sont également pré-chargés.
+
+---
+
+## Interface web
+
+### Pages publiques
+
+| URL | Description |
+|-----|-------------|
+| `/` | Accueil (jeux en vedette, bestsellers) |
+| `/catalogue` | Catalogue avec filtres et pagination |
+| `/promotions` | Jeux en promotion |
+| `/jeu/{slug}` | Fiche produit + avis |
+| `/panier` | Panier |
+| `/login`, `/register` | Authentification |
+| `/mot-de-passe-oublie` | Demande de réinitialisation |
+| `/a-propos` | Page statique |
+
+### Pages authentifiées (client)
+
+| URL | Description |
+|-----|-------------|
+| `/checkout` | Paiement (simulé) |
+| `/checkout/confirmation` | Confirmation de commande |
+| `/compte/profil` | Profil utilisateur |
+| `/compte/bibliotheque` | Jeux achetés et clés |
+| `/compte/commandes` | Historique des commandes |
+
+### Backoffice (`ROLE_ADMIN` ou `ROLE_SUPERADMIN`)
+
+| URL | Description |
+|-----|-------------|
+| `/admin/dashboard` | Tableau de bord (KPIs) |
+| `/admin/games` | Gestion du catalogue |
+| `/admin/licenses` | Import et gestion des clés |
+| `/admin/orders` | Commandes |
+| `/admin/users` | Utilisateurs |
+| `/admin/promos` | Codes promo |
+| `/admin/genres`, `/admin/tags` | Taxonomie |
+| `/admin/reviews` | Modération des avis |
+| `/admin/reports` | Export CSV des commandes |
+
+---
+
+## API REST
+
+Base URL : `http://localhost:8083/api`
+
+### Authentification — `/api/auth`
+
+| Méthode | Endpoint | Accès | Description |
+|---------|----------|-------|-------------|
+| POST | `/register` | Public | Inscription → `201` + profil |
+| POST | `/login` | Public | Connexion → JWT (`accessToken`, `refreshToken`) |
+| POST | `/refresh` | Public | Renouvellement du token |
+| POST | `/logout` | Public | Révoque le refresh token → `204` |
+| POST | `/forgot-password` | Public | Envoi e-mail de réinitialisation → `204` |
+| POST | `/reset-password` | Public | Réinitialisation avec token → `204` |
+| GET | `/verify-email?token=` | Public | **501** — non implémenté |
+
+**Exemple login :**
+
+```json
+POST /api/auth/login
+{
+  "email": "demo@gamestore.local",
+  "password": "Demo1234!"
+}
+```
+
+**Réponse :**
+
+```json
+{
+  "accessToken": "eyJ...",
+  "refreshToken": "eyJ...",
+  "tokenType": "Bearer",
+  "expiresIn": 900
+}
+```
+
+Utiliser ensuite : `Authorization: Bearer <accessToken>`
+
+### Catalogue — `/api/games` (public)
+
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/games` | Liste paginée (`page`, `pageSize`) |
+| GET | `/games/search` | Recherche + filtres (`q`, `genre`, `platform`, `priceMin`, `priceMax`, `sort`, `promoOnly`) |
+| GET | `/games/featured` | Jeux en vedette (`limit`) |
+| GET | `/games/{slug}` | Détail d'un jeu |
+
+### Panier — `/api/cart`
+
+| Méthode | Endpoint | Auth | Description |
+|---------|----------|------|-------------|
+| GET | `/cart` | Invité ou JWT | Contenu du panier |
+| POST | `/cart/items` | Invité ou JWT | Ajouter un jeu `{ "gameId": "uuid" }` |
+| PUT | `/cart/items/{id}` | Invité ou JWT | Modifier quantité `{ "quantity": 2 }` |
+| DELETE | `/cart/items/{id}` | Invité ou JWT | Supprimer un article |
+| POST | `/cart/promo` | JWT | Appliquer un code `{ "code": "GAME10" }` |
+
+**Panier invité :** le serveur renvoie l'en-tête `X-Cart-Session` à conserver sur les requêtes suivantes.
+
+### Commandes — `/api/orders` (JWT obligatoire)
+
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/orders/checkout` | Créer une commande → `201` |
+| GET | `/orders` | Historique |
+| GET | `/orders/{id}` | Détail (propriétaire uniquement → `404` sinon) |
+
+### Bibliothèque — `/api/library` (JWT obligatoire)
+
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/library` | Jeux achetés |
+| GET | `/library/{gameId}/key` | Clé d'activation d'un jeu possédé |
+
+### Admin — `/api/admin/games` (JWT + rôle ADMIN)
+
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/admin/games` | Créer un jeu → `201` |
+| PUT | `/admin/games/{id}` | Modifier un jeu |
+| DELETE | `/admin/games/{id}` | Désactiver un jeu → `204` |
+
+### Codes de réponse API
+
+Les erreurs API renvoient un JSON structuré (`ApiErrorResponse`) :
+
+```json
+{
+  "timestamp": "2026-06-29T12:00:00Z",
+  "status": 404,
+  "error": "Not Found",
+  "message": "Jeu introuvable : ...",
+  "path": "/api/games/..."
+}
 ```
 
 ---
 
-## 7. Plan de Développement
+## Tester l'API
 
-### 7.1 Phases du Projet
+### Option 1 — Fichier HTTP (recommandé)
 
-#### Phase 1 — Initialisation et Architecture (Semaines 1-2)
-- Mise en place du projet Spring Boot
-- Configuration Docker Compose (PostgreSQL, Redis, Adminer)
-- Mise en place de Flyway et des premières migrations SQL
-- Configuration Spring JDBC (`JdbcClient`) et premiers DAO avec requêtes SQL manuelles (sans ORM)
-- Configuration Spring Security de base (JWT)
-- Structure des packages et conventions de code
+Le fichier [`http/gamestore-api.http`](http/gamestore-api.http) contient toutes les requêtes prêtes à l'emploi, compatible **VS Code REST Client** ou **Cursor REST Client Plus**.
 
-#### Phase 2 — Gestion des Utilisateurs (Semaines 3-4)
-- Module d'authentification complet (inscription, connexion, JWT)
-- Vérification email et récupération de mot de passe
-- Profil utilisateur
-- Tests unitaires du module Auth
+**Extension recommandée sous Cursor :** [REST Client Plus](https://open-vsx.org/extension/kit1211/rest-client-plus) — l'extension officielle `humao.rest-client` a un bug d'affichage des réponses sous Cursor (panneau qui s'ouvre et se referme).
 
-#### Phase 3 — Catalogue de Jeux (Semaines 5-7)
-- CRUD complet du catalogue (admin)
-- Page de listing avec filtres et pagination
-- Page de détail d'un jeu
-- Système de notation et d'avis
-- Upload d'images (Cloudinary)
+**Contournement si vous gardez l'extension officielle :**
 
-#### Phase 4 — Panier et Commandes (Semaines 8-10)
-- Module panier (invité + connecté)
-- Processus de checkout
-- Intégration Stripe (Payment Intent + Webhooks)
-- Distribution automatique des clés
-- Notifications email (confirmation, clés)
+1. Ouvrir `gamestore-api.http`
+2. `Ctrl+\` pour créer un split éditeur à droite
+3. Cliquer **Send Request**
+4. Consulter l'historique avec `Ctrl+Alt+H` si le panneau ne s'affiche pas
 
-#### Phase 5 — Administration (Semaines 11-12)
-- Tableau de bord admin
-- Gestion du stock de clés (import CSV)
-- Gestion des commandes et remboursements
-- Gestion des promotions et codes promo
-- Rapports et export
+Les requêtes nommées (`# @name loginDemo`, etc.) alimentent les références du type `{{loginDemo.response.body.accessToken}}`. **Exécuter d'abord la requête source**, puis les requêtes dépendantes.
 
-#### Phase 6 — Qualité et Déploiement (Semaines 13-14)
-- Tests d'intégration (Testcontainers)
-- Tests de performance basiques
-- Audit de sécurité (OWASP)
-- Configuration CI/CD (GitHub Actions)
-- Déploiement sur environnement de staging
-- Documentation finale
+### Option 2 — Swagger UI
 
-### 7.2 Jalons Clés (Milestones)
+http://localhost:8083/swagger-ui.html
 
-| Jalon | Livrable | Semaine |
-|-------|----------|---------|
-| M1 | Environnement de développement fonctionnel | 2 |
-| M2 | Authentification complète (Register/Login/JWT) | 4 |
-| M3 | Catalogue navigable avec filtres | 7 |
-| M4 | Premier achat de bout en bout (Checkout + Clé reçue) | 10 |
-| M5 | Backoffice admin complet | 12 |
-| M6 | Mise en production (v1.0) | 14 |
+1. Appeler `POST /api/auth/login` pour obtenir un token
+2. Cliquer **Authorize** et saisir `Bearer <accessToken>`
+3. Tester les endpoints protégés
 
----
+### Option 3 — curl
 
-## 8. Tests et Qualité
+```bash
+# Catalogue
+curl http://localhost:8083/api/games?page=1
 
-### 8.1 Stratégie de Test
+# Login
+curl -X POST http://localhost:8083/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"demo@gamestore.local","password":"Demo1234!"}'
+```
 
-| Type de test | Outil | Couverture cible |
-|--------------|-------|------------------|
-| Tests unitaires (Services) | JUnit 5 + Mockito | ≥ 80% |
-| Tests d'intégration (Repository / DAO) | Testcontainers + PostgreSQL | Requêtes SQL critiques |
-| Tests d'intégration (API) | MockMvc / RestAssured | Tous les endpoints |
-| Tests de sécurité | Spring Security Test | Contrôle d'accès |
-| Tests de performance | JMeter / Gatling | Scénarios critiques |
+### Ordre de test recommandé
 
-### 8.2 Scénarios de Test Critiques
+#### Phase 1 — Public (sans auth)
 
-- Inscription → Vérification email → Connexion
-- Ajout au panier → Checkout → Paiement Stripe (mode test) → Réception des clés
-- Tentatives de connexion échouées → Verrouillage du compte
-- Accès non autorisé aux routes admin
-- Import de clés en masse → Vérification du stock
-- Remboursement d'une commande → Invalidation des clés
+1. `GET /api/games` — liste
+2. `GET /api/games/search` — filtres
+3. `GET /api/games/featured` — vedette
+4. `GET /api/games/elden-ring` — détail
+5. `GET /api/games/jeu-inexistant` — **404**
 
----
+#### Phase 2 — Authentification
 
-## 9. Livrables Attendus
+6. `POST /api/auth/register`
+7. `POST /api/auth/login` (`loginDemo`)
+8. Login invalide — **401**
+9. `POST /api/auth/refresh`
+10. `POST /api/auth/forgot-password`
+11. `GET /api/auth/verify-email` — **501**
+12. `POST /api/auth/logout`
 
-| Livrable | Description |
-|----------|-------------|
-| Code source | Repository Git (GitHub/GitLab) avec historique de commits |
-| Documentation API | Swagger UI intégré (`/swagger-ui.html`) |
-| Docker Compose | Fichier pour lancer l'environnement complet en local |
-| Documentation technique | README, diagrammes d'architecture (PlantUML/Draw.io) |
-| Base de données | Scripts Flyway de migration + données de démonstration |
-| Manuel d'administration | Guide d'utilisation du backoffice |
-| Rapport de tests | Rapport de couverture de tests (JaCoCo) |
+#### Phase 3 — Panier invité
+
+13. `POST /api/cart/items` → récupérer `X-Cart-Session`
+14. `GET /api/cart`
+15. `PUT /api/cart/items/{id}`
+16. `DELETE /api/cart/items/{id}`
+
+#### Phase 4 — Parcours client (après `loginDemo`)
+
+17. Ajouter au panier (connecté)
+18. Appliquer promo `GAME10`
+19. Préparer le panier (si vide)
+20. `POST /api/orders/checkout` — **201**
+21. `GET /api/orders` + `GET /api/orders/{id}`
+22. `GET /api/library` + clé d'activation
+23. Checkout panier vide — **400**
+
+#### Phase 5 — Admin (après `loginAdmin`)
+
+24. `POST /api/admin/games`
+25. `PUT /api/admin/games/{id}`
+26. `DELETE /api/admin/games/{id}`
+27. Création par un non-admin — **403**
+
+> Ne pas exécuter toutes les requêtes d'un coup : certaines vident le panier ou révoquent le token.
 
 ---
 
-## 10. Risques Identifiés
+## Tests automatisés
 
-| Risque | Probabilité | Impact | Mitigation |
-|--------|-------------|--------|------------|
-| Fraude sur les clés (revente) | Moyenne | Élevé | Limitation d'achat par compte, vérification d'email, détection d'anomalies |
-| Panne du prestataire de paiement | Faible | Élevé | Gestion des erreurs robuste, statut PENDING en cas de timeout, réconciliation par webhook |
-| Stock de clés insuffisant | Moyenne | Moyen | Alertes de stock faible, blocage de la commande si stock = 0 |
-| Violation de données | Faible | Très élevé | Chiffrement, audit, RGPD, tests de sécurité |
-| Montée en charge imprévue | Faible | Moyen | Architecture stateless (horizontal scaling), cache Redis |
+Les tests d'intégration utilisent **H2 en mémoire** (profil `test`) avec les mêmes migrations Flyway.
 
----
+```bash
+# Tous les tests
+./mvnw test
 
-## Annexe A — Glossaire
+# Tests API uniquement
+./mvnw test -Dtest=AuthApiIntegrationTest,GameApiIntegrationTest,CartApiIntegrationTest,OrderApiIntegrationTest,AdminGameApiIntegrationTest
+```
 
-| Terme | Définition |
-|-------|------------|
-| **Licence / Clé d'activation** | Code alphanumérique unique permettant d'activer un jeu sur une plateforme (Steam, Epic, etc.) |
-| **PEGI** | Pan European Game Information — système européen de classification des jeux par âge |
-| **JWT** | JSON Web Token — standard ouvert pour l'authentification stateless |
-| **PCI-DSS** | Payment Card Industry Data Security Standard — standard de sécurité pour les paiements par carte |
-| **Webhook** | Mécanisme de notification HTTP envoyé par un service tiers (ex : Stripe) vers notre application |
-| **Flyway** | Outil de migration de base de données pour Java |
-| **JdbcClient** | API fluide Spring (6.1+) pour exécuter des requêtes SQL paramétrées sans ORM |
-| **DAO (Repository)** | Couche d'accès aux données : une classe par agrégat, SQL écrit à la main |
-| **DTO** | Data Transfer Object — objet utilisé pour transférer des données entre couches |
-| **MapStruct** | Framework Java pour la conversion automatique entre entités et DTOs |
-| **Testcontainers** | Bibliothèque permettant de démarrer des instances Docker (PostgreSQL, Redis) pendant les tests |
+| Classe de test | Couverture |
+|----------------|------------|
+| `AuthApiIntegrationTest` | Register, login, refresh, logout |
+| `GameApiIntegrationTest` | Catalogue public |
+| `CartApiIntegrationTest` | Panier invité et connecté, promo |
+| `OrderApiIntegrationTest` | Checkout, bibliothèque, clés |
+| `AdminGameApiIntegrationTest` | CRUD admin, contrôle d'accès |
+| `CartServiceTest`, `GameReviewServiceTest`, … | Tests unitaires services |
 
 ---
 
-*Document rédigé pour le projet GameStore Platform — Spring Boot E-Commerce*  
-*Version 1.0 — Juin 2026*
+## Structure du projet
+
+```
+gamestore/
+├── docker-compose.yml          # PostgreSQL, Redis, Adminer
+├── http/
+│   └── gamestore-api.http      # Collection de requêtes REST Client
+├── pom.xml
+├── package.json                # Tailwind CSS (build frontend)
+└── src/
+    ├── main/
+    │   ├── java/com/examen/gamestore/
+    │   │   ├── config/         # Security, OpenAPI, Thymeleaf
+    │   │   ├── domain/         # POJOs et enums (sans ORM)
+    │   │   ├── repository/     # JDBC — SQL manuel (JdbcClient)
+    │   │   ├── service/        # Logique métier
+    │   │   │   ├── impl/
+    │   │   │   └── cart/       # Scopes panier (session web / API)
+    │   │   ├── web/
+    │   │   │   ├── controller/
+    │   │   │   │   ├── api/    # REST Controllers
+    │   │   │   │   └── view/   # Thymeleaf Controllers
+    │   │   │   ├── dto/
+    │   │   │   └── mapper/
+    │   │   ├── infrastructure/ # E-mail, sécurité JWT
+    │   │   ├── exception/      # GlobalExceptionHandler (web) + ApiExceptionHandler (API)
+    │   │   └── util/
+    │   └── resources/
+    │       ├── application*.properties
+    │       ├── db/migration/   # Flyway V1 → V6
+    │       ├── static/         # CSS, JS
+    │       └── templates/      # Vues Thymeleaf
+    └── test/
+        ├── java/               # Tests JUnit 5 + MockMvc
+        └── resources/
+            └── application-test.properties
+```
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  Présentation                                           │
+│  • Controllers view (Thymeleaf + sessions)              │
+│  • Controllers api (JSON + JWT stateless)               │
+├─────────────────────────────────────────────────────────┤
+│  Service (interfaces + impl)                            │
+│  • AuthService, CartService, OrderService, GameService… │
+├─────────────────────────────────────────────────────────┤
+│  Repository (JdbcClient — requêtes SQL paramétrées)     │
+├─────────────────────────────────────────────────────────┤
+│  Domain (POJOs, enums)                                  │
+└─────────────────────────────────────────────────────────┘
+         │                              │
+    PostgreSQL                      Flyway migrations
+```
+
+### Double accès panier
+
+| Contexte | Mécanisme | Classe |
+|----------|-----------|--------|
+| Site web | Session HTTP | `HttpSessionCartScope` |
+| API REST invité | Header `X-Cart-Session` | `ApiCartScope` |
+| API REST connecté | JWT → `userId` | `ApiCartScope` |
+
+### Double chaîne de sécurité
+
+| Chaîne | Périmètre | Mode |
+|--------|-----------|------|
+| `apiSecurityFilterChain` | `/api/**` | Stateless JWT |
+| `mvcSecurityFilterChain` | Pages Thymeleaf | Formulaire + session |
+
+---
+
+## Sécurité
+
+| Aspect | Implémentation |
+|--------|----------------|
+| Mots de passe | BCrypt |
+| API | JWT (access 15 min, refresh 7 jours, hashé en BDD) |
+| Web | Spring Security form login (email + mot de passe) |
+| Rôles | `ROLE_USER`, `ROLE_ADMIN`, `ROLE_SUPERADMIN` |
+| CSRF | Activé (web), désactivé (API REST) |
+| SQL | Requêtes paramétrées via `JdbcClient` |
+
+Routes API publiques : auth (register/login/refresh/logout/forgot/reset), catalogue (`GET /api/games/**`), panier (`/api/cart/**`).  
+Routes protégées : `/api/orders/**`, `/api/library/**`.  
+Admin : `/api/admin/**` → rôles `ADMIN` ou `SUPERADMIN`.
+
+---
+
+## Développement
+
+### Compiler le CSS Tailwind manuellement
+
+```bash
+npm install
+npm run build:css
+```
+
+Mode watch pendant le développement front :
+
+```bash
+npm run watch:css
+```
+
+### Profils Spring
+
+| Profil | Usage |
+|--------|-------|
+| `dev` (défaut) | PostgreSQL via Docker |
+| `test` | H2 en mémoire (tests Maven) |
+
+### E-mails en développement
+
+Les e-mails (inscription, commande, reset password) sont loggés dans la console via `LoggingEmailService`. Surveillez les logs Spring pour récupérer les tokens de réinitialisation.
+
+### Migrations Flyway
+
+| Version | Contenu |
+|---------|---------|
+| V1 | Schéma initial |
+| V2 | Données démo (jeux, genres, tags) |
+| V3 | Comptes démo + tokens reset password |
+| V4 | Avis sur les jeux |
+| V5 | Panier, commandes, clés, promo GAME10 |
+| V6 | Refresh tokens JWT |
+
+---
+
+## Limites connues
+
+Fonctionnalités **prévues dans le cahier des charges** mais **non implémentées** ou **partielles** :
+
+| Fonctionnalité | État |
+|----------------|------|
+| Paiement Stripe réel | Colonne BDD présente, checkout **simulé** |
+| Vérification e-mail API | Retourne **501** |
+| OAuth2 (Google, Steam…) | Non implémenté |
+| Cache Redis | Service Docker présent, non branché |
+| Rate limiting | Non implémenté |
+| Chiffrement AES des clés en BDD | Clés stockées en clair |
+| CAPTCHA à l'inscription | Non implémenté |
+| Factures PDF | Non implémenté |
+
+---
+
+## Nettoyage du dépôt
+
+Dossiers **générés automatiquement** — ne pas versionner, supprimables sans impact sur le code source :
+
+| Dossier | Généré par |
+|---------|------------|
+| `target/` | Maven (compilation, tests) |
+| `node_modules/` | npm (Tailwind) |
+| `node/` | frontend-maven-plugin (Node embarqué Maven) |
+
+Tous les fichiers source ajoutés pour l'API REST (`AuthApiController`, `JwtService`, `http/gamestore-api.http`, tests d'intégration, etc.) sont **référencés et utilisés** — aucune suppression n'est nécessaire.
+
+---
+
+*GameStore Platform — Spring Boot E-Commerce — Juin 2026*

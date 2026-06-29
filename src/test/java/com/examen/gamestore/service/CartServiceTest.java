@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.examen.gamestore.exception.InvalidPromoCodeException;
 import com.examen.gamestore.repository.UserRepository;
-import com.examen.gamestore.service.impl.CartServiceImpl;
+import com.examen.gamestore.service.cart.HttpSessionCartScope;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -43,8 +43,8 @@ class CartServiceTest {
 
 	@Test
 	void guestCanAddGameToCart() {
-		cartService.addGame(ELDEN_RING_ID, session, null);
-		var cart = cartService.getCart(session, null);
+		cartService.addGame(ELDEN_RING_ID, new HttpSessionCartScope(session), null);
+		var cart = cartService.getCart(new HttpSessionCartScope(session), null);
 		assertFalse(cart.isEmpty());
 		assertEquals(1, cart.getItemCount());
 		assertEquals("Elden Ring", cart.getItems().getFirst().getTitle());
@@ -52,9 +52,9 @@ class CartServiceTest {
 
 	@Test
 	void promoCodeGame10AppliesDiscount() {
-		cartService.addGame(ELDEN_RING_ID, session, null);
-		cartService.applyPromoCode("GAME10", session, null);
-		var cart = cartService.getCart(session, null);
+		cartService.addGame(ELDEN_RING_ID, new HttpSessionCartScope(session), null);
+		cartService.applyPromoCode("GAME10", new HttpSessionCartScope(session), null);
+		var cart = cartService.getCart(new HttpSessionCartScope(session), null);
 		assertEquals("GAME10", cart.getAppliedPromoCode());
 		assertEquals(0, cart.getTotal().compareTo(cart.getSubtotal().subtract(cart.getDiscount())));
 		assertTrue(cart.getDiscount().compareTo(BigDecimal.ZERO) > 0);
@@ -62,16 +62,16 @@ class CartServiceTest {
 
 	@Test
 	void invalidPromoCodeThrows() {
-		cartService.addGame(ELDEN_RING_ID, session, null);
+		cartService.addGame(ELDEN_RING_ID, new HttpSessionCartScope(session), null);
 		assertThrows(InvalidPromoCodeException.class,
-				() -> cartService.applyPromoCode("INVALID", session, null));
+				() -> cartService.applyPromoCode("INVALID", new HttpSessionCartScope(session), null));
 	}
 
 	@Test
 	void loggedInUserCartPersistsByUserId() {
 		assert userRepository.findById(DEMO_USER_ID).isPresent();
-		cartService.addGame(ELDEN_RING_ID, session, DEMO_USER_ID);
-		var cart = cartService.getCart(session, DEMO_USER_ID);
+		cartService.addGame(ELDEN_RING_ID, new HttpSessionCartScope(session), DEMO_USER_ID);
+		var cart = cartService.getCart(new HttpSessionCartScope(session), DEMO_USER_ID);
 		assertEquals(1, cart.getItemCount());
 	}
 }

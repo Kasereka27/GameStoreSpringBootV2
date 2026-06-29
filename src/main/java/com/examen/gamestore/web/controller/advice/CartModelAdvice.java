@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.examen.gamestore.infrastructure.security.GameStoreUserDetails;
 import com.examen.gamestore.service.CartService;
+import com.examen.gamestore.service.cart.HttpSessionCartScope;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -22,7 +23,7 @@ public class CartModelAdvice {
 
 	@ModelAttribute("cartItemCount")
 	public int cartItemCount(HttpSession session, @AuthenticationPrincipal GameStoreUserDetails user) {
-		return cartService.getItemCount(session, resolveUserId(user));
+		return cartService.getItemCount(new HttpSessionCartScope(session), resolveUserId(user));
 	}
 
 	private UUID resolveUserId(GameStoreUserDetails user) {

@@ -17,6 +17,7 @@ import com.examen.gamestore.exception.InsufficientStockException;
 import com.examen.gamestore.infrastructure.security.GameStoreUserDetails;
 import com.examen.gamestore.service.CartService;
 import com.examen.gamestore.service.OrderService;
+import com.examen.gamestore.service.cart.HttpSessionCartScope;
 import com.examen.gamestore.web.dto.request.CheckoutForm;
 
 import jakarta.servlet.http.HttpSession;
@@ -39,7 +40,7 @@ public class CheckoutController {
 			@AuthenticationPrincipal GameStoreUserDetails user,
 			Model model) {
 
-		var cart = cartService.getCart(session, user.getUser().getId());
+		var cart = cartService.getCart(new HttpSessionCartScope(session), user.getUser().getId());
 		if (cart.isEmpty()) {
 			return "redirect:/panier";
 		}
@@ -69,13 +70,13 @@ public class CheckoutController {
 			RedirectAttributes redirectAttributes) {
 
 		if (bindingResult.hasErrors()) {
-			model.addAttribute("cart", cartService.getCart(session, user.getUser().getId()));
+			model.addAttribute("cart", cartService.getCart(new HttpSessionCartScope(session), user.getUser().getId()));
 			model.addAttribute("activePage", "checkout");
 			return "checkout";
 		}
 
 		try {
-			var order = orderService.checkout(user.getUser().getId(), checkoutForm, session);
+			var order = orderService.checkout(user.getUser().getId(), checkoutForm, new HttpSessionCartScope(session));
 			redirectAttributes.addFlashAttribute("orderNumber", order.getOrderNumber());
 			return "redirect:/checkout/confirmation?order=" + order.getOrderNumber();
 		}

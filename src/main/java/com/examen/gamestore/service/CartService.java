@@ -2,27 +2,27 @@ package com.examen.gamestore.service;
 
 import java.util.UUID;
 
+import com.examen.gamestore.domain.model.PromoCode;
+import com.examen.gamestore.service.cart.CartScope;
 import com.examen.gamestore.web.dto.CartView;
-
-import jakarta.servlet.http.HttpSession;
 
 public interface CartService {
 
-	CartView getCart(HttpSession session, UUID userId);
+	CartView getCart(CartScope scope, UUID userId);
 
-	int getItemCount(HttpSession session, UUID userId);
+	int getItemCount(CartScope scope, UUID userId);
 
-	void addGame(UUID gameId, HttpSession session, UUID userId);
+	void addGame(UUID gameId, CartScope scope, UUID userId);
 
-	void updateQuantity(UUID itemId, int quantity, HttpSession session, UUID userId);
+	void updateQuantity(UUID itemId, int quantity, CartScope scope, UUID userId);
 
-	void removeItem(UUID itemId, HttpSession session, UUID userId);
+	void removeItem(UUID itemId, CartScope scope, UUID userId);
 
-	void applyPromoCode(String code, HttpSession session, UUID userId);
+	void applyPromoCode(String code, CartScope scope, UUID userId);
 
-	void clearPromoCode(HttpSession session);
+	void clearPromoCode(CartScope scope);
 
-	void clearCart(HttpSession session, UUID userId);
+	void clearCart(CartScope scope, UUID userId);
 
-	com.examen.gamestore.domain.model.PromoCode resolvePromo(HttpSession session);
+	PromoCode resolvePromo(CartScope scope);
 }
