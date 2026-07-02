@@ -4,35 +4,19 @@ import java.util.List;
 import java.util.UUID;
 
 import com.examen.gamestore.domain.model.Game;
-import com.examen.gamestore.domain.model.Genre;
-import com.examen.gamestore.domain.model.Tag;
-import com.examen.gamestore.web.dto.GamePage;
-import com.examen.gamestore.web.dto.GameSearchCriteria;
-import com.examen.gamestore.web.dto.request.GameForm;
+import com.examen.gamestore.web.dto.GameForm;
 
 public interface GameService {
 
-	GamePage searchGames(GameSearchCriteria criteria);
+	List<Game> findAll();
 
-	Game getGameBySlug(String slug);
+	Game getById(UUID id);
 
-	Game getGameById(UUID id);
+	UUID create(GameForm form);
 
-	List<Game> getFeaturedGames(int limit);
+	void update(UUID id, GameForm form);
 
-	List<Game> getBestsellers(int limit);
+	void delete(UUID id);
 
-	List<Genre> getAllGenres();
-
-	List<Tag> getAllTags();
-
-	List<Game> getSimilarGames(UUID gameId, int limit);
-
-	GameForm getGameForm(UUID id);
-
-	UUID createGame(GameForm form);
-
-	void updateGame(UUID id, GameForm form);
-
-	void deactivateGame(UUID id);
+	GameForm toForm(Game game);
 }

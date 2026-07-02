@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${tagId != null} ? 'Modifier tag' : 'Nouveau tag'">Tag</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main>
+    <p th:if="${error}" class="error" th:text="${error}"></p>
+    <h2 th:text="${tagId != null} ? 'Modifier tag' : 'Nouveau tag'">Tag</h2>
+    <form th:action="${tagId != null} ? @{/tags/{id}(id=${tagId})} : @{/tags}" method="post"
+          th:object="${tagForm}">
+        <label>Label <input type="text" th:field="*{label}" required/></label>
+        <label>Slug <input type="text" th:field="*{slug}"/></label>
+        <button type="submit">Enregistrer</button>
+        <a th:href="@{/tags}">Annuler</a>
+    </form>
+</main>
+</body>
+</html>

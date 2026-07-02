@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${genreId != null} ? 'Modifier genre' : 'Nouveau genre'">Genre</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main>
+    <p th:if="${error}" class="error" th:text="${error}"></p>
+    <h2 th:text="${genreId != null} ? 'Modifier genre' : 'Nouveau genre'">Genre</h2>
+    <form th:action="${genreId != null} ? @{/genres/{id}(id=${genreId})} : @{/genres}" method="post"
+          th:object="${genreForm}">
+        <label>Label <input type="text" th:field="*{label}" required/></label>
+        <label>Slug <input type="text" th:field="*{slug}"/></label>
+        <button type="submit">Enregistrer</button>
+        <a th:href="@{/genres}">Annuler</a>
+    </form>
+</main>
+</body>
+</html>

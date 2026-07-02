@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Tags</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main>
+    <p th:if="${message}" class="success" th:text="${message}"></p>
+    <p th:if="${error}" class="error" th:text="${error}"></p>
+    <h2>Tags</h2>
+    <p><a th:href="@{/tags/new}">+ Nouveau tag</a></p>
+    <table>
+        <thead>
+        <tr><th>Label</th><th>Slug</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="tag : ${tags}">
+            <td th:text="${tag.label}">Label</td>
+            <td th:text="${tag.slug}">slug</td>
+            <td>
+                <a th:href="@{/tags/{id}/edit(id=${tag.id})}">Modifier</a>
+                <form th:action="@{/tags/{id}/delete(id=${tag.id})}" method="post" style="display:inline">
+                    <button type="submit">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

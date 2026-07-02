@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="header">
+    <h1><a th:href="@{/}">Gamestore</a></h1>
+    <nav>
+        <a th:href="@{/}">Jeux</a>
+        <a th:href="@{/genres}">Genres</a>
+        <a th:href="@{/tags}">Tags</a>
+    </nav>
+</header>
+</body>
+</html>

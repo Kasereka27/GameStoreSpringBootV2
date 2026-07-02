@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${gameId != null} ? 'Modifier jeu' : 'Nouveau jeu'">Jeu</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main>
+    <p th:if="${error}" class="error" th:text="${error}"></p>
+    <h2 th:text="${gameId != null} ? 'Modifier jeu' : 'Nouveau jeu'">Jeu</h2>
+    <form th:action="${gameId != null} ? @{/games/{id}(id=${gameId})} : @{/games}" method="post"
+          th:object="${gameForm}">
+        <label>Titre <input type="text" th:field="*{title}" required/></label>
+        <label>Slug <input type="text" th:field="*{slug}"/></label>
+        <label>Description <textarea th:field="*{description}"></textarea></label>
+        <label>Prix <input type="number" step="0.01" min="0" th:field="*{price}" required/></label>
+        <label>Plateforme <input type="text" th:field="*{platform}"/></label>
+        <fieldset>
+            <legend>Genres</legend>
+            <label th:each="genre : ${genres}">
+                <input type="checkbox" name="genreSlugs" th:value="${genre.slug}"
+                       th:checked="${gameForm.genreSlugs != null and gameForm.genreSlugs.contains(genre.slug)}"/>
+                <span th:text="${genre.label}">Genre</span>
+            </label>
+        </fieldset>
+        <fieldset>
+            <legend>Tags</legend>
+            <label th:each="tag : ${tags}">
+                <input type="checkbox" name="tagSlugs" th:value="${tag.slug}"
+                       th:checked="${gameForm.tagSlugs != null and gameForm.tagSlugs.contains(tag.slug)}"/>
+                <span th:text="${tag.label}">Tag</span>
+            </label>
+        </fieldset>
+        <button type="submit">Enregistrer</button>
+        <a th:href="@{/}">Annuler</a>
+    </form>
+</main>
+</body>
+</html>

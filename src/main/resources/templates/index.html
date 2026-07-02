@@ -1,380 +1,42 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{_layout :: head('Accueil — GameStore Platform', 'GameStore Platform — Achetez vos clés de jeux vidéo numériques au meilleur prix. Livraison instantanée.')}">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="GameStore Platform — Achetez vos clés de jeux vidéo numériques au meilleur prix. Livraison instantanée.">
-  <title>Accueil — GameStore Platform</title>
-
-  <link rel="stylesheet" href="/css/styles.css">
-  <link rel="stylesheet" href="/css/theme.css">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Jeux</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
 </head>
-<body class="bg-bg-dark text-text antialiased min-h-screen flex flex-col">
-
-    <header th:replace="~{_layout :: navbar}"></header>
-
-  <main class="flex-1">
-
-    <!-- 1. Hero Carousel -->
-    <section class="relative border-b border-border" aria-label="Jeux en promotion" data-hero-carousel>
-      <div class="relative aspect-[16/9] max-h-[520px] min-h-[320px] w-full overflow-hidden sm:aspect-[21/9] sm:min-h-[400px]">
-
-        <!-- Slide 1 — Cyberpunk 2077 -->
-        <article data-hero-slide class="hero-slide active absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600&h=900&fit=crop" alt="" class="absolute inset-0 h-full w-full object-cover" aria-hidden="true">
-          <div class="absolute inset-0 bg-gradient-to-r from-bg-dark via-bg-dark/80 to-transparent" aria-hidden="true"></div>
-          <div class="relative flex h-full flex-col justify-center px-4 sm:px-8 lg:px-16">
-            <span class="animate-pulse-promo mb-4 inline-flex w-fit items-center rounded-full bg-error px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">Promo -30%</span>
-            <p class="text-sm font-medium uppercase tracking-widest text-brand-cyan-light">RPG · Action</p>
-            <h1 class="mt-2 max-w-xl text-3xl font-extrabold text-white sm:text-4xl lg:text-5xl">Cyberpunk 2077</h1>
-            <div class="mt-4 flex items-center gap-3">
-              <span class="text-lg text-muted line-through">59,99 €</span>
-              <span class="text-2xl font-bold text-white">41,99 €</span>
-            </div>
-            <div class="mt-6 flex flex-wrap gap-3">
-              <a href="game-detail.html?id=1" data-add-to-cart class="inline-flex items-center gap-2 rounded-lg bg-brand-purple px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-purple-light">Acheter maintenant</a>
-              <a href="game-detail.html?id=1" class="inline-flex items-center gap-2 rounded-lg border border-border bg-bg-card/80 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-bg-card-hover">En savoir plus</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- Slide 2 — Elden Ring -->
-        <article data-hero-slide class="hero-slide absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1600&h=900&fit=crop" alt="" class="absolute inset-0 h-full w-full object-cover" aria-hidden="true">
-          <div class="absolute inset-0 bg-gradient-to-r from-bg-dark via-bg-dark/80 to-transparent" aria-hidden="true"></div>
-          <div class="relative flex h-full flex-col justify-center px-4 sm:px-8 lg:px-16">
-            <span class="animate-pulse-promo mb-4 inline-flex w-fit items-center rounded-full bg-error px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">Promo -30%</span>
-            <p class="text-sm font-medium uppercase tracking-widest text-brand-cyan-light">Action · Souls-like</p>
-            <h2 class="mt-2 max-w-xl text-3xl font-extrabold text-white sm:text-4xl lg:text-5xl">Elden Ring</h2>
-            <div class="mt-4 flex items-center gap-3">
-              <span class="text-lg text-muted line-through">69,99 €</span>
-              <span class="text-2xl font-bold text-white">48,99 €</span>
-            </div>
-            <div class="mt-6 flex flex-wrap gap-3">
-              <a href="game-detail.html?id=2" data-add-to-cart class="inline-flex items-center gap-2 rounded-lg bg-brand-purple px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-purple-light">Acheter maintenant</a>
-              <a href="game-detail.html?id=2" class="inline-flex items-center gap-2 rounded-lg border border-border bg-bg-card/80 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-bg-card-hover">En savoir plus</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- Slide 3 — Baldur's Gate 3 -->
-        <article data-hero-slide class="hero-slide absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1493710667105-003dca9897c9?w=1600&h=900&fit=crop" alt="" class="absolute inset-0 h-full w-full object-cover" aria-hidden="true">
-          <div class="absolute inset-0 bg-gradient-to-r from-bg-dark via-bg-dark/80 to-transparent" aria-hidden="true"></div>
-          <div class="relative flex h-full flex-col justify-center px-4 sm:px-8 lg:px-16">
-            <span class="animate-pulse-promo mb-4 inline-flex w-fit items-center rounded-full bg-error px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">Promo -30%</span>
-            <p class="text-sm font-medium uppercase tracking-widest text-brand-cyan-light">RPG · Aventure</p>
-            <h2 class="mt-2 max-w-xl text-3xl font-extrabold text-white sm:text-4xl lg:text-5xl">Baldur's Gate 3</h2>
-            <div class="mt-4 flex items-center gap-3">
-              <span class="text-lg text-muted line-through">59,99 €</span>
-              <span class="text-2xl font-bold text-white">41,99 €</span>
-            </div>
-            <div class="mt-6 flex flex-wrap gap-3">
-              <a href="game-detail.html?id=3" data-add-to-cart class="inline-flex items-center gap-2 rounded-lg bg-brand-purple px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-purple-light">Acheter maintenant</a>
-              <a href="game-detail.html?id=3" class="inline-flex items-center gap-2 rounded-lg border border-border bg-bg-card/80 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-bg-card-hover">En savoir plus</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- Navigation -->
-        <button type="button" data-hero-prev class="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-border bg-bg-dark/70 p-2 text-white backdrop-blur transition hover:bg-bg-card sm:left-6" aria-label="Slide précédent">
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-        </button>
-        <button type="button" data-hero-next class="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-border bg-bg-dark/70 p-2 text-white backdrop-blur transition hover:bg-bg-card sm:right-6" aria-label="Slide suivant">
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        </button>
-
-        <div class="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2" role="tablist" aria-label="Slides du carousel">
-          <button type="button" data-hero-dot class="h-2.5 w-2.5 rounded-full bg-brand-cyan transition" aria-label="Slide 1" aria-selected="true"></button>
-          <button type="button" data-hero-dot class="h-2.5 w-2.5 rounded-full bg-border transition" aria-label="Slide 2"></button>
-          <button type="button" data-hero-dot class="h-2.5 w-2.5 rounded-full bg-border transition" aria-label="Slide 3"></button>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. Meilleures ventes -->
-    <section class="py-12 sm:py-16" aria-labelledby="bestsellers-title">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="mb-8 flex items-end justify-between gap-4">
-          <div>
-            <h2 id="bestsellers-title" class="text-2xl font-bold text-white sm:text-3xl">Meilleures ventes</h2>
-            <p class="mt-1 text-sm text-muted">Les titres les plus achetés cette semaine</p>
-          </div>
-          <a href="catalogue.html?sort=bestseller" class="inline-flex items-center gap-1 text-sm font-medium text-brand-cyan-light transition hover:text-brand-cyan">
-            Voir tout
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-          </a>
-        </div>
-
-        <!-- th:each="game : ${bestsellers}" -->
-        <ul class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <th:block th:each="game : ${bestsellers}">
-            <li th:replace="~{fragments/game-card :: homeCard(game=${game})}"></li>
-          </th:block>
-        </ul>
-      </div>
-    </section>
-
-    <!-- 3. Nouveautés -->
-    <section class="border-t border-border bg-bg-card/30 py-12 sm:py-16" aria-labelledby="new-releases-title">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="mb-8 flex items-end justify-between gap-4">
-          <div>
-            <h2 id="new-releases-title" class="text-2xl font-bold text-white sm:text-3xl">Nouveautés</h2>
-            <p class="mt-1 text-sm text-muted">Les dernières sorties disponibles immédiatement</p>
-          </div>
-          <a href="catalogue.html?sort=new" class="text-sm font-medium text-brand-cyan-light transition hover:text-brand-cyan">Voir tout →</a>
-        </div>
-
-        <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin">
-          <article class="w-72 shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-bg-card transition hover:border-brand-purple/50">
-            <a href="game-detail.html?id=7" class="flex flex-col">
-              <figure class="relative h-40 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=400&h=200&fit=crop" alt="Black Myth: Wukong" class="h-full w-full object-cover" loading="lazy">
-                <span class="absolute bottom-3 left-3 rounded-full bg-brand-cyan px-2.5 py-0.5 text-xs font-bold text-bg-dark">Nouveau</span>
-              </figure>
-              <div class="p-4">
-                <p class="text-xs text-brand-cyan-light">Action · PC</p>
-                <h3 class="mt-1 font-bold text-white">Black Myth: Wukong</h3>
-                <p class="mt-2 text-lg font-bold text-white">59,99 €</p>
-              </div>
-            </a>
-          </article>
-          <article class="w-72 shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-bg-card transition hover:border-brand-purple/50">
-            <a href="game-detail.html?id=8" class="flex flex-col">
-              <figure class="relative h-40 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1606144042614-b2417e99c4e9?w=400&h=200&fit=crop" alt="Final Fantasy XVI" class="h-full w-full object-cover" loading="lazy">
-                <span class="absolute bottom-3 left-3 rounded-full bg-brand-cyan px-2.5 py-0.5 text-xs font-bold text-bg-dark">Nouveau</span>
-              </figure>
-              <div class="p-4">
-                <p class="text-xs text-brand-cyan-light">RPG · PS5</p>
-                <h3 class="mt-1 font-bold text-white">Final Fantasy XVI</h3>
-                <p class="mt-2 text-lg font-bold text-white">49,99 €</p>
-              </div>
-            </a>
-          </article>
-          <article class="w-72 shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-bg-card transition hover:border-brand-purple/50">
-            <a href="game-detail.html?id=9" class="flex flex-col">
-              <figure class="relative h-40 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1556438064-444d9adc5a10?w=400&h=200&fit=crop" alt="Alan Wake 2" class="h-full w-full object-cover" loading="lazy">
-                <span class="absolute bottom-3 left-3 rounded-full bg-brand-cyan px-2.5 py-0.5 text-xs font-bold text-bg-dark">Nouveau</span>
-              </figure>
-              <div class="p-4">
-                <p class="text-xs text-brand-cyan-light">Horreur · PC / Xbox</p>
-                <h3 class="mt-1 font-bold text-white">Alan Wake 2</h3>
-                <p class="mt-2 text-lg font-bold text-white">44,99 €</p>
-              </div>
-            </a>
-          </article>
-          <article class="w-72 shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-bg-card transition hover:border-brand-purple/50">
-            <a href="game-detail.html?id=10" class="flex flex-col">
-              <figure class="relative h-40 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=400&h=200&fit=crop" alt="Spider-Man 2" class="h-full w-full object-cover" loading="lazy">
-                <span class="absolute bottom-3 left-3 rounded-full bg-brand-cyan px-2.5 py-0.5 text-xs font-bold text-bg-dark">Nouveau</span>
-              </figure>
-              <div class="p-4">
-                <p class="text-xs text-brand-cyan-light">Action · PS5</p>
-                <h3 class="mt-1 font-bold text-white">Marvel's Spider-Man 2</h3>
-                <p class="mt-2 text-lg font-bold text-white">69,99 €</p>
-              </div>
-            </a>
-          </article>
-          <article class="w-72 shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-bg-card transition hover:border-brand-purple/50">
-            <a href="game-detail.html?id=11" class="flex flex-col">
-              <figure class="relative h-40 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1560253023-3ec5d502a8af?w=400&h=200&fit=crop" alt="Lies of P" class="h-full w-full object-cover" loading="lazy">
-                <span class="absolute bottom-3 left-3 rounded-full bg-brand-cyan px-2.5 py-0.5 text-xs font-bold text-bg-dark">Nouveau</span>
-              </figure>
-              <div class="p-4">
-                <p class="text-xs text-brand-cyan-light">Souls-like · PC</p>
-                <h3 class="mt-1 font-bold text-white">Lies of P</h3>
-                <p class="mt-2 text-lg font-bold text-white">39,99 €</p>
-              </div>
-            </a>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4. Promotions flash -->
-    <section class="py-12 sm:py-16" aria-labelledby="flash-deals-title">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="mb-8 overflow-hidden rounded-2xl border border-error/30 bg-gradient-to-r from-error/10 via-bg-card to-brand-purple/10 p-6 sm:p-8">
-          <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-            <div>
-              <h2 id="flash-deals-title" class="text-2xl font-bold text-white sm:text-3xl">Promotions flash</h2>
-              <p class="mt-1 text-sm text-muted">Offres limitées — ne tardez pas !</p>
-            </div>
-            <div class="flex items-center gap-3 rounded-xl border border-border bg-bg-dark px-5 py-3">
-              <span class="text-sm font-medium text-muted">Se termine dans</span>
-              <span data-flash-timer data-end="" class="font-mono text-xl font-bold text-error">04h 32m 15s</span>
-            </div>
-          </div>
-        </div>
-
-        <ul class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <li>
-            <article class="card-glow relative overflow-hidden rounded-xl border border-border bg-bg-card p-4 transition hover:border-brand-purple/40">
-              <span class="absolute right-3 top-3 rounded-lg bg-error px-2 py-1 text-sm font-bold text-white">-50%</span>
-              <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=300&h=180&fit=crop" alt="Starfield" class="mb-4 aspect-video w-full rounded-lg object-cover" loading="lazy">
-              <h3 class="font-semibold text-white">Starfield</h3>
-              <div class="mt-2 flex items-center gap-2">
-                <span class="text-lg font-bold text-white">27,49 €</span>
-                <span class="text-sm text-muted line-through">54,99 €</span>
-              </div>
-              <a href="game-detail.html?id=4" data-add-to-cart class="mt-4 block w-full rounded-lg bg-brand-purple py-2 text-center text-sm font-semibold text-white transition hover:bg-brand-purple-light">Profiter</a>
-            </article>
-          </li>
-          <li>
-            <article class="card-glow relative overflow-hidden rounded-xl border border-border bg-bg-card p-4 transition hover:border-brand-purple/40">
-              <span class="absolute right-3 top-3 rounded-lg bg-error px-2 py-1 text-sm font-bold text-white">-40%</span>
-              <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85c1f53?w=300&h=180&fit=crop" alt="Red Dead Redemption 2" class="mb-4 aspect-video w-full rounded-lg object-cover" loading="lazy">
-              <h3 class="font-semibold text-white">Red Dead Redemption 2</h3>
-              <div class="mt-2 flex items-center gap-2">
-                <span class="text-lg font-bold text-white">11,99 €</span>
-                <span class="text-sm text-muted line-through">19,99 €</span>
-              </div>
-              <a href="game-detail.html?id=6" data-add-to-cart class="mt-4 block w-full rounded-lg bg-brand-purple py-2 text-center text-sm font-semibold text-white transition hover:bg-brand-purple-light">Profiter</a>
-            </article>
-          </li>
-          <li>
-            <article class="card-glow relative overflow-hidden rounded-xl border border-border bg-bg-card p-4 transition hover:border-brand-purple/40">
-              <span class="absolute right-3 top-3 rounded-lg bg-error px-2 py-1 text-sm font-bold text-white">-35%</span>
-              <img src="https://images.unsplash.com/photo-1538481190775-a0370204df00?w=300&h=180&fit=crop" alt="Hogwarts Legacy" class="mb-4 aspect-video w-full rounded-lg object-cover" loading="lazy">
-              <h3 class="font-semibold text-white">Hogwarts Legacy</h3>
-              <div class="mt-2 flex items-center gap-2">
-                <span class="text-lg font-bold text-white">22,74 €</span>
-                <span class="text-sm text-muted line-through">34,99 €</span>
-              </div>
-              <a href="game-detail.html?id=5" data-add-to-cart class="mt-4 block w-full rounded-lg bg-brand-purple py-2 text-center text-sm font-semibold text-white transition hover:bg-brand-purple-light">Profiter</a>
-            </article>
-          </li>
-          <li>
-            <article class="card-glow relative overflow-hidden rounded-xl border border-border bg-bg-card p-4 transition hover:border-brand-purple/40">
-              <span class="absolute right-3 top-3 rounded-lg bg-error px-2 py-1 text-sm font-bold text-white">-45%</span>
-              <img src="https://images.unsplash.com/photo-1511884642894-4c6ce993d016?w=300&h=180&fit=crop" alt="The Witcher 3" class="mb-4 aspect-video w-full rounded-lg object-cover" loading="lazy">
-              <h3 class="font-semibold text-white">The Witcher 3: Wild Hunt</h3>
-              <div class="mt-2 flex items-center gap-2">
-                <span class="text-lg font-bold text-white">16,49 €</span>
-                <span class="text-sm text-muted line-through">29,99 €</span>
-              </div>
-              <a href="game-detail.html?id=12" data-add-to-cart class="mt-4 block w-full rounded-lg bg-brand-purple py-2 text-center text-sm font-semibold text-white transition hover:bg-brand-purple-light">Profiter</a>
-            </article>
-          </li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- 5. Genres populaires -->
-    <section class="border-t border-border bg-bg-card/30 py-12 sm:py-16" aria-labelledby="genres-title">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h2 id="genres-title" class="text-2xl font-bold text-white sm:text-3xl">Genres populaires</h2>
-        <p class="mt-1 mb-8 text-sm text-muted">Explorez notre catalogue par catégorie</p>
-
-        <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          <li>
-            <a href="catalogue.html?genre=action" class="group flex flex-col items-center rounded-xl border border-border bg-bg-card p-5 text-center transition hover:border-brand-purple hover:bg-bg-card-hover">
-              <span class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-purple/20 text-brand-purple-light transition group-hover:scale-110">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              </span>
-              <span class="font-semibold text-white">Action</span>
-              <span class="mt-1 text-xs text-muted">842 jeux disponibles</span>
-            </a>
-          </li>
-          <li>
-            <a href="catalogue.html?genre=rpg" class="group flex flex-col items-center rounded-xl border border-border bg-bg-card p-5 text-center transition hover:border-brand-purple hover:bg-bg-card-hover">
-              <span class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-cyan/20 text-brand-cyan-light transition group-hover:scale-110">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
-              </span>
-              <span class="font-semibold text-white">RPG</span>
-              <span class="mt-1 text-xs text-muted">615 jeux disponibles</span>
-            </a>
-          </li>
-          <li>
-            <a href="catalogue.html?genre=strategie" class="group flex flex-col items-center rounded-xl border border-border bg-bg-card p-5 text-center transition hover:border-brand-purple hover:bg-bg-card-hover">
-              <span class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-purple/20 text-brand-purple-light transition group-hover:scale-110">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-              </span>
-              <span class="font-semibold text-white">Stratégie</span>
-              <span class="mt-1 text-xs text-muted">328 jeux disponibles</span>
-            </a>
-          </li>
-          <li>
-            <a href="catalogue.html?genre=sport" class="group flex flex-col items-center rounded-xl border border-border bg-bg-card p-5 text-center transition hover:border-brand-purple hover:bg-bg-card-hover">
-              <span class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-cyan/20 text-brand-cyan-light transition group-hover:scale-110">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              </span>
-              <span class="font-semibold text-white">Sport</span>
-              <span class="mt-1 text-xs text-muted">156 jeux disponibles</span>
-            </a>
-          </li>
-          <li>
-            <a href="catalogue.html?genre=fps" class="group flex flex-col items-center rounded-xl border border-border bg-bg-card p-5 text-center transition hover:border-brand-purple hover:bg-bg-card-hover">
-              <span class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-purple/20 text-brand-purple-light transition group-hover:scale-110">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              </span>
-              <span class="font-semibold text-white">FPS</span>
-              <span class="mt-1 text-xs text-muted">489 jeux disponibles</span>
-            </a>
-          </li>
-          <li>
-            <a href="catalogue.html?genre=aventure" class="group flex flex-col items-center rounded-xl border border-border bg-bg-card p-5 text-center transition hover:border-brand-purple hover:bg-bg-card-hover">
-              <span class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-cyan/20 text-brand-cyan-light transition group-hover:scale-110">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              </span>
-              <span class="font-semibold text-white">Aventure</span>
-              <span class="mt-1 text-xs text-muted">534 jeux disponibles</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- 6. Pourquoi GameStore -->
-    <section class="py-12 sm:py-16" aria-labelledby="why-title">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h2 id="why-title" class="text-center text-2xl font-bold text-white sm:text-3xl">Pourquoi GameStore ?</h2>
-        <p class="mx-auto mt-2 max-w-xl text-center text-sm text-muted">La plateforme de confiance pour vos clés de jeux numériques</p>
-
-        <ul class="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          <li class="text-center">
-            <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-purple/20 text-brand-purple-light">
-              <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            </div>
-            <h3 class="font-semibold text-white">Livraison instantanée</h3>
-            <p class="mt-2 text-sm text-muted">Recevez votre clé par e-mail en moins de 60 secondes après paiement</p>
-          </li>
-          <li class="text-center">
-            <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-cyan/20 text-brand-cyan-light">
-              <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-            </div>
-            <h3 class="font-semibold text-white">Paiement sécurisé</h3>
-            <p class="mt-2 text-sm text-muted">Transactions chiffrées SSL — CB, PayPal et crypto acceptés</p>
-          </li>
-          <li class="text-center">
-            <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-purple/20 text-brand-purple-light">
-              <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-            </div>
-            <h3 class="font-semibold text-white">Support 24/7</h3>
-            <p class="mt-2 text-sm text-muted">Équipe disponible jour et nuit — réponse moyenne sous 2 heures</p>
-          </li>
-          <li class="text-center">
-            <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-cyan/20 text-brand-cyan-light">
-              <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </div>
-            <h3 class="font-semibold text-white">Garantie authenticité</h3>
-            <p class="mt-2 text-sm text-muted">100 % de clés officielles — remboursement si problème d'activation</p>
-          </li>
-        </ul>
-      </div>
-    </section>
-
-  </main>
-
-    <footer th:replace="~{_layout :: footer}"></footer>
-
-    <div th:replace="~{_layout :: toasts}"></div>
-
-  <div th:replace="~{_layout :: scripts}"></div>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main>
+    <p th:if="${message}" class="success" th:text="${message}"></p>
+    <p th:if="${error}" class="error" th:text="${error}"></p>
+    <h2>Jeux</h2>
+    <p><a th:href="@{/games/new}">+ Nouveau jeu</a></p>
+    <table>
+        <thead>
+        <tr>
+            <th>Titre</th>
+            <th>Prix</th>
+            <th>Genres</th>
+            <th>Tags</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="game : ${games}">
+            <td th:text="${game.title}">Titre</td>
+            <td th:text="${game.price} + ' EUR'">0</td>
+            <td th:text="${#strings.listJoin(game.genreLabels, ', ')}">-</td>
+            <td th:text="${#strings.listJoin(game.tagLabels, ', ')}">-</td>
+            <td>
+                <a th:href="@{/games/{id}/edit(id=${game.id})}">Modifier</a>
+                <form th:action="@{/games/{id}/delete(id=${game.id})}" method="post" style="display:inline">
+                    <button type="submit">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
 </body>
 </html>

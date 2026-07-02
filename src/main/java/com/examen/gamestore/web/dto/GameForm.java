@@ -1,30 +1,31 @@
-package com.examen.gamestore.domain.model;
+package com.examen.gamestore.web.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-public class Game {
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-	private UUID id;
+public class GameForm {
+
+	@NotBlank
 	private String title;
+
 	private String slug;
+
 	private String description;
+
+	@NotNull
+	@DecimalMin("0.0")
 	private BigDecimal price;
+
 	private String platform;
-	private LocalDateTime createdAt;
-	private List<String> genreLabels = new ArrayList<>();
-	private List<String> tagLabels = new ArrayList<>();
 
-	public UUID getId() {
-		return id;
-	}
+	private List<String> genreSlugs = new ArrayList<>();
 
-	public void setId(UUID id) {
-		this.id = id;
-	}
+	private List<String> tagSlugs = new ArrayList<>();
 
 	public String getTitle() {
 		return title;
@@ -66,27 +67,19 @@ public class Game {
 		this.platform = platform;
 	}
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
+	public List<String> getGenreSlugs() {
+		return genreSlugs;
 	}
 
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
+	public void setGenreSlugs(List<String> genreSlugs) {
+		this.genreSlugs = genreSlugs;
 	}
 
-	public List<String> getGenreLabels() {
-		return genreLabels;
+	public List<String> getTagSlugs() {
+		return tagSlugs;
 	}
 
-	public void setGenreLabels(List<String> genreLabels) {
-		this.genreLabels = genreLabels;
-	}
-
-	public List<String> getTagLabels() {
-		return tagLabels;
-	}
-
-	public void setTagLabels(List<String> tagLabels) {
-		this.tagLabels = tagLabels;
+	public void setTagSlugs(List<String> tagSlugs) {
+		this.tagSlugs = tagSlugs;
 	}
 }
