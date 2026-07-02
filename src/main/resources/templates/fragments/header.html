@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <body>
-<header th:fragment="header">
-    <h1><a th:href="@{/}">Gamestore</a></h1>
-    <nav>
-        <a th:href="@{/}">Jeux</a>
-        <a th:href="@{/genres}">Genres</a>
-        <a th:href="@{/tags}">Tags</a>
-    </nav>
+<header th:fragment="header" class="bg-slate-800 text-white shadow-md">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-3">
+        <a th:href="@{/}" class="text-xl font-semibold tracking-tight hover:text-indigo-200 transition-colors">
+            Gamestore
+        </a>
+        <nav class="flex flex-wrap gap-4 text-sm font-medium">
+            <a th:href="@{/}" class="hover:text-indigo-200 transition-colors">Jeux</a>
+            <a th:href="@{/genres}" class="hover:text-indigo-200 transition-colors">Genres</a>
+            <a th:href="@{/tags}" class="hover:text-indigo-200 transition-colors">Tags</a>
+        </nav>
+    </div>
 </header>
 </body>
 </html>

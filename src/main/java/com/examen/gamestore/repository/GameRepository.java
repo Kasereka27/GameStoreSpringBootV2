@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.examen.gamestore.domain.model.Game;
 import com.examen.gamestore.repository.mapping.DomainRowMappers;
+import com.examen.gamestore.util.JdbcUuid;
 
 @Repository
 public class GameRepository {
@@ -47,7 +48,7 @@ public class GameRepository {
 
 	public Optional<Game> findById(UUID id) {
 		return jdbcClient.sql("SELECT " + GAME_COLUMNS + " FROM games g WHERE g.id = :id")
-				.param("id", id)
+				.param("id", JdbcUuid.toParam(id))
 				.query(gameWithRelations)
 				.optional();
 	}
@@ -66,7 +67,7 @@ public class GameRepository {
 		}
 		var query = jdbcClient.sql(sql.toString()).param("slug", slug);
 		if (excludeId != null) {
-			query = query.param("excludeId", excludeId);
+			query = query.param("excludeId", JdbcUuid.toParam(excludeId));
 		}
 		Long count = query.query(Long.class).single();
 		return count != null && count > 0;
@@ -78,7 +79,7 @@ public class GameRepository {
 				INSERT INTO games (id, title, slug, description, price, platform, created_at)
 				VALUES (:id, :title, :slug, :description, :price, :platform, CURRENT_TIMESTAMP)
 				""")
-				.param("id", id)
+				.param("id", JdbcUuid.toParam(id))
 				.param("title", game.getTitle())
 				.param("slug", game.getSlug())
 				.param("description", game.getDescription())
@@ -94,7 +95,7 @@ public class GameRepository {
 					price = :price, platform = :platform
 				WHERE id = :id
 				""")
-				.param("id", game.getId())
+				.param("id", JdbcUuid.toParam(game.getId()))
 				.param("title", game.getTitle())
 				.param("slug", game.getSlug())
 				.param("description", game.getDescription())
@@ -105,7 +106,7 @@ public class GameRepository {
 
 	public void deleteById(UUID id) {
 		jdbcClient.sql("DELETE FROM games WHERE id = :id")
-				.param("id", id)
+				.param("id", JdbcUuid.toParam(id))
 				.update();
 	}
 
@@ -116,7 +117,7 @@ public class GameRepository {
 				WHERE gg.game_id = :gameId
 				ORDER BY ge.label
 				""")
-				.param("gameId", gameId)
+				.param("gameId", JdbcUuid.toParam(gameId))
 				.query(String.class)
 				.list();
 	}
@@ -128,14 +129,14 @@ public class GameRepository {
 				WHERE gt.game_id = :gameId
 				ORDER BY t.label
 				""")
-				.param("gameId", gameId)
+				.param("gameId", JdbcUuid.toParam(gameId))
 				.query(String.class)
 				.list();
 	}
 
 	public void replaceGenres(UUID gameId, List<String> genreSlugs) {
 		jdbcClient.sql("DELETE FROM game_genres WHERE game_id = :gameId")
-				.param("gameId", gameId)
+				.param("gameId", JdbcUuid.toParam(gameId))
 				.update();
 		if (genreSlugs == null || genreSlugs.isEmpty()) {
 			return;
@@ -145,7 +146,7 @@ public class GameRepository {
 					INSERT INTO game_genres (game_id, genre_id)
 					SELECT :gameId, id FROM genres WHERE slug = :slug
 					""")
-					.param("gameId", gameId)
+					.param("gameId", JdbcUuid.toParam(gameId))
 					.param("slug", slug)
 					.update();
 		}
@@ -153,7 +154,7 @@ public class GameRepository {
 
 	public void replaceTags(UUID gameId, List<String> tagSlugs) {
 		jdbcClient.sql("DELETE FROM game_tags WHERE game_id = :gameId")
-				.param("gameId", gameId)
+				.param("gameId", JdbcUuid.toParam(gameId))
 				.update();
 		if (tagSlugs == null || tagSlugs.isEmpty()) {
 			return;
@@ -163,7 +164,7 @@ public class GameRepository {
 					INSERT INTO game_tags (game_id, tag_id)
 					SELECT :gameId, id FROM tags WHERE slug = :slug
 					""")
-					.param("gameId", gameId)
+					.param("gameId", JdbcUuid.toParam(gameId))
 					.param("slug", slug)
 					.update();
 		}
@@ -176,7 +177,7 @@ public class GameRepository {
 				WHERE gg.game_id = :gameId
 				ORDER BY ge.label
 				""")
-				.param("gameId", gameId)
+				.param("gameId", JdbcUuid.toParam(gameId))
 				.query(String.class)
 				.list();
 	}
@@ -188,7 +189,7 @@ public class GameRepository {
 				WHERE gt.game_id = :gameId
 				ORDER BY t.label
 				""")
-				.param("gameId", gameId)
+				.param("gameId", JdbcUuid.toParam(gameId))
 				.query(String.class)
 				.list();
 	}

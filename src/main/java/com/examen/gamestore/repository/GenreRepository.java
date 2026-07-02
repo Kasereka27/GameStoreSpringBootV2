@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.examen.gamestore.domain.model.Genre;
 import com.examen.gamestore.repository.mapping.DomainRowMappers;
+import com.examen.gamestore.util.JdbcUuid;
 
 @Repository
 public class GenreRepository {
@@ -29,7 +30,7 @@ public class GenreRepository {
 
 	public Optional<Genre> findById(UUID id) {
 		return jdbcClient.sql("SELECT id, slug, label FROM genres WHERE id = :id")
-				.param("id", id)
+				.param("id", JdbcUuid.toParam(id))
 				.query(rowMappers.genre())
 				.optional();
 	}
@@ -45,7 +46,7 @@ public class GenreRepository {
 	public UUID insert(String slug, String label) {
 		UUID id = UUID.randomUUID();
 		jdbcClient.sql("INSERT INTO genres (id, slug, label) VALUES (:id, :slug, :label)")
-				.param("id", id)
+				.param("id", JdbcUuid.toParam(id))
 				.param("slug", slug)
 				.param("label", label)
 				.update();
@@ -54,7 +55,7 @@ public class GenreRepository {
 
 	public void update(UUID id, String slug, String label) {
 		jdbcClient.sql("UPDATE genres SET slug = :slug, label = :label WHERE id = :id")
-				.param("id", id)
+				.param("id", JdbcUuid.toParam(id))
 				.param("slug", slug)
 				.param("label", label)
 				.update();
@@ -62,7 +63,7 @@ public class GenreRepository {
 
 	public long countGamesByGenreId(UUID genreId) {
 		Long count = jdbcClient.sql("SELECT COUNT(*) FROM game_genres WHERE genre_id = :id")
-				.param("id", genreId)
+				.param("id", JdbcUuid.toParam(genreId))
 				.query(Long.class)
 				.single();
 		return count != null ? count : 0L;
@@ -70,7 +71,7 @@ public class GenreRepository {
 
 	public void deleteById(UUID id) {
 		jdbcClient.sql("DELETE FROM genres WHERE id = :id")
-				.param("id", id)
+				.param("id", JdbcUuid.toParam(id))
 				.update();
 	}
 }

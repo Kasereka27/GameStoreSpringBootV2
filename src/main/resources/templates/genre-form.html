@@ -1,22 +1,39 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8"/>
-    <title th:text="${genreId != null} ? 'Modifier genre' : 'Nouveau genre'">Genre</title>
-    <link rel="stylesheet" th:href="@{/style.css}"/>
-</head>
-<body>
+<head th:replace="~{fragments/head :: head(${genreId != null} ? 'Modifier genre' : 'Nouveau genre')}"></head>
+<body class="min-h-screen bg-slate-100 text-slate-800 antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
-<main>
-    <p th:if="${error}" class="error" th:text="${error}"></p>
-    <h2 th:text="${genreId != null} ? 'Modifier genre' : 'Nouveau genre'">Genre</h2>
-    <form th:action="${genreId != null} ? @{/genres/{id}(id=${genreId})} : @{/genres}" method="post"
-          th:object="${genreForm}">
-        <label>Label <input type="text" th:field="*{label}" required/></label>
-        <label>Slug <input type="text" th:field="*{slug}"/></label>
-        <button type="submit">Enregistrer</button>
-        <a th:href="@{/genres}">Annuler</a>
-    </form>
+<main class="max-w-5xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-md">
+        <div th:replace="~{fragments/alert :: error(${error})}"></div>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mb-6"
+            th:text="${genreId != null} ? 'Modifier genre' : 'Nouveau genre'">Genre</h2>
+
+        <form th:action="${genreId != null} ? @{/genres/{id}(id=${genreId})} : @{/genres}" method="post"
+              th:object="${genreForm}" class="space-y-4">
+            <label class="block">
+                <span class="text-sm font-medium text-slate-700">Label</span>
+                <input type="text" th:field="*{label}" required
+                       class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"/>
+            </label>
+            <label class="block">
+                <span class="text-sm font-medium text-slate-700">Slug</span>
+                <input type="text" th:field="*{slug}" placeholder="auto si vide"
+                       class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"/>
+            </label>
+            <div class="flex flex-wrap gap-3 pt-2">
+                <button type="submit"
+                        class="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors">
+                    Enregistrer
+                </button>
+                <a th:href="@{/genres}"
+                   class="rounded-lg border border-slate-300 px-5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
 </main>
 </body>
 </html>

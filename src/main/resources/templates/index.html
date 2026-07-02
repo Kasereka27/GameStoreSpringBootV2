@@ -1,42 +1,53 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8"/>
-    <title>Jeux</title>
-    <link rel="stylesheet" th:href="@{/style.css}"/>
-</head>
-<body>
+<head th:replace="~{fragments/head :: head('Jeux')}"></head>
+<body class="min-h-screen bg-slate-100 text-slate-800 antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
-<main>
-    <p th:if="${message}" class="success" th:text="${message}"></p>
-    <p th:if="${error}" class="error" th:text="${error}"></p>
-    <h2>Jeux</h2>
-    <p><a th:href="@{/games/new}">+ Nouveau jeu</a></p>
-    <table>
-        <thead>
-        <tr>
-            <th>Titre</th>
-            <th>Prix</th>
-            <th>Genres</th>
-            <th>Tags</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="game : ${games}">
-            <td th:text="${game.title}">Titre</td>
-            <td th:text="${game.price} + ' EUR'">0</td>
-            <td th:text="${#strings.listJoin(game.genreLabels, ', ')}">-</td>
-            <td th:text="${#strings.listJoin(game.tagLabels, ', ')}">-</td>
-            <td>
-                <a th:href="@{/games/{id}/edit(id=${game.id})}">Modifier</a>
-                <form th:action="@{/games/{id}/delete(id=${game.id})}" method="post" style="display:inline">
-                    <button type="submit">Supprimer</button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<main class="max-w-5xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div th:replace="~{fragments/alert :: success(${message})}"></div>
+        <div th:replace="~{fragments/alert :: error(${error})}"></div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+            <h2 class="text-2xl font-semibold text-slate-900">Jeux</h2>
+            <a th:href="@{/games/new}"
+               class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors">
+                + Nouveau jeu
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-slate-50 text-slate-600 uppercase text-xs tracking-wide">
+                <tr>
+                    <th class="px-4 py-3 text-left font-medium">Titre</th>
+                    <th class="px-4 py-3 text-left font-medium">Prix</th>
+                    <th class="px-4 py-3 text-left font-medium">Genres</th>
+                    <th class="px-4 py-3 text-left font-medium">Tags</th>
+                    <th class="px-4 py-3 text-left font-medium">Actions</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                <tr th:each="game : ${games}" class="hover:bg-slate-50">
+                    <td class="px-4 py-3 font-medium" th:text="${game.title}">Titre</td>
+                    <td class="px-4 py-3" th:text="${game.price} + ' €'">0</td>
+                    <td class="px-4 py-3 text-slate-600" th:text="${#strings.listJoin(game.genreLabels, ', ')} ?: '—'">—</td>
+                    <td class="px-4 py-3 text-slate-600" th:text="${#strings.listJoin(game.tagLabels, ', ')} ?: '—'">—</td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-2">
+                            <a th:href="@{/games/{id}/edit(id=${game.id})}"
+                               class="text-indigo-600 hover:text-indigo-800 font-medium">Modifier</a>
+                            <form th:action="@{/games/{id}/delete(id=${game.id})}" method="post" class="inline">
+                                <button type="submit"
+                                        class="text-red-600 hover:text-red-800 font-medium">Supprimer</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </main>
 </body>
 </html>

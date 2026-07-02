@@ -1,29 +1,32 @@
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: gamestore-postgres
+  mysql:
+    image: mysql:8.4
+    container_name: gamestore-mysql
     environment:
-      POSTGRES_DB: gamestore
-      POSTGRES_USER: gamestore
-      POSTGRES_PASSWORD: gamestore
+      MYSQL_DATABASE: gamestore
+      MYSQL_USER: gamestore
+      MYSQL_PASSWORD: gamestore
+      MYSQL_ROOT_PASSWORD: root
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - gamestore_pg_data:/var/lib/postgresql/data
+      - gamestore_mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U gamestore -d gamestore"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ugamestore", "-pgamestore"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   adminer:
     image: adminer:4
     container_name: gamestore-adminer
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
     ports:
       - "8080:8080"
     depends_on:
-      postgres:
+      mysql:
         condition: service_healthy
 
 volumes:
-  gamestore_pg_data:
+  gamestore_mysql_data:

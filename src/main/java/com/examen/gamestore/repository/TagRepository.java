@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.examen.gamestore.domain.model.Tag;
 import com.examen.gamestore.repository.mapping.DomainRowMappers;
+import com.examen.gamestore.util.JdbcUuid;
 
 @Repository
 public class TagRepository {
@@ -29,7 +30,7 @@ public class TagRepository {
 
 	public Optional<Tag> findById(UUID id) {
 		return jdbcClient.sql("SELECT id, slug, label FROM tags WHERE id = :id")
-				.param("id", id)
+				.param("id", JdbcUuid.toParam(id))
 				.query(rowMappers.tag())
 				.optional();
 	}
@@ -45,7 +46,7 @@ public class TagRepository {
 	public UUID insert(String slug, String label) {
 		UUID id = UUID.randomUUID();
 		jdbcClient.sql("INSERT INTO tags (id, slug, label) VALUES (:id, :slug, :label)")
-				.param("id", id)
+				.param("id", JdbcUuid.toParam(id))
 				.param("slug", slug)
 				.param("label", label)
 				.update();
@@ -54,7 +55,7 @@ public class TagRepository {
 
 	public void update(UUID id, String slug, String label) {
 		jdbcClient.sql("UPDATE tags SET slug = :slug, label = :label WHERE id = :id")
-				.param("id", id)
+				.param("id", JdbcUuid.toParam(id))
 				.param("slug", slug)
 				.param("label", label)
 				.update();
@@ -62,7 +63,7 @@ public class TagRepository {
 
 	public long countGamesByTagId(UUID tagId) {
 		Long count = jdbcClient.sql("SELECT COUNT(*) FROM game_tags WHERE tag_id = :id")
-				.param("id", tagId)
+				.param("id", JdbcUuid.toParam(tagId))
 				.query(Long.class)
 				.single();
 		return count != null ? count : 0L;
@@ -70,7 +71,7 @@ public class TagRepository {
 
 	public void deleteById(UUID id) {
 		jdbcClient.sql("DELETE FROM tags WHERE id = :id")
-				.param("id", id)
+				.param("id", JdbcUuid.toParam(id))
 				.update();
 	}
 }

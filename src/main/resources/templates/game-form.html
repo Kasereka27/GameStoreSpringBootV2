@@ -1,41 +1,81 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8"/>
-    <title th:text="${gameId != null} ? 'Modifier jeu' : 'Nouveau jeu'">Jeu</title>
-    <link rel="stylesheet" th:href="@{/style.css}"/>
-</head>
-<body>
+<head th:replace="~{fragments/head :: head(${gameId != null} ? 'Modifier jeu' : 'Nouveau jeu')}"></head>
+<body class="min-h-screen bg-slate-100 text-slate-800 antialiased">
 <div th:replace="~{fragments/header :: header}"></div>
-<main>
-    <p th:if="${error}" class="error" th:text="${error}"></p>
-    <h2 th:text="${gameId != null} ? 'Modifier jeu' : 'Nouveau jeu'">Jeu</h2>
-    <form th:action="${gameId != null} ? @{/games/{id}(id=${gameId})} : @{/games}" method="post"
-          th:object="${gameForm}">
-        <label>Titre <input type="text" th:field="*{title}" required/></label>
-        <label>Slug <input type="text" th:field="*{slug}"/></label>
-        <label>Description <textarea th:field="*{description}"></textarea></label>
-        <label>Prix <input type="number" step="0.01" min="0" th:field="*{price}" required/></label>
-        <label>Plateforme <input type="text" th:field="*{platform}"/></label>
-        <fieldset>
-            <legend>Genres</legend>
-            <label th:each="genre : ${genres}">
-                <input type="checkbox" name="genreSlugs" th:value="${genre.slug}"
-                       th:checked="${gameForm.genreSlugs != null and gameForm.genreSlugs.contains(genre.slug)}"/>
-                <span th:text="${genre.label}">Genre</span>
+<main class="max-w-5xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-2xl">
+        <div th:replace="~{fragments/alert :: error(${error})}"></div>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mb-6"
+            th:text="${gameId != null} ? 'Modifier jeu' : 'Nouveau jeu'">Jeu</h2>
+
+        <form th:action="${gameId != null} ? @{/games/{id}(id=${gameId})} : @{/games}" method="post"
+              th:object="${gameForm}" class="space-y-4">
+            <label class="block">
+                <span class="text-sm font-medium text-slate-700">Titre</span>
+                <input type="text" th:field="*{title}" required
+                       class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"/>
             </label>
-        </fieldset>
-        <fieldset>
-            <legend>Tags</legend>
-            <label th:each="tag : ${tags}">
-                <input type="checkbox" name="tagSlugs" th:value="${tag.slug}"
-                       th:checked="${gameForm.tagSlugs != null and gameForm.tagSlugs.contains(tag.slug)}"/>
-                <span th:text="${tag.label}">Tag</span>
+            <label class="block">
+                <span class="text-sm font-medium text-slate-700">Slug</span>
+                <input type="text" th:field="*{slug}" placeholder="auto si vide"
+                       class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"/>
             </label>
-        </fieldset>
-        <button type="submit">Enregistrer</button>
-        <a th:href="@{/}">Annuler</a>
-    </form>
+            <label class="block">
+                <span class="text-sm font-medium text-slate-700">Description</span>
+                <textarea th:field="*{description}" rows="3"
+                          class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"></textarea>
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label class="block">
+                    <span class="text-sm font-medium text-slate-700">Prix</span>
+                    <input type="number" step="0.01" min="0" th:field="*{price}" required
+                           class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"/>
+                </label>
+                <label class="block">
+                    <span class="text-sm font-medium text-slate-700">Plateforme</span>
+                    <input type="text" th:field="*{platform}"
+                           class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"/>
+                </label>
+            </div>
+
+            <fieldset class="rounded-lg border border-slate-200 p-4">
+                <legend class="px-1 text-sm font-medium text-slate-700">Genres</legend>
+                <div class="mt-2 flex flex-wrap gap-3">
+                    <label th:each="genre : ${genres}" class="inline-flex items-center gap-2 text-sm">
+                        <input type="checkbox" name="genreSlugs" th:value="${genre.slug}"
+                               th:checked="${gameForm.genreSlugs != null and gameForm.genreSlugs.contains(genre.slug)}"
+                               class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"/>
+                        <span th:text="${genre.label}">Genre</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <fieldset class="rounded-lg border border-slate-200 p-4">
+                <legend class="px-1 text-sm font-medium text-slate-700">Tags</legend>
+                <div class="mt-2 flex flex-wrap gap-3">
+                    <label th:each="tag : ${tags}" class="inline-flex items-center gap-2 text-sm">
+                        <input type="checkbox" name="tagSlugs" th:value="${tag.slug}"
+                               th:checked="${gameForm.tagSlugs != null and gameForm.tagSlugs.contains(tag.slug)}"
+                               class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"/>
+                        <span th:text="${tag.label}">Tag</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+                <button type="submit"
+                        class="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors">
+                    Enregistrer
+                </button>
+                <a th:href="@{/}"
+                   class="rounded-lg border border-slate-300 px-5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
 </main>
 </body>
 </html>
